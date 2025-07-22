@@ -10,18 +10,28 @@ class Database:
         if not connection_string:
             connection_string = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/')
         
+        self.environment = os.getenv('ENVIRONMENT', 'development')
+        
         try:
-            self.client = MongoClient(connection_string)
+            self.client = MongoClient(connection_string, serverSelectionTimeoutMS=5000)  # 5 second timeout
             self.db = self.client[database_name]
             self.users = self.db.users
             
             # Test connection
             self.client.admin.command('ping')
-            print("✅ Connected to MongoDB Atlas successfully!")
+            
+            # Determine connection type
+            if 'localhost' in connection_string or '127.0.0.1' in connection_string:
+                print("✅ Connected to MongoDB Local successfully!")
+                print(f"🏠 Database: {database_name} (Local Development)")
+            else:
+                print("✅ Connected to MongoDB Atlas successfully!")
+                print(f"☁️ Database: {database_name} (Cloud Production)")
             
         except Exception as e:
             print(f"❌ Error connecting to MongoDB: {e}")
             print("📁 Falling back to file-based storage...")
+            print("💡 Tip: Make sure MongoDB service is running locally")
             # Fallback to file-based storage for development
             self.client = None
             self.db = None
@@ -31,6 +41,10 @@ class Database:
     def _init_file_storage(self):
         """Initialize file-based storage as fallback"""
         self.users_file = "data/users.json"
+        
+        # Ensure data directory exists
+        os.makedirs("data", exist_ok=True)
+        
         if not os.path.exists(self.users_file):
             with open(self.users_file, 'w', encoding='utf-8') as f:
                 json.dump([], f, ensure_ascii=False, indent=2)
@@ -61,24 +75,15 @@ class Database:
             "created_at": datetime.now().isoformat(),
             "gender": gender,
             "buildings": {
-                "town_hall": 1,  # Start with level 1 town hall
-                "inventory": 1,  # Start with level 1 inventory
-                "forge": 0,
-                "shop": 0,
-                "potion": 0,
+                "town_hall": 1,   # Start with level 1 town hall
+                "storage": 1,     # Đổi từ "inventory" thành "storage"
+                "blacksmith": 0,  # Đổi từ "forge" thành "blacksmith"
+                "market": 0,      # Đổi từ "shop" thành "market"
                 "mage_tower": 0
             },
             "quests": [],
             "dialogs_seen": [],
-            "inventory": [
-                {"item_id": "wood", "quantity": 15},
-                {"item_id": "stone", "quantity": 10},
-                {"item_id": "iron", "quantity": 5},
-                {"item_id": "coal", "quantity": 3},
-                {"item_id": "herb", "quantity": 8},
-                {"item_id": "bronze_sword", "quantity": 1, "level": 1},
-                {"item_id": "leather_armor", "quantity": 1, "level": 1}
-            ],
+            "inventory": [],
             "gold": 1000,
             "exp": 0,
             "reputation": 0,
@@ -95,7 +100,7 @@ class Database:
             ]
         }
 
-        if self.users:
+        if self.users is not None:
             # MongoDB storage
             try:
                 result = self.users.insert_one(user_data)
@@ -111,7 +116,7 @@ class Database:
 
     def find_user(self, username):
         """Find user by username"""
-        if self.users:
+        if self.users is not None:
             # MongoDB storage
             try:
                 return self.users.find_one({"username": username})
@@ -128,7 +133,7 @@ class Database:
 
     def update_user(self, username, update_data):
         """Update user data"""
-        if self.users:
+        if self.users is not None:
             # MongoDB storage
             try:
                 result = self.users.update_one(
@@ -236,7 +241,7 @@ class Database:
 
     def close_connection(self):
         """Close database connection"""
-        if self.client:
+        if self.client is not None:
             self.client.close()
             print("📝 Database connection closed")
 

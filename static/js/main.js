@@ -91,9 +91,22 @@ async function register(username, password, gender) {
 }
 
 function logout() {
-    localStorage.removeItem('username');
-    localStorage.removeItem('user_data');
-    window.location.href = '/';
+    // Call logout API to clear session
+    apiCall('/api/logout', 'POST')
+        .then(response => {
+            if (response.success) {
+                showToast('Đăng xuất thành công!');
+            }
+        })
+        .catch(error => {
+            console.error('Logout error:', error);
+        })
+        .finally(() => {
+            // Clear local storage and redirect regardless of API result
+            localStorage.removeItem('username');
+            localStorage.removeItem('user_data');
+            window.location.href = '/';
+        });
 }
 
 // User Data Functions
@@ -113,11 +126,15 @@ function calculateLevel(exp) {
 // Building Functions
 async function loadBuildings() {
     try {
-        const userData = getUserData();
-        if (!userData) {
+        // Get fresh user data from server
+        const userResponse = await apiCall('/api/user');
+        if (!userResponse.success) {
             window.location.href = '/';
             return;
         }
+        
+        const userData = userResponse.user;
+        updateUserData(userData); // Update local storage
         
         const response = await apiCall('/api/buildings');
         const buildings = response.buildings;
@@ -137,22 +154,25 @@ async function loadBuildings() {
         
     } catch (error) {
         console.error('Error loading buildings:', error);
+        window.location.href = '/';
     }
 }
 
 function createBuildingCard(building, level) {
     const card = document.createElement('div');
-    card.className = 'building-card';
+    card.className = `building-card ${level > 0 ? 'built' : 'not-built'}`;
     card.onclick = () => openBuildingModal(building, level);
     
-    const icon = getBuildingIcon(building.building_id);
     const levelClass = level > 0 ? 'built' : '';
     const levelText = level > 0 ? `Cấp ${level}` : 'Chưa xây';
     
+    // URL hình ảnh công trình
+    const buildingImageUrl = `/static/img/building/${building.building_id}.png`;
+    
     card.innerHTML = `
         <div class="building-level ${levelClass}">${levelText}</div>
-        <div class="building-icon">
-            <i class="${icon}"></i>
+        <div class="building-image">
+            <div class="building-structure" style="background-image: url('${buildingImageUrl}');"></div>
         </div>
         <div class="building-name">${building.name}</div>
         <div class="building-description">${building.description}</div>
@@ -164,10 +184,9 @@ function createBuildingCard(building, level) {
 function getBuildingIcon(buildingId) {
     const icons = {
         'town_hall': 'fas fa-landmark',
-        'inventory': 'fas fa-boxes',
-        'forge': 'fas fa-hammer',
-        'shop': 'fas fa-store',
-        'potion': 'fas fa-flask',
+        'storage': 'fas fa-boxes',      // Đổi từ 'inventory'
+        'blacksmith': 'fas fa-hammer',  // Đổi từ 'forge'
+        'market': 'fas fa-store',       // Đổi từ 'shop'
         'mage_tower': 'fas fa-hat-wizard'
     };
     return icons[buildingId] || 'fas fa-building';
@@ -335,9 +354,46 @@ function switchForm(formType) {
     document.getElementById('registerForm').style.display = formType === 'register' ? 'block' : 'none';
 }
 
+// Authentication Status Check
+async function checkAuthStatus() {
+    try {
+        const response = await apiCall('/api/auth-status');
+        if (response.success && response.authenticated) {
+            // User is authenticated, redirect to town if on index page
+            if (window.location.pathname === '/' || window.location.pathname === '/index') {
+                window.location.href = '/town';
+                return;
+            }
+            // Update local storage with fresh user data
+            localStorage.setItem('username', response.user.username);
+            localStorage.setItem('user_data', JSON.stringify(response.user));
+        } else {
+            // User not authenticated, clear local storage
+            localStorage.removeItem('username');
+            localStorage.removeItem('user_data');
+            
+            // Redirect to index if on protected pages
+            if (window.location.pathname === '/town' || window.location.pathname === '/quests') {
+                window.location.href = '/';
+            }
+        }
+    } catch (error) {
+        console.error('Auth status check error:', error);
+        // On error, clear local storage and redirect to index if on protected pages
+        localStorage.removeItem('username');
+        localStorage.removeItem('user_data');
+        if (window.location.pathname === '/town' || window.location.pathname === '/quests') {
+            window.location.href = '/';
+        }
+    }
+}
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize slideshow if on index page
+    // Check authentication status first
+    checkAuthStatus();
+    
+    // Initialize slideshow if on index page  
     initSlideshow();
     
     // Load buildings if on town page

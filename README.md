@@ -2,7 +2,7 @@
 
 ## 1. Giới thiệu chung
 
-**Hero Fate** là một web game online đơn giản, được thiết kế như một dự án học tập để hỗ trợ học viên mới bắt đầu học lập trình có thể thực hành theo. Game có lối chơi nhẹ nhàng, gồm hai phần chính: **xây dựng thị trấn** và **chiến đấu theo lượt (turn-based)**.
+**Hero Fate** là một web game online đơn giản, được thiết kế như một dự án học tập để học viên mới bắt đầu học lập trình có thể thực hành theo. Game có lối chơi nhẹ nhàng, gồm hai phần chính: **xây dựng thị trấn** và **chiến đấu theo lượt (turn-based)**.
 
 Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và dễ triển khai.
 
@@ -22,8 +22,11 @@ Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và d�
 ### Backend
 
 - Python
-- Flask (REST API)
+- Flask (REST API) + Flask-Login (Authentication)
 - MongoDB (NoSQL database): chỉ sử dụng cho dữ liệu **user**
+  - **Development**: MongoDB Local (nhanh hơn, khuyến nghị)
+  - **Production**: MongoDB Atlas (cloud)
+- Session-based authentication với Flask-Login
 - Các dữ liệu hệ thống khác như **quái vật (enemies), vật phẩm (items), nhiệm vụ (quests), hội thoại (dialogs), công trình (buildings), kỹ năng (skills)** sẽ được lưu trữ trong các file JSON tĩnh trên server, để giúp học viên dễ đọc, dễ chỉnh sửa, dễ hiểu.
 
 #### Cấu trúc database `users`
@@ -36,10 +39,9 @@ Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và d�
   "gender": "male",
   "buildings": {
     "town_hall": 1,
-    "inventory": 1,
-    "forge": 0,
-    "shop": 0,
-    "potion": 0,
+    "storage": 1,       // Đã đổi từ "inventory"
+    "blacksmith": 0,    // Đã đổi từ "forge"
+    "market": 0,        // Đã đổi từ "shop"
     "mage_tower": 0
   },
   "quests": [
@@ -83,23 +85,83 @@ Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và d�
 
 ### Frontend
 
-- HTML, W3.CSS
-- Font Awesome 5.3
-- JavaScript (dùng XHR để gọi API)
+- HTML, W3.CSS, CSS tùy chỉnh với background images
+- Font Awesome 5.15.4
+- JavaScript (dùng Fetch API để gọi API)
+- Responsive design với mobile support
+- Visual effects và animations
 
 ---
 
-## 4. Các Route
+## 4. Authentication & Session Management
 
-### A. Xây dựng thị trấn (`/town`)
+### 4.1. Flask-Login Integration
+- **Session-based authentication**: Sử dụng Flask-Login để quản lý session
+- **Protected routes**: Các trang như `/town`, `/quests` yêu cầu đăng nhập
+- **Automatic redirects**: 
+  - Chưa đăng nhập → redirect đến `/` (trang login)
+  - Đã đăng nhập → redirect từ `/` đến `/town`
+
+### 4.2. User Model
+```python
+class User(UserMixin):
+    def __init__(self, user_data):
+        self.id = user_data.get('username')
+        self.username = user_data.get('username')
+        # ... other user properties
+    
+    def get_id(self):
+        return self.username
+```
+
+### 4.3. API Endpoints
+- `POST /api/register` - Đăng ký tài khoản mới
+- `POST /api/login` - Đăng nhập (tạo session)
+- `POST /api/logout` - Đăng xuất (xóa session)
+- `GET /api/auth-status` - Kiểm tra trạng thái đăng nhập
+- `GET /api/user` - Lấy thông tin user hiện tại (protected)
+
+---
+
+## 5. UI/UX Improvements
+
+### 5.1. Visual Design
+- **Header**: Background image từ `static/img/background/1.jpg`
+- **Building System**: 
+  - Hình ảnh building từ `static/img/building/{building_id}.png`
+  - Ground texture: `static/img/building/ground.png`
+  - Building images được scale 2x để nổi bật
+- **Visual States**: 
+  - Đã xây: Màu bình thường + level badge xanh
+  - Chưa xây: Grayscale filter + level badge đỏ
+
+### 5.2. Responsive Design
+- **Desktop**: 3 cột buildings
+- **Tablet**: 2 cột buildings  
+- **Mobile**: 1 cột buildings
+- Adaptive scaling cho building images
+
+---
+
+## 6. Các Route
+
+### A. Trang chính (`/`)
+
+- **Logic redirect thông minh:**
+  - Chưa đăng nhập: Hiển thị form login/register
+  - Đã đăng nhập: Tự động redirect đến `/town`
+- **Slideshow**: Giới thiệu game với hình ảnh động
+- **Responsive layout**: 2 cột (slideshow + auth forms)
+
+### B. Xây dựng thị trấn (`/town`) - Protected Route
 
 | Công trình                   | Tính năng                                        | Cải tiến nâng cấp                                     |
 |-----------------------------|--------------------------------------------------|-------------------------------------------------------|
-| Thợ rèn                      | Chế tạo và nâng cấp trang bị                     | Tăng giới hạn upgrade level                           |
-| Chợ                          | Mua bán vật phẩm                                 | Tăng số lượng item xuất hiện trong shop               |
-| Tòa thị chính                | Nhận nhiệm vụ phụ tuyến                          | Tăng độ khó nhiệm vụ                                  |
-| Kho (inventory)              | Quản lý item người chơi                          | Tăng số lượng slot lưu trữ                            |
-| Tháp phép thuật (Mage Tower) | Học và nâng cấp kỹ năng phép thuật               | Mở bán sách phép, xem và nâng cấp kỹ năng đã học     |
+| Thợ rèn (blacksmith)        | Chế tạo và nâng cấp trang bị                     | Tăng giới hạn upgrade level                           |
+| Chợ (market)                | Mua bán vật phẩm                                 | Tăng số lượng item xuất hiện trong shop               |
+| Tòa thị chính (town_hall)   | Nhận nhiệm vụ phụ tuyến                          | Tăng độ khó nhiệm vụ                                  |
+| Kho (storage)               | Quản lý item người chơi                          | Tăng số lượng slot lưu trữ                            |
+| Tháp phép thuật (mage_tower)| Học và nâng cấp kỹ năng phép thuật               | Mở bán sách phép, xem và nâng cấp kỹ năng đã học     |
 
 #### Giao diện `/town`
 
@@ -118,7 +180,7 @@ Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và d�
 
 ---
 
-### C. Nhiệm vụ (`/quests`)
+### D. Nhiệm vụ (`/quests`) - Protected Route
 
 - Tối đa 5 nhiệm vụ đang hoạt động
 - Trạng thái: chưa nhận, đang thực hiện, đã hoàn thành
@@ -127,7 +189,7 @@ Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và d�
 
 ---
 
-### D. Hội thoại (`/dialog/<id>/<quest_id>`)
+### E. Hội thoại (`/dialog/<id>/<quest_id>`) - Protected Route
 
 - Hiện đoạn thoại tương tác (từng dòng)
 - Có 2 loại:
@@ -142,9 +204,9 @@ Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và d�
 
 ---
 
-## 5. Gameplay chính
+## 7. Gameplay chính
 
-## 5.1. Cấu trúc file `enemies.json`
+### 7.1. Cấu trúc file `enemies.json`
 
 (Thư mục ảnh: `static/img/enemies/{enemy_id}_attack_{frame}.png`)
 
@@ -183,7 +245,7 @@ Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và d�
 
 ---
 
-## 5.2. Cấu trúc file `skills.json`
+### 7.2. Cấu trúc file `skills.json`
 
 (Thư mục ảnh: `static/img/icon/skill/{skill_id}.png`)
 
@@ -207,7 +269,7 @@ Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và d�
 
 ---
 
-## 5.3. Cấu trúc file `items.json`
+### 7.3. Cấu trúc file `items.json`
 
 (Thư mục ảnh: `static/img/icon/item/{item_id}.png`)
 
@@ -248,7 +310,7 @@ Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và d�
 
 ---
 
-## 5.4. Cấu trúc file `buildings.json`
+### 7.4. Cấu trúc file `buildings.json`
 
 (Thư mục ảnh: `static/img/icon/building/{building_id}.png` hoặc `static/img/building/{building_id}.png`)
 
@@ -290,7 +352,7 @@ Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và d�
 
 ---
 
-## 5.5. Cấu trúc file `quests.json`
+### 7.5. Cấu trúc file `quests.json`
 
 (Trang hiển thị: `/quests` – danh sách các nhiệm vụ đang hoạt động hoặc có thể nhận)
 
@@ -340,7 +402,7 @@ Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và d�
 - Khi login vào game, hệ thống sẽ tự động thêm nhiệm vụ (nếu user có slot trống), bằng cách chọn ngẫu nhiên từ file `quests.json`
 
 ---
-## 5.6. Cấu trúc file `dialogs.json`
+### 7.6. Cấu trúc file `dialogs.json`
 
 (Trang hiển thị: `/dialog/<dialog_id>` — hiện đoạn hội thoại tương tác)
 
@@ -378,54 +440,212 @@ Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và d�
   - Nếu là `type: "end"` → mở modal phần thưởng, sau đó redirect về `/town`
 ---
 
-## 6. Cấu trúc thư mục dự án
+---
+
+## 8. Cấu trúc thư mục dự án
 
 ```
-hero_fate/
-├── static/
-│   ├── css/
-│   ├── js/
-│   ├── img/
-│   │   ├── icon/
-│   │   │   ├── skill/
-│   │   │   ├── item/
-│   │   │   └── building/
-│   │   ├── enemies/
-│   │   ├── effect/
-│   │   ├── player/
-│   │   ├── npc/
-│   │   ├── background/
-│   │   └── building/
-├── templates/
-│   ├── index.html
-│   ├── town.html
-│   ├── battle.html
-│   ├── quests.html
-│   └── dialog.html
-├── data/
-│   ├── enemies.json
-│   ├── skills.json
-│   ├── items.json
-│   ├── buildings.json
-│   └── quests.json
-├── app.py
-├── database.py
-└── README.md
+herofate/
+├── 📄 Core Application
+│   ├── app.py                    # Main Flask application với Flask-Login
+│   ├── database.py               # Database abstraction layer  
+│   ├── models.py                 # User model cho Flask-Login
+│   └── .env                      # Environment configuration
+│
+├── 📊 Data & Assets
+│   ├── data/                     # JSON data files
+│   │   ├── enemies.json
+│   │   ├── skills.json  
+│   │   ├── items.json
+│   │   ├── buildings.json
+│   │   ├── quests.json
+│   │   └── dialogs.json
+│   ├── static/                   # Frontend assets
+│   │   ├── css/
+│   │   │   └── style.css         # Main CSS với responsive design
+│   │   ├── js/
+│   │   │   └── main.js           # JavaScript với Fetch API
+│   │   └── img/
+│   │       ├── background/       # Background images
+│   │       ├── building/         # Building sprites + ground.png
+│   │       ├── icon/             # Icons cho UI
+│   │       ├── enemies/          # Enemy sprites
+│   │       ├── player/           # Player avatars
+│   │       └── npc/              # NPC portraits
+│   └── templates/                # Jinja2 templates
+│       ├── index.html            # Landing page với auth
+│       ├── town.html             # Main game interface
+│       ├── battle.html           # Combat interface
+│       ├── quests.html           # Quest management
+│       └── dialog.html           # Dialog system
+│
+├── 🔧 Scripts & Utils
+│   ├── start.bat                 # Main startup script
+│   ├── start_local.bat           # Local development
+│   ├── switch_db.bat             # Environment switching
+│   ├── migrate_buildings.py      # Database migration
+│   └── requirements.txt          # Python dependencies
+│
+├── 📖 Documentation & Config
+│   ├── README.md                 # Project documentation
+│   ├── .gitignore               # Git ignore rules
+│   └── CLEANUP_SUMMARY.md       # Project cleanup log
+│
+└── 🗃️ Development
+    ├── git-push.bat             # Git automation scripts
+    ├── git-start.bat
+    └── __pycache__/             # Python cache
 ```
 
 ---
 
-## 7. Giao diện
+---
 
-- Giao diện width 70%, căn giữa
-- `/index`: chia 2 cột (slideshow + login/signup)
-- Modal, toast, tab đều dùng class của W3.CSS
+## 9. Giao diện & User Experience
+
+### 9.1. Responsive Design
+- **Container**: Width 70% trên desktop, 95% trên mobile
+- **Grid System**: Adaptive columns (3→2→1) cho buildings
+- **Touch-friendly**: Buttons và interactions phù hợp mobile
+
+### 9.2. Visual Elements  
+- **Modals**: W3.CSS modal system cho building upgrades
+- **Toasts**: Thông báo success/error với animations
+- **Loading states**: Visual feedback cho API calls
+- **Hover effects**: Smooth transitions và scale effects
+
+### 9.3. Authentication UX
+- **Smart redirects**: Tự động điều hướng based on auth status
+- **Session persistence**: Maintain login state across browser sessions
+- **Error handling**: User-friendly error messages
 
 ---
 
 ---
 
-## 8. Tác giả
+## 10. Cài đặt và triển khai
+
+### 10.1. Cài đặt dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+**Dependencies chính:**
+- `Flask` - Web framework
+- `Flask-Login` - Authentication management  
+- `PyMongo` - MongoDB driver
+- `python-dotenv` - Environment variables
+
+### 10.2. Cấu hình Database
+
+#### **MongoDB Local (Development - Khuyến nghị)**
+
+1. **Cài đặt MongoDB Community Server:**
+   - Download từ [MongoDB Community Server](https://www.mongodb.com/try/download/community)
+   - Cài đặt với thiết lập mặc định
+   - MongoDB sẽ chạy như Windows Service
+
+2. **Khởi động dự án:**
+   ```bash
+   # Cách 1: Sử dụng script tự động
+   start_local.bat
+   
+   # Cách 2: Chạy thủ công
+   python app.py
+   ```
+
+#### **MongoDB Atlas (Production)**
+
+1. **Tạo cluster trên MongoDB Atlas:**
+   - Truy cập [MongoDB Atlas](https://www.mongodb.com/atlas)
+   - Tạo cluster miễn phí (M0 Sandbox)
+   - Cấu hình Database User và Network Access
+
+2. **Chuyển sang production mode:**
+   ```bash
+   # Sử dụng script chuyển đổi
+   switch_db.bat
+   
+   # Hoặc chỉnh sửa file .env thủ công
+   ```
+
+### 10.3. Chuyển đổi giữa Local và Cloud
+
+Sử dụng script `switch_db.bat` để chuyển đổi nhanh:
+
+```bash
+switch_db.bat
+```
+
+**Lựa chọn:**
+- **Option 1**: MongoDB Local (Development) - Khuyến nghị
+- **Option 2**: MongoDB Atlas (Production)
+
+### 10.4. Cấu trúc file .env
+
+```env
+# MongoDB Configuration
+MONGODB_URI=mongodb://localhost:27017/          # Local (default)
+# MONGODB_URI=mongodb+srv://...                 # Atlas (production)
+DATABASE_NAME=herofate
+ENVIRONMENT=development
+
+# Flask Configuration  
+SECRET_KEY=your_secret_key_here
+DEBUG=True
+```
+
+### 10.5. Database Migration
+
+Nếu cập nhật từ version cũ, chạy migration script:
+
+```bash
+python migrate_buildings.py
+```
+
+Script này sẽ cập nhật:
+- `inventory` → `storage`
+- `forge` → `blacksmith`  
+- `shop` → `market`
+- Xóa `potion` building không sử dụng
+
+---
+
+---
+
+## 11. Development Workflow
+
+### 11.1. Local Development
+```bash
+# Khởi động với MongoDB local
+start_local.bat
+
+# Hoặc chạy thủ công
+python app.py
+```
+
+### 11.2. Production Deployment
+```bash
+# Chuyển sang Atlas
+switch_db.bat
+
+# Chọn option 2 (MongoDB Atlas)
+# Cập nhật .env với production settings
+```
+
+### 11.3. Project Management
+```bash
+# Git workflow
+git-start.bat    # Initialize git repo
+git-push.bat     # Automated commit & push
+```
+
+---
+
+---
+
+## 12. Tác giả & License
 
 - Dự án phát triển bởi **Gum Code**
 - Phiên bản đầu tiên: Tháng 7 năm 2025

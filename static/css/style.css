@@ -17,18 +17,38 @@ body {
 
 /* Header */
 .header {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
+    background-image: url('/static/img/background/1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 30px 15px;
     margin-bottom: 20px;
-    border-radius: 10px;
+    border-radius: 15px;
+    position: relative;
     backdrop-filter: blur(10px);
+}
+
+/* Overlay để text dễ đọc hơn */
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 15px;
+    z-index: 1;
 }
 
 .header h1 {
     margin: 0;
     color: white;
     text-align: center;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    position: relative;
+    z-index: 2;
+    font-size: 2.2em;
 }
 
 /* Game Info Bar */
@@ -62,36 +82,67 @@ body {
 
 .building-card {
     background: rgba(255, 255, 255, 0.9);
-    border-radius: 10px;
-    padding: 20px;
+    border-radius: 15px;
+    padding: 15px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
-    min-height: 200px;
+    min-height: 250px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+    overflow: hidden;
 }
 
 .building-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
     background: rgba(255, 255, 255, 0.95);
 }
 
+.building-card:hover .building-structure {
+    transform: translateX(-50%) scale(1.1); /* Scale từ 2x lên 2.2x khi hover */
+}
+
+/* Building Image Container */
+.building-image {
+    position: relative;
+    width: 128px;
+    height: 128px;
+    margin: 10px auto 15px;
+    background-image: url('/static/img/building/ground.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    overflow: hidden; /* Đảm bảo scaled building không tràn ra ngoài */
+}
+
+.building-structure {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 128px;
+    height: 128px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+/* Công trình chưa xây - màu xám */
+.building-card.not-built .building-structure {
+    filter: grayscale(100%) brightness(0.6);
+}
+
+/* Công trình đã xây - màu bình thường */
+.building-card.built .building-structure {
+    filter: none;
+}
+
 .building-icon {
-    width: 80px;
-    height: 80px;
-    background: #3498db;
-    border-radius: 50%;
-    margin: 0 auto 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2em;
-    color: white;
+    display: none; /* Ẩn icon cũ vì giờ dùng hình ảnh */
 }
 
 .building-level {
@@ -100,26 +151,30 @@ body {
     right: 15px;
     background: #e74c3c;
     color: white;
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 0.8em;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
     font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 3;
 }
 
 .building-level.built {
-    background: #27ae60;
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
 }
 
 .building-name {
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     color: #2c3e50;
+    font-size: 1.1em;
 }
 
 .building-description {
     font-size: 0.9em;
     color: #7f8c8d;
     line-height: 1.4;
+    margin-top: auto;
 }
 
 /* Action Buttons */
@@ -177,7 +232,7 @@ body {
     padding: 30px;
     border-radius: 15px;
     max-width: 400px;
-    margin: 50px auto;
+    margin: auto;
 }
 
 .form-group {
@@ -210,7 +265,6 @@ body {
     position: relative;
     max-width: 100%;
     margin: auto;
-    border-radius: 15px;
     overflow: hidden;
 }
 
@@ -337,5 +391,34 @@ body {
     .game-info {
         flex-direction: column;
         gap: 10px;
+    }
+    
+    .header {
+        padding: 20px 10px;
+    }
+    
+    .header h1 {
+        font-size: 1.8em;
+    }
+    
+    .building-image {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .building-structure {
+        width: 100px;
+        height: 100px;
+        transform: translateX(-50%); /* Scale nhỏ hơn cho mobile */
+    }
+    
+    .building-card:hover .building-structure {
+        transform: translateX(-50%) scale(1.1); /* Hover effect cho mobile */
+    }
+}
+
+@media (max-width: 1024px) {
+    .buildings-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
