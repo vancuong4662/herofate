@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thị Trấn - Hero Fate</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-city"></i> Thị Trấn Hero Fate</h1>
+        </div>
+
+        <!-- User Info Bar -->
+        <div class="game-info">
+            <div class="info-item">
+                <i class="fas fa-star"></i>
+                <span>Cấp độ: <strong id="userLevel">1</strong></span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-coins"></i>
+                <span>Vàng: <strong id="userGold">0</strong></span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-bolt"></i>
+                <span>EXP: <strong id="userExp">0</strong></span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-heart"></i>
+                <span>Danh tiếng: <strong id="userReputation">0</strong></span>
+            </div>
+            <div class="info-item">
+                <button class="btn btn-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
+            </div>
+        </div>
+
+        <!-- Buildings Grid -->
+        <div class="buildings-grid" id="buildingsContainer">
+            <!-- Buildings will be loaded by JavaScript -->
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="/quests" class="btn btn-warning">
+                <i class="fas fa-scroll"></i> Nhiệm vụ
+            </a>
+            <a href="/battle" class="btn btn-danger">
+                <i class="fas fa-sword"></i> Chiến đấu
+            </a>
+            <button class="btn" onclick="showInventory()">
+                <i class="fas fa-boxes"></i> Kho đồ
+            </button>
+        </div>
+
+        <!-- Navigation -->
+        <div style="text-align: center; margin-top: 20px;">
+            <div style="background: rgba(255,255,255,0.9); padding: 15px; border-radius: 10px; display: inline-block;">
+                <a href="/town" class="btn" style="margin: 5px;">
+                    <i class="fas fa-city"></i> Thị trấn
+                </a>
+                <a href="/quests" class="btn" style="margin: 5px;">
+                    <i class="fas fa-scroll"></i> Nhiệm vụ
+                </a>
+                <a href="/battle" class="btn" style="margin: 5px;">
+                    <i class="fas fa-sword"></i> Chiến đấu
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Building Modal -->
+    <div id="buildingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalBuildingName">Tên công trình</h2>
+            <p id="modalBuildingDescription">Mô tả công trình</p>
+            
+            <div id="upgradeInfo">
+                <!-- Upgrade information will be populated by JavaScript -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="upgradeButton" class="btn btn-success">
+                    <i class="fas fa-hammer"></i> Xây dựng
+                </button>
+                <button class="btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Modal -->
+    <div id="inventoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2><i class="fas fa-boxes"></i> Kho đồ</h2>
+            
+            <div style="margin-bottom: 20px;">
+                <button class="btn" onclick="showInventoryTab('equipment')">
+                    <i class="fas fa-sword"></i> Trang bị
+                </button>
+                <button class="btn" onclick="showInventoryTab('material')">
+                    <i class="fas fa-cubes"></i> Nguyên liệu
+                </button>
+            </div>
+            
+            <div id="inventoryContent">
+                <!-- Inventory items will be populated by JavaScript -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+    <script>
+        // Inventory functions
+        async function showInventory() {
+            const modal = document.getElementById('inventoryModal');
+            modal.style.display = 'block';
+            showInventoryTab('material'); // Default to materials tab
+        }
+
+        async function showInventoryTab(type) {
+            const userData = getUserData();
+            const inventory = userData.inventory || [];
+            const content = document.getElementById('inventoryContent');
+            
+            try {
+                // Load items data to get proper names and info
+                const response = await apiCall('/api/items');
+                const allItems = response.items;
+                
+                const filteredItems = inventory.filter(item => {
+                    const itemData = allItems.find(i => i.item_id === item.item_id);
+                    return itemData && itemData.type === type;
+                });
+                
+                if (filteredItems.length === 0) {
+                    content.innerHTML = `<p style="text-align: center; color: #7f8c8d;">Không có ${type === 'equipment' ? 'trang bị' : 'nguyên liệu'} nào.</p>`;
+                    return;
+                }
+                
+                let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">';
+                
+                filteredItems.forEach(item => {
+                    const itemData = allItems.find(i => i.item_id === item.item_id);
+                    if (!itemData) return;
+                    
+                    const isEquipment = itemData.type === 'equipment';
+                    const levelRequire = itemData.level_require ? `<div style="color: #e67e22;">Yêu cầu: Lv.${itemData.level_require}</div>` : '';
+                    const itemLevel = item.level ? `<div style="color: #27ae60;">Cấp độ: ${item.level}</div>` : '';
+                    const stats = itemData.stat ? Object.entries(itemData.stat).map(([key, value]) => `${key}: +${value}`).join(', ') : '';
+                    const statsDisplay = stats ? `<div style="color: #3498db; font-size: 0.9em;">${stats}</div>` : '';
+                    
+                    html += `
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; border: 2px solid ${isEquipment ? '#3498db' : '#95a5a6'};">
+                            <div style="width: 60px; height: 60px; background: ${isEquipment ? '#3498db' : '#95a5a6'}; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-${isEquipment ? 'sword' : 'cube'}" style="color: white; font-size: 1.2em;"></i>
+                            </div>
+                            <div style="font-weight: bold; margin-bottom: 5px; color: #2c3e50;">${itemData.name}</div>
+                            <div style="color: #7f8c8d; font-size: 0.9em; margin-bottom: 8px;">${itemData.description}</div>
+                            <div style="color: #27ae60; font-weight: bold;">Số lượng: ${item.quantity}</div>
+                            ${itemLevel}
+                            ${levelRequire}
+                            ${statsDisplay}
+                            <div style="color: #f39c12; font-size: 0.9em; margin-top: 5px;">Giá: ${itemData.price} vàng</div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                content.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error loading items:', error);
+                content.innerHTML = '<p style="text-align: center; color: #e74c3c;">Lỗi tải dữ liệu item.</p>';
+            }
+        }
+
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = getUserData();
+            if (!userData) {
+                window.location.href = '/';
+                return;
+            }
+        });
+    </script>
+</body>
+</html>

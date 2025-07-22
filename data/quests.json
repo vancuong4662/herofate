@@ -1,0 +1,59 @@
+[
+  {
+    "quest_id": "q001",
+    "name": "Giải cứu dân làng",
+    "description": "Một nhóm quái vật đang đe dọa ngôi làng gần thị trấn. Hãy đánh bại chúng!",
+    "background": "forest.jpg",
+    "enemy_id": 1023,
+    "start_dialog_id": 12,
+    "complete_dialog_id": 13,
+    "required_items": [],
+    "reward": {
+      "gold": 300,
+      "exp": 150,
+      "items": [
+        {"item_id": "iron", "quantity": 2},
+        {"item_id": "herb", "quantity": 3}
+      ]
+    },
+    "level_required": 1
+  },
+  {
+    "quest_id": "q002",
+    "name": "Thu thập gỗ",
+    "description": "Thị trấn cần gỗ để xây dựng. Hãy thu thập 10 khúc gỗ.",
+    "background": "forest.jpg",
+    "enemy_id": null,
+    "start_dialog_id": -1,
+    "complete_dialog_id": -1,
+    "required_items": [
+      {"item_id": "wood", "quantity": 10}
+    ],
+    "reward": {
+      "gold": 100,
+      "exp": 50,
+      "items": [
+        {"item_id": "stone", "quantity": 5}
+      ]
+    },
+    "level_required": 1
+  },
+  {
+    "quest_id": "q003",
+    "name": "Tiêu diệt sói rừng",
+    "description": "Những con sói rừng đang tấn công các thương gia. Hãy tiêu diệt chúng!",
+    "background": "forest.jpg",
+    "enemy_id": 1001,
+    "start_dialog_id": 14,
+    "complete_dialog_id": 15,
+    "required_items": [],
+    "reward": {
+      "gold": 200,
+      "exp": 100,
+      "items": [
+        {"item_id": "leather_armor", "quantity": 1}
+      ]
+    },
+    "level_required": 2
+  }
+]

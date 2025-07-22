@@ -1,0 +1,107 @@
+[
+  {
+    "building_id": "town_hall",
+    "name": "Tòa thị chính",
+    "description": "Nơi nhận nhiệm vụ và điều hành thị trấn.",
+    "upgrade_material": {
+      "1": {
+        "gold": 100,
+        "materials": [
+          { "item_id": "wood", "quantity": 5 },
+          { "item_id": "stone", "quantity": 3 }
+        ]
+      },
+      "2": {
+        "gold": 250,
+        "materials": [
+          { "item_id": "wood", "quantity": 8 },
+          { "item_id": "stone", "quantity": 5 },
+          { "item_id": "iron", "quantity": 2 }
+        ]
+      }
+    }
+  },
+  {
+    "building_id": "storage",
+    "name": "Kho",
+    "description": "Quản lý và lưu trữ vật phẩm của bạn.",
+    "upgrade_material": {
+      "1": {
+        "gold": 50,
+        "materials": [
+          { "item_id": "wood", "quantity": 3 }
+        ]
+      },
+      "2": {
+        "gold": 150,
+        "materials": [
+          { "item_id": "wood", "quantity": 5 },
+          { "item_id": "stone", "quantity": 2 }
+        ]
+      }
+    }
+  },
+  {
+    "building_id": "blacksmith",
+    "name": "Thợ rèn",
+    "description": "Chế tạo và nâng cấp trang bị.",
+    "upgrade_material": {
+      "1": {
+        "gold": 200,
+        "materials": [
+          { "item_id": "stone", "quantity": 5 },
+          { "item_id": "iron", "quantity": 3 }
+        ]
+      },
+      "2": {
+        "gold": 400,
+        "materials": [
+          { "item_id": "iron", "quantity": 8 },
+          { "item_id": "coal", "quantity": 5 }
+        ]
+      }
+    }
+  },
+  {
+    "building_id": "market",
+    "name": "Chợ",
+    "description": "Mua bán các vật phẩm cần thiết.",
+    "upgrade_material": {
+      "1": {
+        "gold": 150,
+        "materials": [
+          { "item_id": "wood", "quantity": 6 },
+          { "item_id": "stone", "quantity": 4 }
+        ]
+      },
+      "2": {
+        "gold": 300,
+        "materials": [
+          { "item_id": "wood", "quantity": 10 },
+          { "item_id": "iron", "quantity": 3 }
+        ]
+      }
+    }
+  },
+  {
+    "building_id": "mage_tower",
+    "name": "Tháp phép thuật",
+    "description": "Học và nâng cấp kỹ năng phép thuật.",
+    "upgrade_material": {
+      "1": {
+        "gold": 300,
+        "materials": [
+          { "item_id": "stone", "quantity": 8 },
+          { "item_id": "crystal", "quantity": 5 }
+        ]
+      },
+      "2": {
+        "gold": 600,
+        "materials": [
+          { "item_id": "crystal", "quantity": 12 },
+          { "item_id": "mana_stone", "quantity": 5 }
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,219 @@
+[
+  {
+    "item_id": "wood",
+    "name": "Gỗ",
+    "type": "material",
+    "price": 5,
+    "description": "Nguyên liệu cơ bản để xây dựng"
+  },
+  {
+    "item_id": "stone",
+    "name": "Đá",
+    "type": "material",
+    "price": 8,
+    "description": "Nguyên liệu bền chắc cho công trình"
+  },
+  {
+    "item_id": "iron",
+    "name": "Sắt",
+    "type": "material",
+    "price": 15,
+    "description": "Kim loại quý để chế tạo trang bị"
+  },
+  {
+    "item_id": "coal",
+    "name": "Than",
+    "type": "material",
+    "price": 12,
+    "description": "Nhiên liệu để rèn đúc"
+  },
+  {
+    "item_id": "herb",
+    "name": "Thảo dược",
+    "type": "material",
+    "price": 10,
+    "description": "Nguyên liệu pha chế thuốc"
+  },
+  {
+    "item_id": "crystal",
+    "name": "Pha lê",
+    "type": "material",
+    "price": 25,
+    "description": "Vật liệu ma thuật quý hiếm"
+  },
+  {
+    "item_id": "mana_stone",
+    "name": "Đá mana",
+    "type": "material",
+    "price": 50,
+    "description": "Đá chứa năng lượng ma thuật"
+  },
+  {
+    "item_id": "diamond",
+    "name": "Kim cương",
+    "type": "material",
+    "price": 100,
+    "description": "Vật liệu quý hiếm nhất để chế tạo trang bị huyền thoại"
+  },
+  {
+    "item_id": "bronze_sword",
+    "name": "Gươm đồng",
+    "type": "equipment",
+    "price": 120,
+    "description": "Một thanh gươm đơn giản làm từ đồng",
+    "level_require": 1,
+    "stat": {
+      "STR": 3
+    },
+    "upgrade_material": ["iron", "coal"]
+  },
+  {
+    "item_id": "iron_sword",
+    "name": "Gươm sắt",
+    "type": "equipment",
+    "price": 250,
+    "description": "Thanh gươm chắc chắn làm từ sắt",
+    "level_require": 3,
+    "stat": {
+      "STR": 6
+    },
+    "upgrade_material": ["iron", "crystal"]
+  },
+  {
+    "item_id": "eagle_sword",
+    "name": "Gươm đại bàng",
+    "type": "equipment",
+    "price": 450,
+    "description": "Gươm nhẹ và sắc bén như móng vuốt đại bàng",
+    "level_require": 5,
+    "stat": {
+      "STR": 10,
+      "AGI": 3
+    },
+    "upgrade_material": ["crystal", "mana_stone"]
+  },
+  {
+    "item_id": "hero_saber",
+    "name": "Kiếm anh hùng",
+    "type": "equipment",
+    "price": 750,
+    "description": "Thanh kiếm của những anh hùng huyền thoại",
+    "level_require": 8,
+    "stat": {
+      "STR": 15,
+      "VIT": 5
+    },
+    "upgrade_material": ["crystal", "diamond"]
+  },
+  {
+    "item_id": "blue_angle",
+    "name": "Thiên thần xanh",
+    "type": "equipment",
+    "price": 1200,
+    "description": "Vũ khí thiêng liêng được ban phước bởi thiên thần",
+    "level_require": 12,
+    "stat": {
+      "STR": 20,
+      "WIS": 8,
+      "crit_rate": 0.1
+    },
+    "upgrade_material": ["diamond", "mana_stone"]
+  },
+  {
+    "item_id": "phoenix_sword",
+    "name": "Kiếm phượng hoàng",
+    "type": "equipment",
+    "price": 1800,
+    "description": "Kiếm huyền thoại mang sức mạnh của phượng hoàng bất tử",
+    "level_require": 15,
+    "stat": {
+      "STR": 25,
+      "INT": 10,
+      "VIT": 8
+    },
+    "upgrade_material": ["diamond", "crystal"]
+  },
+  {
+    "item_id": "emerald_guardian_sword",
+    "name": "Kiếm ngọc lục bảo",
+    "type": "equipment",
+    "price": 2500,
+    "description": "Kiếm hộ vệ được chế tác từ ngọc lục bảo thiêng",
+    "level_require": 18,
+    "stat": {
+      "STR": 30,
+      "VIT": 15,
+      "WIS": 5
+    },
+    "upgrade_material": ["diamond", "mana_stone"]
+  },
+  {
+    "item_id": "demon_slayer_sword",
+    "name": "Kiếm diệt ma",
+    "type": "equipment",
+    "price": 3500,
+    "description": "Kiếm được tôi luyện để tiêu diệt các thế lực hắc ám",
+    "level_require": 22,
+    "stat": {
+      "STR": 35,
+      "AGI": 10,
+      "crit_rate": 0.15
+    },
+    "upgrade_material": ["diamond", "crystal"]
+  },
+  {
+    "item_id": "executioner",
+    "name": "Đao hành quyết",
+    "type": "equipment",
+    "price": 4000,
+    "description": "Vũ khí khủng khiếp của những kẻ hành quyết",
+    "level_require": 25,
+    "stat": {
+      "STR": 40,
+      "VIT": 10,
+      "crit_rate": 0.2
+    },
+    "upgrade_material": ["diamond", "mana_stone"]
+  },
+  {
+    "item_id": "red_death_blade",
+    "name": "Lưỡi tử thần đỏ",
+    "type": "equipment",
+    "price": 5000,
+    "description": "Lưỡi kiếm đỏ như máu, mang theo cái chết cho kẻ thù",
+    "level_require": 28,
+    "stat": {
+      "STR": 45,
+      "AGI": 15,
+      "crit_rate": 0.25
+    },
+    "upgrade_material": ["diamond"]
+  },
+  {
+    "item_id": "terror_blade",
+    "name": "Kiếm khủng bố",
+    "type": "equipment",
+    "price": 7500,
+    "description": "Kiếm huyền thoại gây ra nỗi kinh hoàng cho mọi kẻ thù",
+    "level_require": 32,
+    "stat": {
+      "STR": 55,
+      "AGI": 20,
+      "INT": 15,
+      "crit_rate": 0.3
+    },
+    "upgrade_material": ["diamond"]
+  },
+  {
+    "item_id": "leather_armor",
+    "name": "Áo giáp da",
+    "type": "equipment",
+    "price": 100,
+    "description": "Bộ giáp nhẹ làm từ da",
+    "level_require": 1,
+    "stat": {
+      "VIT": 2
+    },
+    "upgrade_material": ["iron", "herb"]
+  }
+]
