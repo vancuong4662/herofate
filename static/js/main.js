@@ -1,5 +1,35 @@
 // Hero Fate - Main JavaScript
 
+// Mobile Detection & Redirect
+function isMobileDevice() {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'ipod', 'blackberry', 'opera mini'];
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    
+    // Check by user agent
+    const isMobileUA = mobileKeywords.some(keyword => userAgent.includes(keyword));
+    
+    // Check by screen size (typical mobile/tablet sizes)
+    const isMobileScreen = screenWidth <= 768 || screenHeight <= 768;
+    
+    return isMobileUA || isMobileScreen;
+}
+
+function checkMobileAndRedirect() {
+    if (isMobileDevice() && !window.location.pathname.includes('/not-implemented')) {
+        window.location.href = '/not-implemented';
+        return true;
+    }
+    return false;
+}
+
+// Run mobile check immediately
+if (checkMobileAndRedirect()) {
+    // Stop execution if redirecting
+    throw new Error('Redirecting to mobile not-supported page');
+}
+
 // API base URL
 const API_BASE = '';
 

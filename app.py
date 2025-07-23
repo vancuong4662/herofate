@@ -72,6 +72,10 @@ def index():
         return redirect('/town')
     return render_template("index.html")
 
+@app.route("/not-implemented")
+def not_implemented():
+    return render_template("not-implemented.html")
+
 @app.route("/town")
 @login_required
 def town():

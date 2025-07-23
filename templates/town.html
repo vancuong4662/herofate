@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thị Trấn - Hero Fate</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/css/variables.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -14,26 +20,43 @@
             <h1><i class="fas fa-city"></i> Thị Trấn Hero Fate</h1>
         </div>
 
-        <!-- User Info Bar -->
-        <div class="game-info">
-            <div class="info-item">
-                <i class="fas fa-star"></i>
-                <span>Cấp độ: <strong id="userLevel">1</strong></span>
+        <!-- User Info & Navigation Bar -->
+        <div class="game-info-nav">
+            <!-- User Stats -->
+            <div class="user-stats">
+                <div class="info-item">
+                    <i class="fas fa-star"></i>
+                    <span>Cấp độ: <strong id="userLevel">1</strong></span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-coins"></i>
+                    <span>Vàng: <strong id="userGold">0</strong></span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-bolt"></i>
+                    <span>EXP: <strong id="userExp">0</strong></span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-heart"></i>
+                    <span>Danh tiếng: <strong id="userReputation">0</strong></span>
+                </div>
             </div>
-            <div class="info-item">
-                <i class="fas fa-coins"></i>
-                <span>Vàng: <strong id="userGold">0</strong></span>
-            </div>
-            <div class="info-item">
-                <i class="fas fa-bolt"></i>
-                <span>EXP: <strong id="userExp">0</strong></span>
-            </div>
-            <div class="info-item">
-                <i class="fas fa-heart"></i>
-                <span>Danh tiếng: <strong id="userReputation">0</strong></span>
-            </div>
-            <div class="info-item">
-                <button class="btn btn-danger" onclick="logout()">
+            
+            <!-- Navigation Actions -->
+            <div class="nav-actions">
+                <button class="btn btn-primary" onclick="showPlayerInfo()">
+                    <i class="fas fa-user"></i> Thông tin
+                </button>
+                <a href="/town" class="btn btn-primary">
+                    <i class="fas fa-city"></i> Thị trấn
+                </a>
+                <a href="/quests" class="btn btn-primary">
+                    <i class="fas fa-scroll"></i> Nhiệm vụ
+                </a>
+                <button class="btn btn-primary" onclick="showInventory()">
+                    <i class="fas fa-boxes"></i> Kho đồ
+                </button>
+                <button class="btn btn-secondary" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i> Đăng xuất
                 </button>
             </div>
@@ -43,32 +66,125 @@
         <div class="buildings-grid" id="buildingsContainer">
             <!-- Buildings will be loaded by JavaScript -->
         </div>
+    </div>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <a href="/quests" class="btn btn-warning">
-                <i class="fas fa-scroll"></i> Nhiệm vụ
-            </a>
-            <a href="/battle" class="btn btn-danger">
-                <i class="fas fa-sword"></i> Chiến đấu
-            </a>
-            <button class="btn" onclick="showInventory()">
-                <i class="fas fa-boxes"></i> Kho đồ
-            </button>
-        </div>
-
-        <!-- Navigation -->
-        <div style="text-align: center; margin-top: 20px;">
-            <div style="background: rgba(255,255,255,0.9); padding: 15px; border-radius: 10px; display: inline-block;">
-                <a href="/town" class="btn" style="margin: 5px;">
-                    <i class="fas fa-city"></i> Thị trấn
-                </a>
-                <a href="/quests" class="btn" style="margin: 5px;">
-                    <i class="fas fa-scroll"></i> Nhiệm vụ
-                </a>
-                <a href="/battle" class="btn" style="margin: 5px;">
-                    <i class="fas fa-sword"></i> Chiến đấu
-                </a>
+    <!-- Player Info Modal -->
+    <div id="playerInfoModal" class="modal">
+        <div class="modal-content player-info-modal">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-user"></i> Thông tin nhân vật
+                </h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <div class="player-info-container">
+                    <!-- Left Side - Avatar -->
+                    <div class="player-info-avatar">
+                        <canvas id="playerInfoCanvas" width="128" height="128"></canvas>
+                        <div class="avatar-label">
+                            <i class="fas fa-gamepad"></i>
+                            <span id="playerUsername">Tên tài khoản</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Side - Stats & Info -->
+                    <div class="player-info-stats">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <i class="fas fa-star"></i>
+                                <div class="stat-content">
+                                    <span class="stat-label">Cấp độ</span>
+                                    <span class="stat-value" id="playerInfoLevel">1</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <i class="fas fa-coins"></i>
+                                <div class="stat-content">
+                                    <span class="stat-label">Vàng</span>
+                                    <span class="stat-value" id="playerInfoGold">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <i class="fas fa-bolt"></i>
+                                <div class="stat-content">
+                                    <span class="stat-label">Kinh nghiệm</span>
+                                    <span class="stat-value" id="playerInfoExp">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <i class="fas fa-heart"></i>
+                                <div class="stat-content">
+                                    <span class="stat-label">Danh tiếng</span>
+                                    <span class="stat-value" id="playerInfoReputation">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <i class="fas fa-fist-raised"></i>
+                                <div class="stat-content">
+                                    <span class="stat-label">Sức mạnh (STR)</span>
+                                    <span class="stat-value" id="playerInfoSTR">10</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <i class="fas fa-running"></i>
+                                <div class="stat-content">
+                                    <span class="stat-label">Nhanh nhẹn (AGI)</span>
+                                    <span class="stat-value" id="playerInfoAGI">10</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <i class="fas fa-brain"></i>
+                                <div class="stat-content">
+                                    <span class="stat-label">Trí tuệ (INT)</span>
+                                    <span class="stat-value" id="playerInfoINT">10</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <div class="stat-content">
+                                    <span class="stat-label">Thể lực (VIT)</span>
+                                    <span class="stat-value" id="playerInfoVIT">10</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <i class="fas fa-eye"></i>
+                                <div class="stat-content">
+                                    <span class="stat-label">Khôn ngoan (WIS)</span>
+                                    <span class="stat-value" id="playerInfoWIS">10</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <i class="fas fa-crosshairs"></i>
+                                <div class="stat-content">
+                                    <span class="stat-label">Tỷ lệ chí mạng</span>
+                                    <span class="stat-value" id="playerInfoCrit">10%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Đóng
+                </button>
             </div>
         </div>
     </div>
@@ -76,19 +192,29 @@
     <!-- Building Modal -->
     <div id="buildingModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2 id="modalBuildingName">Tên công trình</h2>
-            <p id="modalBuildingDescription">Mô tả công trình</p>
-            
-            <div id="upgradeInfo">
-                <!-- Upgrade information will be populated by JavaScript -->
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalBuildingName">Tên công trình</h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             
-            <div style="text-align: center; margin-top: 20px;">
-                <button id="upgradeButton" class="btn btn-success">
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <p id="modalBuildingDescription">Mô tả công trình</p>
+                
+                <div id="upgradeInfo">
+                    <!-- Upgrade information will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button id="upgradeButton" class="btn btn-primary">
                     <i class="fas fa-hammer"></i> Xây dựng
                 </button>
-                <button class="btn" onclick="closeModal()">
+                <button class="btn btn-secondary" onclick="closeModal()">
                     <i class="fas fa-times"></i> Đóng
                 </button>
             </div>
@@ -98,32 +224,283 @@
     <!-- Inventory Modal -->
     <div id="inventoryModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2><i class="fas fa-boxes"></i> Kho đồ</h2>
-            
-            <div style="margin-bottom: 20px;">
-                <button class="btn" onclick="showInventoryTab('equipment')">
-                    <i class="fas fa-sword"></i> Trang bị
-                </button>
-                <button class="btn" onclick="showInventoryTab('material')">
-                    <i class="fas fa-cubes"></i> Nguyên liệu
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-boxes"></i> Kho đồ
+                </h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <div id="inventoryContent">
-                <!-- Inventory items will be populated by JavaScript -->
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <div class="inventory-tabs" style="margin-bottom: 20px; text-align: center;">
+                    <button class="btn btn-primary" onclick="showInventoryTab('equipment')">
+                        <i class="fas fa-sword"></i> Trang bị
+                    </button>
+                    <button class="btn btn-primary" onclick="showInventoryTab('material')">
+                        <i class="fas fa-cubes"></i> Nguyên liệu
+                    </button>
+                </div>
+                
+                <div id="inventoryContent">
+                    <!-- Inventory items will be populated by JavaScript -->
+                </div>
             </div>
             
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="btn" onclick="closeModal()">
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">
                     <i class="fas fa-times"></i> Đóng
                 </button>
             </div>
         </div>
     </div>
 
+    <script src="/static/js/support.js"></script>
+    <script src="/static/js/gml.js"></script>
     <script src="/static/js/main.js"></script>
     <script>
+        // Player Animation Configuration
+        const ANIMATION_CONFIG = {
+            FRAME_SPEED: 0.1,        // Tốc độ chuyển frame (0.05 = chậm, 0.3 = nhanh)
+            FRAME_COUNT: 4,          // Số frame trong sprite
+            CANVAS_SIZE: 128,        // Kích thước canvas
+            SPRITE_SIZE: 128,        // Kích thước mỗi frame sprite
+            AUTO_START: false        // Tự động bắt đầu animation khi load page
+        };
+
+        // Player Animation System
+        let playerSprite = null;
+        let playerInstance = null;
+        let playerCanvas = null;
+        let playerCtx = null;
+        let animationRunning = false;
+
+        function initPlayerAnimation() {
+            playerCanvas = document.getElementById('playerInfoCanvas');
+            if (!playerCanvas) {
+                console.error('Player canvas not found');
+                return;
+            }
+            
+            playerCtx = playerCanvas.getContext('2d');
+            
+            // Create player sprite with configurable parameters
+            playerSprite = spriteCreate(
+                '/static/img/player/male_idle.png', 
+                ANIMATION_CONFIG.SPRITE_SIZE, 
+                ANIMATION_CONFIG.SPRITE_SIZE, 
+                ANIMATION_CONFIG.FRAME_COUNT, 
+                ANIMATION_CONFIG.SPRITE_SIZE / 2, 
+                ANIMATION_CONFIG.SPRITE_SIZE / 2
+            );
+            
+            // Wait for image to load
+            playerSprite.image.onload = function() {
+                // Create player instance with configurable speed
+                playerInstance = instCreate(
+                    ANIMATION_CONFIG.CANVAS_SIZE / 2, 
+                    ANIMATION_CONFIG.CANVAS_SIZE / 2, 
+                    0, 
+                    playerSprite
+                );
+                playerInstance.imageSpeed = ANIMATION_CONFIG.FRAME_SPEED;
+                playerInstance.imageLoop = true;
+                
+                // Auto start if configured
+                if (ANIMATION_CONFIG.AUTO_START) {
+                    startPlayerAnimation();
+                }
+            };
+            
+            playerSprite.image.onerror = function() {
+                console.error('Failed to load player sprite');
+                drawFallbackPlayer();
+            };
+        }
+
+        function startPlayerAnimation() {
+            if (animationRunning) return;
+            animationRunning = true;
+            
+            function animate() {
+                if (!animationRunning || !playerInstance || !playerCanvas) return;
+                
+                // Clear canvas
+                playerCtx.clearRect(0, 0, playerCanvas.width, playerCanvas.height);
+                
+                // Update animation frame using configurable speed
+                playerInstance.imageFrameCounter += playerInstance.imageSpeed;
+                if (playerInstance.imageFrameCounter >= 1) {
+                    playerInstance.imageIndex = (playerInstance.imageIndex + 1) % ANIMATION_CONFIG.FRAME_COUNT;
+                    playerInstance.imageFrameCounter = 0;
+                }
+                
+                // Draw player sprite at full size (128x128)
+                drawPlayerFrame();
+                
+                // Continue animation
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+
+        function drawPlayerFrame() {
+            if (!playerSprite || !playerInstance) return;
+            
+            const frameX = (playerInstance.imageIndex % ANIMATION_CONFIG.FRAME_COUNT) * ANIMATION_CONFIG.SPRITE_SIZE;
+            const frameY = 0; // Single row of frames
+            
+            // Draw at configured canvas size
+            const drawWidth = ANIMATION_CONFIG.SPRITE_SIZE;
+            const drawHeight = ANIMATION_CONFIG.SPRITE_SIZE;
+            const drawX = (ANIMATION_CONFIG.CANVAS_SIZE - drawWidth) / 2;
+            const drawY = (ANIMATION_CONFIG.CANVAS_SIZE - drawHeight) / 2;
+            
+            playerCtx.drawImage(
+                playerSprite.image,
+                frameX, frameY, ANIMATION_CONFIG.SPRITE_SIZE, ANIMATION_CONFIG.SPRITE_SIZE,
+                drawX, drawY, drawWidth, drawHeight
+            );
+        }
+
+        function drawFallbackPlayer() {
+            if (!playerCtx) return;
+            playerCtx.fillStyle = '#3498db';
+            playerCtx.fillRect(0, 0, ANIMATION_CONFIG.CANVAS_SIZE, ANIMATION_CONFIG.CANVAS_SIZE);
+            playerCtx.fillStyle = 'white';
+            playerCtx.font = '40px Arial';
+            playerCtx.textAlign = 'center';
+            playerCtx.fillText('👤', ANIMATION_CONFIG.CANVAS_SIZE/2, ANIMATION_CONFIG.CANVAS_SIZE/2 + 15);
+        }
+
+        // Animation Control Functions
+        /**
+         * Điều chỉnh tốc độ animation của avatar
+         * @param {number} speed - Tốc độ (0.05 = rất chậm, 0.15 = bình thường, 0.3 = rất nhanh)
+         * Ví dụ: setAnimationSpeed(0.1); // Đặt tốc độ chậm
+         */
+        function setAnimationSpeed(speed) {
+            ANIMATION_CONFIG.FRAME_SPEED = speed;
+            if (playerInstance) {
+                playerInstance.imageSpeed = speed;
+            }
+            console.log(`Animation speed set to: ${speed}`);
+        }
+
+        /**
+         * Lấy tốc độ animation hiện tại
+         * @returns {number} Tốc độ hiện tại
+         */
+        function getAnimationSpeed() {
+            return ANIMATION_CONFIG.FRAME_SPEED;
+        }
+
+        /**
+         * Sử dụng preset tốc độ animation có sẵn
+         * @param {string} preset - Preset: 'very_slow', 'slow', 'normal', 'fast', 'very_fast'
+         * Ví dụ: setAnimationPreset('slow'); // Đặt tốc độ chậm
+         */
+        // Preset animation speeds
+        function setAnimationPreset(preset) {
+            const presets = {
+                'very_slow': 0.05,
+                'slow': 0.1,
+                'normal': 0.15,
+                'fast': 0.2,
+                'very_fast': 0.3
+            };
+            
+            if (presets[preset]) {
+                setAnimationSpeed(presets[preset]);
+            } else {
+                console.error(`Unknown preset: ${preset}. Available: very_slow, slow, normal, fast, very_fast`);
+            }
+        }
+
+        /*
+         * HƯỚNG DẪN SỬ DỤNG ANIMATION SYSTEM:
+         * 
+         * 1. Thay đổi tốc độ animation:
+         *    setAnimationSpeed(0.1);  // Tốc độ chậm
+         *    setAnimationSpeed(0.15); // Tốc độ bình thường
+         *    setAnimationSpeed(0.2);  // Tốc độ nhanh
+         * 
+         * 2. Sử dụng preset có sẵn:
+         *    setAnimationPreset('slow');    // Chậm
+         *    setAnimationPreset('normal');  // Bình thường
+         *    setAnimationPreset('fast');    // Nhanh
+         * 
+         * 3. Kiểm tra tốc độ hiện tại:
+         *    console.log(getAnimationSpeed());
+         * 
+         * 4. Dừng/khởi động animation:
+         *    stopPlayerAnimation();   // Dừng
+         *    startPlayerAnimation();  // Khởi động
+         */
+
+        function stopPlayerAnimation() {
+            animationRunning = false;
+        }
+
+        // Player Info Modal functions
+        async function showPlayerInfo() {
+            const modal = document.getElementById('playerInfoModal');
+            const userData = getUserData();
+            
+            if (!userData) {
+                showToast('Không thể lấy thông tin người chơi', 'error');
+                return;
+            }
+            
+            // Update player info in modal
+            document.getElementById('playerUsername').textContent = userData.username;
+            document.getElementById('playerInfoLevel').textContent = Math.floor(userData.exp / 100) + 1;
+            document.getElementById('playerInfoGold').textContent = userData.gold || 0;
+            document.getElementById('playerInfoExp').textContent = userData.exp || 0;
+            document.getElementById('playerInfoReputation').textContent = userData.reputation || 0;
+            
+            // Update stats
+            const stats = userData.stats || {};
+            document.getElementById('playerInfoSTR').textContent = stats.STR || 10;
+            document.getElementById('playerInfoAGI').textContent = stats.AGI || 10;
+            document.getElementById('playerInfoINT').textContent = stats.INT || 10;
+            document.getElementById('playerInfoVIT').textContent = stats.VIT || 10;
+            document.getElementById('playerInfoWIS').textContent = stats.WIS || 10;
+            document.getElementById('playerInfoCrit').textContent = Math.round((stats.crit_rate || 0.1) * 100) + '%';
+            
+            // Show modal
+            modal.style.display = 'block';
+            
+            // Start player animation
+            if (!animationRunning) {
+                startPlayerAnimation();
+            }
+        }
+
+        // Close modal function (enhanced)
+        function closeModal() {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+            
+            // Stop player animation when modal closes
+            if (animationRunning) {
+                stopPlayerAnimation();
+            }
+        }
+
+        // Initialize player animation system when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize sprite but don't start animation yet
+            setTimeout(initPlayerAnimation, 100);
+        });
+
         // Inventory functions
         async function showInventory() {
             const modal = document.getElementById('inventoryModal');

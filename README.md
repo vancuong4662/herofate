@@ -2,7 +2,61 @@
 
 ## 1. Giới thiệu chung
 
-**Hero Fate** là một web game online đơn giản, được thiết kế như một dự án học tập để học viên mới bắt đầu học lập trình có thể thực hành theo. Game có lối chơi nhẹ nhàng, gồm hai phần chính: **xây dựng thị trấn** và **chiến đấu theo lượt (turn-based)**.
+**Hero Fate** là một web game online đơn giản, được thiết kế như một dự án học tập để học viên mới bắt đầu học lập tr#### Giao diện `/town`
+
+**🎮 Enhanced Navigation Bar:**
+- **User Stats**: Cấp độ, Vàng, EXP, Danh tiếng với icons  
+- **Player Info Button**: Nút "Thông tin" mở modal chi tiết về player
+- **Navigation Actions**: Thị trấn, Nhiệm vụ, Kho đồ, Đăng xuất
+- **Clean Layout**: Streamlined horizontal bar without avatar clutter
+
+**📋 Player Info Modal (NEW):**
+- **Trigger**: Click nút "Thông tin" trong navigation bar
+- **Layout**: Modal nằm ngang với 2 cột chính
+  - **Left Side**: Player avatar (128x128 canvas) + username
+  - **Right Side**: Stats grid với 10 thông số (Level, Gold, EXP, Reputation, STR, AGI, INT, VIT, WIS, Crit Rate)
+- **Animation**: Configurable idle animation chỉ chạy khi modal mở
+- **Auto-close**: Animation tự động dừng khi đóng modal
+- **Professional**: Centered layout với proper spacing
+
+**� Player Animation System (ENHANCED):**
+- **GML.js Integration**: Sử dụng thư viện tự tạo cho sprite animation
+- **Canvas Rendering**: 128x128 canvas với idle animation full-size
+- **Configurable Speed**: Animation speed có thể điều chỉnh qua JavaScript
+- **Control Functions**:
+  - `setAnimationSpeed(speed)`: Điều chỉnh tốc độ (0.05-0.3)
+  - `setAnimationPreset(preset)`: Sử dụng preset ('slow', 'normal', 'fast')
+  - `getAnimationSpeed()`: Lấy tốc độ hiện tại
+  - `startPlayerAnimation()` / `stopPlayerAnimation()`: Control animation
+- **On-demand**: Animation chỉ chạy khi Player Info Modal mở
+- **Performance**: Efficient memory usage với conditional rendering thể thực hành theo. Game có lối chơi nhẹ nhàng, gồm hai phần chính: **xây dựng thị trấn** và **chiến đấu theo lượt (turn-based)**.
+- Khi thiếu nhiệm vụ, hệ thống tự thêm mới từ file JSON
+- Nút "Bắt đầu" sẽ chuyển sang `/battle` (thay vì navigation trực tiếp)
+
+### D. Chiến đấu theo lượt (`/battle`) - Protected Route
+
+- Dạng 1 vs 1, luân phiên
+- Kẻ địch xác định qua `battle_enemy` (từ localStorage)  
+- Gọi API lấy dữ liệu enemy từ JSON
+- **Chỉ truy cập từ quests**: Không có direct navigation button
+
+### E. Hội thoại (`/dialog/<id>/<quest_id>`) - Protected Routeation Bar:**
+- **Player Avatar**: Canvas animation với male_idle.png (4 frames, 128x128 → 64x64)
+- **User Stats**: Cấp độ, Vàng, EXP, Danh tiếng với icons
+- **Navigation Actions**: Thị trấn, Nhiệm vụ, Kho đồ, Đăng xuất
+- **Integrated Layout**: Single horizontal bar thay vì multiple sections
+
+**🏗️ Buildings Grid:**
+- Các công trình được render dạng card theo grid 3 cột
+- Hover để xem tên, click mở modal tương ứng
+- Tòa thị chính mở `/quests`
+- Có nút "Xây dựng" để hiện danh sách công trình có thể xây
+
+**🎨 Player Animation System:**
+- **GML.js Integration**: Sử dụng thư viện tự tạo cho sprite animation
+- **Canvas Rendering**: 64x64 canvas với idle animation
+- **Frame Management**: 4 frames với tốc độ 0.2, loop tự động
+- **Fallback**: Icon 👤 nếu không load được spriteới bắt đầu học lập trình có thể thực hành theo. Game có lối chơi nhẹ nhàng, gồm hai phần chính: **xây dựng thị trấn** và **chiến đấu theo lượt (turn-based)**.
 
 Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và dễ triển khai.
 
@@ -135,11 +189,17 @@ class User(UserMixin):
   - Đã xây: Màu bình thường + level badge xanh
   - Chưa xây: Grayscale filter + level badge đỏ
 
-### 5.2. Responsive Design
-- **Desktop**: 3 cột buildings
-- **Tablet**: 2 cột buildings  
-- **Mobile**: 1 cột buildings
-- Adaptive scaling cho building images
+### 5.2. Desktop-Only Experience
+- **Platform Support**: Chỉ hỗ trợ máy tính để bàn và laptop
+- **Screen Requirements**: Độ phân giải tối thiểu 1024x768
+- **Mobile Detection**: Tự động redirect thiết bị mobile đến `/not-implemented`
+- **Optimized Layout**: 3 cột buildings được tối ưu cho màn hình lớn
+
+### 5.3. Mobile Not Supported
+- **Auto Detection**: JavaScript kiểm tra User Agent và screen size
+- **Redirect Logic**: Mobile users → `/not-implemented` page
+- **Clear Messaging**: Thông báo rõ ràng về yêu cầu hệ thống
+- **No Responsive CSS**: Đã loại bỏ toàn bộ mobile responsive để tối ưu performance
 
 ---
 
@@ -503,21 +563,33 @@ herofate/
 
 ## 9. Giao diện & User Experience
 
-### 9.1. Responsive Design
-- **Container**: Width 70% trên desktop, 95% trên mobile
-- **Grid System**: Adaptive columns (3→2→1) cho buildings
-- **Touch-friendly**: Buttons và interactions phù hợp mobile
+### 9.1. Desktop-Only Design
+- **Container**: Width 70% tối ưu cho desktop/laptop
+- **Grid System**: 3 cột buildings cố định cho màn hình lớn
+- **Navigation**: User Info & Navigation tích hợp thành một bar
+- **No Mobile Support**: Loại bỏ responsive CSS để tối ưu performance
 
-### 9.2. Visual Elements  
+### 9.2. Enhanced Navigation  
+- **Integrated Bar**: User stats + navigation actions trong cùng một component
+- **Direct Actions**: Thị trấn, Nhiệm vụ, Chiến đấu, Kho đồ, Đăng xuất
+- **Visual Feedback**: Button states và hover effects
+- **Streamlined UX**: Loại bỏ Action Buttons duplicate
+
+### 9.3. Visual Elements  
 - **Modals**: W3.CSS modal system cho building upgrades
 - **Toasts**: Thông báo success/error với animations
 - **Loading states**: Visual feedback cho API calls
 - **Hover effects**: Smooth transitions và scale effects
 
-### 9.3. Authentication UX
+### 9.4. Authentication UX
 - **Smart redirects**: Tự động điều hướng based on auth status
 - **Session persistence**: Maintain login state across browser sessions
 - **Error handling**: User-friendly error messages
+
+### 9.5. Mobile Detection & Redirect
+- **Auto Detection**: JavaScript kiểm tra device type và screen size
+- **Graceful Fallback**: Redirect đến `/not-implemented` với thông báo rõ ràng
+- **System Requirements**: Hiển thị yêu cầu hệ thống cho user
 
 ---
 
@@ -525,7 +597,19 @@ herofate/
 
 ## 10. Cài đặt và triển khai
 
-### 10.1. Cài đặt dependencies
+### 10.1. Yêu cầu hệ thống
+
+**🖥️ Platform Support:**
+- **Máy tính để bàn hoặc laptop** (bắt buộc)
+- **Độ phân giải tối thiểu**: 1024x768 pixels
+- **Trình duyệt**: Chrome, Firefox, Safari, Edge (phiên bản mới)
+- **Kết nối internet**: Ổn định cho MongoDB và API calls
+
+**📱 Mobile & Tablet:**
+- **Không hỗ trợ**: Game tự động redirect mobile users đến `/not-implemented`
+- **Lý do**: Gameplay tối ưu cho mouse/keyboard interaction
+
+### 10.2. Cài đặt dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -537,7 +621,7 @@ pip install -r requirements.txt
 - `PyMongo` - MongoDB driver
 - `python-dotenv` - Environment variables
 
-### 10.2. Cấu hình Database
+### 10.3. Cấu hình Database
 
 #### **MongoDB Local (Development - Khuyến nghị)**
 
@@ -570,7 +654,7 @@ pip install -r requirements.txt
    # Hoặc chỉnh sửa file .env thủ công
    ```
 
-### 10.3. Chuyển đổi giữa Local và Cloud
+### 10.4. Chuyển đổi giữa Local và Cloud
 
 Sử dụng script `switch_db.bat` để chuyển đổi nhanh:
 
@@ -582,7 +666,7 @@ switch_db.bat
 - **Option 1**: MongoDB Local (Development) - Khuyến nghị
 - **Option 2**: MongoDB Atlas (Production)
 
-### 10.4. Cấu trúc file .env
+### 10.5. Cấu trúc file .env
 
 ```env
 # MongoDB Configuration
@@ -596,7 +680,7 @@ SECRET_KEY=your_secret_key_here
 DEBUG=True
 ```
 
-### 10.5. Database Migration
+### 10.6. Database Migration
 
 Nếu cập nhật từ version cũ, chạy migration script:
 

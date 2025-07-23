@@ -1,0 +1,116 @@
+/* Hero Fate - CSS Variables & Color System */
+
+:root {
+  /* Primary Colors */
+  --primary-color: #e0803b;           /* Saddle brown - màu chủ đạo */
+  --primary-color-hover: #eb9f69;     /* Dark brown hover */
+  --primary-color-light: #A0522D;     /* Sienna - nhạt hơn */
+  --primary-color-dark: #5D2F05;      /* Very dark brown */
+
+  /* Secondary Colors */
+  --secondary-color: #F5E6D3;         /* Màu giấy cũ */
+  --secondary-color-dark: #E8D5B7;    /* Giấy cũ đậm hơn */
+  --secondary-color-alt: #B8860B;     /* Dark goldenrod - màu mái ngói */
+  --secondary-color-alt-hover: #996515; /* Darker tile color */
+
+  /* Accent Colors */
+  --accent-color: #DAA520;            /* Goldenrod - màu vàng cổ điển */
+  --accent-color-hover: #B8860B;      /* Darker gold */
+  --accent-color-alt: #B87333;        /* Copper - màu đồng */
+  --accent-color-alt-hover: #8B4513;  /* Darker copper */
+
+  /* Status Colors */
+  --success-color: #556B2F;           /* Dark olive green */
+  --success-color-hover: #3C4F1A;     /* Darker olive */
+  --warning-color: #CD853F;           /* Peru - cam cổ điển */
+  --warning-color-hover: #A0522D;     /* Sienna */
+  --danger-color: #A0522D;            /* Sienna - đỏ nâu */
+  --danger-color-hover: #8B4513;      /* Saddle brown */
+  --info-color: #708090;              /* Slate gray */
+  --info-color-hover: #556B2F;        /* Dark olive */
+
+  /* Background Colors */
+  --bg-gradient-start: #8a400b;       /* Dark brown */
+  --bg-gradient-end: #eb9f69;         /* Medium brown */
+  --bg-white: #FFF8E1;                /* Light yellow/cream */
+  --bg-white-transparent: rgba(245, 230, 211, 0.95); /* Parchment transparent */
+  --bg-white-light: #F5E6D3;          /* Parchment */
+  --bg-dark-overlay: rgba(62, 39, 35, 0.6);  /* Dark brown overlay */
+  --bg-dark-overlay-strong: rgba(62, 39, 35, 0.85); /* Strong brown overlay */
+
+  /* Text Colors */
+  --text-primary: #3E2723;            /* Dark brown text */
+  --text-secondary: #5D4037;          /* Medium brown text */
+  --text-white: #FFF8E1;              /* Cream white */
+  --text-muted: #8D6E63;              /* Light brown */
+  --text-light: #F5E6D3;              /* Parchment light */
+
+  /* Border & Shadow */
+  --border-radius: 8px;
+  --border-radius-round: 25px;
+  --border-radius-large: 15px;
+  --box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --box-shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --box-shadow-strong: 2px 2px 4px rgba(0, 0, 0, 0.8);
+
+  /* Spacing */
+  --spacing-xs: 5px;
+  --spacing-sm: 10px;
+  --spacing-md: 15px;
+  --spacing-lg: 20px;
+  --spacing-xl: 30px;
+
+  /* Typography */
+  --font-primary: 'Huninn', 'Arial', sans-serif;
+  --font-secondary: 'Arial', sans-serif;
+  --font-size-xs: 0.8em;
+  --font-size-sm: 0.9em;
+  --font-size-md: 1em;
+  --font-size-lg: 1.2em;
+  --font-size-xl: 1.5em;
+  --font-size-xxl: 2.2em;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* Game Specific Colors */
+  --stat-level: #DAA520;              /* Gold */
+  --stat-gold: #B8860B;               /* Dark goldenrod */
+  --stat-exp: #8B4513;                /* Saddle brown */
+  --stat-reputation: #A0522D;         /* Sienna */
+  --stat-str: #A0522D;                /* Sienna - strength */
+  --stat-agi: #556B2F;                /* Dark olive - agility */
+  --stat-int: #708090;                /* Slate gray - intelligence */
+  --stat-vit: #CD853F;                /* Peru - vitality */
+  --stat-wis: #8B4513;                /* Saddle brown - wisdom */
+  --stat-crit: #B87333;               /* Copper - critical */
+
+  /* Modal & Overlay */
+  --modal-bg: rgba(62, 39, 35, 0.7);  /* Dark brown modal background */
+  --modal-content-bg: var(--bg-white); /* Parchment modal content */
+  --modal-border-radius: var(--border-radius);
+
+  /* Button Sizes */
+  --btn-padding-sm: 8px 12px;
+  --btn-padding-md: 10px 16px;
+  --btn-padding-lg: 12px 24px;
+
+  /* Grid & Layout */
+  --container-width: 70%;
+  --grid-gap: var(--spacing-md);
+  --building-card-size: 150px;
+}
+
+/* Dark theme variables (for future use) */
+[data-theme="dark"] {
+  --bg-gradient-start: #2C1810;       /* Very dark brown */
+  --bg-gradient-end: #3E2723;         /* Dark brown */
+  --bg-white: #3E2723;                /* Dark brown background */
+  --bg-white-transparent: rgba(62, 39, 35, 0.95); /* Dark brown transparent */
+  --bg-white-light: #5D4037;          /* Medium brown */
+  --text-primary: #F5E6D3;            /* Parchment text */
+  --text-secondary: #E8D5B7;          /* Darker parchment text */
+  --modal-content-bg: #3E2723;        /* Dark brown modal */
+}
