@@ -501,11 +501,16 @@ body {
     background-color: var(--modal-content-bg);
     margin: 3% auto;
     border-radius: var(--border-radius-large);
-    width: 85%;
-    max-width: 700px;
+    width: 95%;
+    max-width: 900px;
     position: relative;
     box-shadow: var(--box-shadow-medium);
     overflow: hidden;
+}
+
+.inventory-modal .modal-body {
+    flex: 1;
+    min-height: 0;
 }
 
 /* Modal Header */
@@ -598,15 +603,207 @@ body {
 }
 
 /* Inventory Modal Specific */
+.inventory-container {
+    display: flex;
+    gap: 20px;
+    height: 450px;
+    min-height: 450px;
+}
+
+.inventory-main {
+    flex: 0 60%;
+    display: flex;
+    flex-direction: column;
+}
+
+.inventory-sidebar {
+    flex: 0 40%;
+    background: var(--surface-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+}
+
 .inventory-tabs {
     display: flex;
     justify-content: center;
     gap: var(--spacing-md);
     flex-wrap: wrap;
+    margin-bottom: 15px;
 }
 
 .inventory-tabs .btn {
     min-width: 140px;
+}
+
+/* Inventory Grid */
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    row-gap: 24px;
+    column-gap: 6px;
+    flex: 1;
+    padding: 10px;
+    background: var(--surface-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    overflow-y: auto;
+}
+
+.inventory-slot {
+    aspect-ratio: 1;
+    background: var(--background-color);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    min-height: 50px;
+}
+
+.inventory-slot:hover {
+    border-color: var(--primary-color);
+    background: var(--hover-background);
+}
+
+.inventory-slot.selected {
+    border-color: #e74c3c;
+    background: rgba(231, 76, 60, 0.1);
+}
+
+.inventory-slot.empty {
+    background: rgba(127, 140, 141, 0.1);
+    cursor: default;
+}
+
+.inventory-slot .item-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.inventory-slot .item-icon.fallback {
+    font-size: 1.5em;
+    color: var(--text-color);
+}
+
+.inventory-slot .item-quantity {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: var(--primary-color);
+    color: white;
+    font-size: 0.7em;
+    font-weight: bold;
+    padding: 1px 4px;
+    border-radius: 3px;
+    min-width: 12px;
+    text-align: center;
+}
+
+/* Item Detail Panel */
+.item-detail {
+    text-align: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.item-detail.empty {
+    justify-content: center;
+    align-items: center;
+    color: var(--muted-text);
+}
+
+.item-detail .item-image {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: itemPulse 2s ease-in-out infinite;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+@keyframes itemPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.item-detail .item-image i {
+    font-size: 2.8em;
+    color: white;
+}
+
+.item-detail .item-image img {
+    width: 68px;
+    height: 68px;
+    object-fit: contain;
+}
+
+.item-detail .item-name {
+    font-size: 1.15em;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 6px;
+    flex-shrink: 0;
+}
+
+.item-detail .item-type {
+    color: var(--muted-text);
+    font-size: 0.9em;
+    margin-bottom: 6px;
+    text-transform: capitalize;
+    flex-shrink: 0;
+}
+
+.item-detail .item-price {
+    color: var(--warning-color);
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+    flex-shrink: 0;
+}
+
+.item-detail .item-description {
+    color: var(--muted-text);
+    font-size: 0.9em;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.item-detail .item-stats {
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 6px;
+    padding: 6px;
+    margin-top: auto;
+    flex-shrink: 0;
+}
+
+.item-detail .item-stats .stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 2px 0;
+    font-size: 0.8em;
+}
+
+.item-detail .item-level-req {
+    color: var(--warning-color);
+    font-size: 0.85em;
+    margin-bottom: 4px;
+    flex-shrink: 0;
 }
 
 /* Desktop-only Game - No Mobile Support */

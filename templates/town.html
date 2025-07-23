@@ -222,7 +222,7 @@
     </div>
 
     <!-- Inventory Modal -->
-    <div id="inventoryModal" class="modal">
+    <div id="inventoryModal" class="modal inventory-modal">
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
@@ -236,22 +236,40 @@
             
             <!-- Modal Body -->
             <div class="modal-body">
-                <div class="inventory-tabs" style="margin-bottom: 20px; text-align: center;">
-                    <button class="btn btn-primary" onclick="showInventoryTab('equipment')">
-                        <i class="fas fa-sword"></i> Trang bị
-                    </button>
-                    <button class="btn btn-primary" onclick="showInventoryTab('material')">
-                        <i class="fas fa-cubes"></i> Nguyên liệu
-                    </button>
-                </div>
-                
-                <div id="inventoryContent">
-                    <!-- Inventory items will be populated by JavaScript -->
+                <div class="inventory-container">
+                    <!-- Main Inventory Panel (70%) -->
+                    <div class="inventory-main">
+                        <div class="inventory-tabs">
+                            <button class="btn btn-primary" onclick="showInventoryTab('equipment')">
+                                <i class="fas fa-sword"></i> Trang bị
+                            </button>
+                            <button class="btn btn-primary" onclick="showInventoryTab('material')">
+                                <i class="fas fa-cubes"></i> Nguyên liệu
+                            </button>
+                        </div>
+                        
+                        <div class="inventory-grid" id="inventoryGrid">
+                            <!-- Inventory slots will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Item Detail Sidebar (30%) -->
+                    <div class="inventory-sidebar">
+                        <div class="item-detail empty" id="itemDetail">
+                            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                                <i class="fas fa-mouse-pointer" style="font-size: 2em; margin-bottom: 10px; opacity: 0.5;"></i>
+                                <p>Di chuột qua item để xem chi tiết</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <!-- Modal Footer -->
             <div class="modal-footer">
+                <button id="useItemButton" class="btn btn-primary" style="display: none;" onclick="useSelectedItem()">
+                    <i class="fas fa-hand-paper"></i> Sử dụng
+                </button>
                 <button class="btn btn-secondary" onclick="closeModal()">
                     <i class="fas fa-times"></i> Đóng
                 </button>
@@ -502,67 +520,234 @@
         });
 
         // Inventory functions
+        let selectedItem = null;
+        let currentTab = 'material';
+        
         async function showInventory() {
             const modal = document.getElementById('inventoryModal');
             modal.style.display = 'block';
             showInventoryTab('material'); // Default to materials tab
         }
 
+        function getItemTypeVietnamese(type) {
+            const typeMap = {
+                'material': 'Nguyên liệu',
+                'equipment': 'Trang bị',
+                'consumable': 'Vật phẩm tiêu hao',
+                'weapon': 'Vũ khí',
+                'armor': 'Giáp',
+                'accessory': 'Phụ kiện'
+            };
+            return typeMap[type] || type;
+        }
+
+        function getItemIcon(itemData) {
+            // Return path to webp icon image
+            return `/static/img/icon/item/${itemData.item_id}.webp`;
+        }
+
+        function getItemIconFallback(itemData) {
+            // Fallback font awesome icons if image fails to load
+            if (itemData.type === 'equipment') {
+                return 'fas fa-sword';
+            } else if (itemData.type === 'material') {
+                const materialIcons = {
+                    'wood': 'fas fa-tree',
+                    'stone': 'fas fa-mountain',
+                    'iron': 'fas fa-hammer',
+                    'coal': 'fas fa-fire',
+                    'herb': 'fas fa-leaf',
+                    'crystal': 'fas fa-gem',
+                    'mana_stone': 'fas fa-star',
+                    'diamond': 'fas fa-diamond'
+                };
+                return materialIcons[itemData.item_id] || 'fas fa-cube';
+            }
+            return 'fas fa-question';
+        }
+
         async function showInventoryTab(type) {
+            currentTab = type;
             const userData = getUserData();
             const inventory = userData.inventory || [];
-            const content = document.getElementById('inventoryContent');
+            const grid = document.getElementById('inventoryGrid');
+            
+            // Reset selected item
+            selectedItem = null;
+            updateItemDetail(null);
+            updateUseButton();
             
             try {
                 // Load items data to get proper names and info
                 const response = await apiCall('/api/items');
                 const allItems = response.items;
                 
+                // Create 36 slots (6x6 grid)
+                const totalSlots = 36;
+                let html = '';
+                
+                // Filter items by type
                 const filteredItems = inventory.filter(item => {
                     const itemData = allItems.find(i => i.item_id === item.item_id);
                     return itemData && itemData.type === type;
                 });
                 
-                if (filteredItems.length === 0) {
-                    content.innerHTML = `<p style="text-align: center; color: #7f8c8d;">Không có ${type === 'equipment' ? 'trang bị' : 'nguyên liệu'} nào.</p>`;
-                    return;
+                // Fill slots
+                for (let i = 0; i < totalSlots; i++) {
+                    const item = filteredItems[i];
+                    
+                    if (item) {
+                        const itemData = allItems.find(i => i.item_id === item.item_id);
+                        if (itemData) {
+                            const iconPath = getItemIcon(itemData);
+                            const fallbackIcon = getItemIconFallback(itemData);
+                            
+                            html += `
+                                <div class="inventory-slot" 
+                                     data-item-id="${item.item_id}" 
+                                     onmouseenter="showItemTooltip('${item.item_id}')" 
+                                     onmouseleave="hideItemTooltip()"
+                                     onclick="selectItem('${item.item_id}')">
+                                    <img class="item-icon" 
+                                         src="${iconPath}" 
+                                         alt="${itemData.name}"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                                    <i class="item-icon fallback ${fallbackIcon}" style="display: none;"></i>
+                                    <div class="item-quantity">${item.quantity}</div>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        html += '<div class="inventory-slot empty"></div>';
+                    }
                 }
                 
-                let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">';
-                
-                filteredItems.forEach(item => {
-                    const itemData = allItems.find(i => i.item_id === item.item_id);
-                    if (!itemData) return;
-                    
-                    const isEquipment = itemData.type === 'equipment';
-                    const levelRequire = itemData.level_require ? `<div style="color: #e67e22;">Yêu cầu: Lv.${itemData.level_require}</div>` : '';
-                    const itemLevel = item.level ? `<div style="color: #27ae60;">Cấp độ: ${item.level}</div>` : '';
-                    const stats = itemData.stat ? Object.entries(itemData.stat).map(([key, value]) => `${key}: +${value}`).join(', ') : '';
-                    const statsDisplay = stats ? `<div style="color: #3498db; font-size: 0.9em;">${stats}</div>` : '';
-                    
-                    html += `
-                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; border: 2px solid ${isEquipment ? '#3498db' : '#95a5a6'};">
-                            <div style="width: 60px; height: 60px; background: ${isEquipment ? '#3498db' : '#95a5a6'}; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-${isEquipment ? 'sword' : 'cube'}" style="color: white; font-size: 1.2em;"></i>
-                            </div>
-                            <div style="font-weight: bold; margin-bottom: 5px; color: #2c3e50;">${itemData.name}</div>
-                            <div style="color: #7f8c8d; font-size: 0.9em; margin-bottom: 8px;">${itemData.description}</div>
-                            <div style="color: #27ae60; font-weight: bold;">Số lượng: ${item.quantity}</div>
-                            ${itemLevel}
-                            ${levelRequire}
-                            ${statsDisplay}
-                            <div style="color: #f39c12; font-size: 0.9em; margin-top: 5px;">Giá: ${itemData.price} vàng</div>
-                        </div>
-                    `;
-                });
-                
-                html += '</div>';
-                content.innerHTML = html;
+                grid.innerHTML = html;
                 
             } catch (error) {
                 console.error('Error loading items:', error);
-                content.innerHTML = '<p style="text-align: center; color: #e74c3c;">Lỗi tải dữ liệu item.</p>';
+                grid.innerHTML = '<p style="text-align: center; color: #e74c3c; grid-column: 1 / -1;">Lỗi tải dữ liệu item.</p>';
             }
+        }
+
+        async function showItemTooltip(itemId) {
+            try {
+                const response = await apiCall('/api/items');
+                const allItems = response.items;
+                const itemData = allItems.find(i => i.item_id === itemId);
+                
+                if (itemData) {
+                    updateItemDetail(itemData);
+                }
+            } catch (error) {
+                console.error('Error loading item tooltip:', error);
+            }
+        }
+
+        function hideItemTooltip() {
+            if (!selectedItem) {
+                updateItemDetail(null);
+            }
+        }
+
+        async function selectItem(itemId) {
+            // Remove previous selection
+            document.querySelectorAll('.inventory-slot.selected').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            // Add selection to clicked slot
+            const slot = document.querySelector(`[data-item-id="${itemId}"]`);
+            if (slot) {
+                slot.classList.add('selected');
+                selectedItem = itemId;
+                
+                // Show item detail
+                await showItemTooltip(itemId);
+                updateUseButton();
+            }
+        }
+
+        function updateItemDetail(itemData) {
+            const detailContainer = document.getElementById('itemDetail');
+            
+            if (!itemData) {
+                detailContainer.className = 'item-detail empty';
+                detailContainer.innerHTML = `
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                        <i class="fas fa-mouse-pointer" style="font-size: 2em; margin-bottom: 10px; opacity: 0.5;"></i>
+                        <p>Di chuột qua item để xem chi tiết</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            detailContainer.className = 'item-detail';
+            
+            // Build stats display if available
+            let statsHtml = '';
+            if (itemData.stat && Object.keys(itemData.stat).length > 0) {
+                statsHtml = '<div class="item-stats">';
+                Object.entries(itemData.stat).forEach(([key, value]) => {
+                    let statName = key;
+                    let statValue = value;
+                    
+                    // Format special stats
+                    if (key === 'crit_rate') {
+                        statName = 'Tỷ lệ chí mạng';
+                        statValue = Math.round(value * 100) + '%';
+                    } else {
+                        statValue = '+' + value;
+                    }
+                    
+                    statsHtml += `<div class="stat-item"><span>${statName}:</span><span>${statValue}</span></div>`;
+                });
+                statsHtml += '</div>';
+            }
+            
+            // Build level requirement if available
+            const levelReq = itemData.level_require ? `<div class="item-level-req">Yêu cầu: Cấp ${itemData.level_require}</div>` : '';
+            
+            // Build item image with fallback
+            const iconPath = getItemIcon(itemData);
+            const fallbackIcon = getItemIconFallback(itemData);
+            
+            detailContainer.innerHTML = `
+                <div class="item-image">
+                    <img src="${iconPath}" 
+                         alt="${itemData.name}"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                    <i class="${fallbackIcon}" style="display: none;"></i>
+                </div>
+                <div class="item-name">${itemData.name}</div>
+                <div class="item-type">${getItemTypeVietnamese(itemData.type)}</div>
+                <div class="item-price"><i class="fas fa-coins"></i> ${itemData.price} vàng</div>
+                ${levelReq}
+                <div class="item-description">${itemData.description}</div>
+                ${statsHtml}
+            `;
+        }
+
+        function updateUseButton() {
+            const useButton = document.getElementById('useItemButton');
+            
+            if (selectedItem) {
+                // Check if selected item is equipment
+                const isEquipment = currentTab === 'equipment';
+                useButton.style.display = isEquipment ? 'inline-flex' : 'none';
+            } else {
+                useButton.style.display = 'none';
+            }
+        }
+
+        async function useSelectedItem() {
+            if (!selectedItem) {
+                showToast('Chưa chọn item nào', 'error');
+                return;
+            }
+            
+            // TODO: Implement use item functionality
+            showToast(`Sử dụng item: ${selectedItem}`, 'info');
         }
 
         // Check if user is logged in
