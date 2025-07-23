@@ -142,21 +142,316 @@ Dự án sử dụng công nghệ phổ biến, đơn giản, dễ học và d�
 - HTML, W3.CSS, CSS tùy chỉnh với background images
 - Font Awesome 5.15.4
 - JavaScript (dùng Fetch API để gọi API)
+- **GML.js**: Thư viện sprite animation tự phát triển
+- **Support.js**: Utilities và helper functions
 - Responsive design với mobile support
 - Visual effects và animations
 
 ---
 
-## 4. Authentication & Session Management
+## 4. Frontend Libraries & Animation System
 
-### 4.1. Flask-Login Integration
+### 4.1. GML.js - Game Maker Language JavaScript
+**GML.js** là thư viện sprite animation tự phát triển, lấy cảm hứng từ GameMaker Studio:
+
+```javascript
+// Tạo sprite với 4 frames animation
+const playerSprite = spriteCreate(
+    '/static/img/player/male_idle.png', 
+    128,    // sprite width
+    128,    // sprite height  
+    4,      // number of frames
+    64,     // origin x
+    64      // origin y
+);
+
+// Tạo instance của sprite
+const playerInstance = instCreate(x, y, 0, playerSprite);
+playerInstance.imageSpeed = 0.15;  // Animation speed
+playerInstance.imageLoop = true;   // Loop animation
+```
+
+**Tính năng chính:**
+- **Sprite Management**: Load và quản lý sprite sheets
+- **Frame Animation**: Hỗ trợ multi-frame animation với tốc độ có thể điều chỉnh
+- **Instance System**: Tạo và quản lý multiple instances của cùng một sprite
+- **Canvas Rendering**: Render sprites lên HTML5 Canvas
+- **Performance Optimized**: Chỉ render khi cần thiết
+
+### 4.2. Support.js - Utility Functions
+**Support.js** chứa các helper functions và utilities:
+
+```javascript
+// Toast notification system
+showToast(message, type);  // 'success', 'error', 'warning', 'info'
+
+// API call wrapper với error handling
+apiCall(endpoint, options);
+
+// User data management
+getUserData();
+updateUserInfoDisplay(userData);
+
+// Level calculation từ EXP
+calculateLevel(exp);
+
+// Modal management
+closeModal();
+```
+
+**Chức năng chính:**
+- **Toast System**: Thông báo user-friendly
+- **API Wrapper**: Xử lý HTTP requests với error handling
+- **Data Management**: LocalStorage và session management  
+- **UI Utilities**: Modal controls, form validation
+- **Game Logic**: Level calculation, stat management
+
+### 4.3. Player Animation Integration
+```javascript
+// Animation control functions
+setAnimationSpeed(speed);        // 0.05 - 0.3
+setAnimationPreset(preset);      // 'slow', 'normal', 'fast'
+getAnimationSpeed();             // Get current speed
+startPlayerAnimation();          // Start animation
+stopPlayerAnimation();           // Stop animation
+
+// Configuration object
+const ANIMATION_CONFIG = {
+    FRAME_SPEED: 0.1,
+    FRAME_COUNT: 4,
+    CANVAS_SIZE: 128,
+    SPRITE_SIZE: 128,
+    AUTO_START: false
+};
+```
+
+---
+
+## 5. Modal System & UI Standards
+
+### 5.1. Modal Structure Standards
+Tất cả modals trong game tuân theo cấu trúc 3 phần chuẩn:
+
+```html
+<div id="modalName" class="modal">
+    <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h2 class="modal-title">
+                <i class="fas fa-icon"></i> Tiêu đề Modal
+            </h2>
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- Modal Body -->
+        <div class="modal-body">
+            <!-- Nội dung chính của modal -->
+        </div>
+        
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+            <button class="btn btn-primary">Hành động chính</button>
+            <button class="btn btn-secondary" onclick="closeModal()">Đóng</button>
+        </div>
+    </div>
+</div>
+```
+
+### 5.2. Modal Sizing Standards
+```css
+/* Standard modal */
+.modal-content {
+    max-width: 700px;
+    width: 85%;
+}
+
+/* Large modal (cho inventory, player info) */
+.inventory-modal .modal-content {
+    max-width: 900px;
+    width: 95%;
+}
+
+/* Player info modal */
+.player-info-modal {
+    max-width: 750px;
+    width: 90%;
+}
+```
+
+### 5.3. Button Consistency
+```css
+/* Modal footer buttons luôn được căn giữa và có khoảng cách đều */
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+}
+
+/* Button styling standards */
+.btn-primary {
+    background: var(--primary-color);
+}
+
+.btn-secondary {
+    background: var(--primary-color-light);
+}
+```
+
+---
+
+## 6. Inventory System
+
+### 6.1. Inventory Layout (70% - 30%)
+Hệ thống inventory sử dụng layout chia đôi hiện đại:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    INVENTORY MODAL                      │
+├─────────────────────┬───────────────────────────────────┤
+│   GRID SLOTS (65%)  │      ITEM DETAIL (35%)           │
+│                     │                                   │
+│ [Tab Buttons]       │  ┌─────────────────────────────┐   │
+│                     │  │       Item Image            │   │
+│ ┌─┬─┬─┬─┬─┬─┐       │  │    (Animated Pulse)         │   │
+│ │ │ │ │ │ │ │       │  └─────────────────────────────┘   │
+│ ├─┼─┼─┼─┼─┼─┤       │                                   │
+│ │ │ │ │ │ │ │       │  Item Name                       │
+│ ├─┼─┼─┼─┼─┼─┤       │  Item Type (Việt hóa)            │
+│ │ │ │ │ │ │ │       │  Price: 100 vàng                 │
+│ ├─┼─┼─┼─┼─┼─┤       │  Level Requirement               │
+│ │ │ │ │ │ │ │       │                                   │
+│ ├─┼─┼─┼─┼─┼─┤       │  Description text...              │
+│ │ │ │ │ │ │ │       │                                   │
+│ └─┴─┴─┴─┴─┴─┘       │  ┌─────────────────────────────┐   │
+│                     │  │        STATS                │   │
+│                     │  │  STR: +10                   │   │
+│                     │  │  AGI: +5                    │   │
+│                     │  └─────────────────────────────┘   │
+└─────────────────────┴───────────────────────────────────┘
+```
+
+### 6.2. Grid System (6x6 Slots)
+```javascript
+// 36 slots total (6 columns x 6 rows)
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    row-gap: 6px;
+    column-gap: 6px;
+}
+
+// Slot states
+.inventory-slot {
+    aspect-ratio: 1;
+    border: 2px solid var(--border-color);
+}
+
+.inventory-slot:hover {
+    border-color: var(--primary-color);  // Blue hover
+}
+
+.inventory-slot.selected {
+    border-color: #e74c3c;  // Red selection
+}
+
+.inventory-slot.empty {
+    background: rgba(127, 140, 141, 0.1);  // Gray empty
+}
+```
+
+### 6.3. Item Display & Icons
+```javascript
+// Item icons từ static/img/icon/item/{item_id}.webp
+function getItemIcon(itemData) {
+    return `/static/img/icon/item/${itemData.item_id}.webp`;
+}
+
+// Fallback system nếu image không load
+<img class="item-icon" 
+     src="${iconPath}" 
+     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+<i class="item-icon fallback fas fa-cube" style="display: none;"></i>
+```
+
+### 6.4. Tooltip System
+**Hover Tooltip**: Khi hover qua slot item
+```javascript
+// Show tooltip on hover
+onmouseenter="showItemTooltip('${item.item_id}')"
+onmouseleave="hideItemTooltip()"
+
+// Click to select
+onclick="selectItem('${item.item_id}')"
+```
+
+**Item Detail Panel**: Hiển thị chi tiết bên phải
+- **Animated Image**: 90x90px với pulse animation  
+- **Item Information**: Name, type (Việt hóa), price, description
+- **Stats Display**: Equipment stats nếu có
+- **Level Requirement**: Hiển thị yêu cầu level nếu có
+
+### 6.5. Item Types & Behavior
+```javascript
+// Type mapping sang tiếng Việt
+const typeMap = {
+    'material': 'Nguyên liệu',
+    'equipment': 'Trang bị',
+    'consumable': 'Vật phẩm tiêu hao',
+    'weapon': 'Vũ khí',
+    'armor': 'Giáp',
+    'accessory': 'Phụ kiện'
+};
+
+// Equipment actions
+if (selectedItem && currentTab === 'equipment') {
+    // Show "Sử dụng" button in modal footer
+    useButton.style.display = 'inline-flex';
+}
+```
+
+### 6.6. Inventory Data Structure
+```javascript
+// User inventory format
+"inventory": [
+    {
+        "item_id": "bronze_sword",
+        "quantity": 1,
+        "level": 2  // Chỉ cho equipment
+    },
+    {
+        "item_id": "wood", 
+        "quantity": 50  // Materials có thể stack
+    }
+]
+
+// Item data from items.json
+{
+    "item_id": "bronze_sword",
+    "name": "Gươm đồng", 
+    "type": "equipment",
+    "price": 120,
+    "description": "Một thanh gươm đơn giản làm từ đồng",
+    "level_require": 1,
+    "stat": {
+        "STR": 3
+    }
+}
+```
+
+---
+
+## 7. Authentication & Session Management
+
+### 7.1. Flask-Login Integration
 - **Session-based authentication**: Sử dụng Flask-Login để quản lý session
 - **Protected routes**: Các trang như `/town`, `/quests` yêu cầu đăng nhập
 - **Automatic redirects**: 
   - Chưa đăng nhập → redirect đến `/` (trang login)
   - Đã đăng nhập → redirect từ `/` đến `/town`
 
-### 4.2. User Model
+### 7.2. User Model
 ```python
 class User(UserMixin):
     def __init__(self, user_data):
@@ -168,7 +463,7 @@ class User(UserMixin):
         return self.username
 ```
 
-### 4.3. API Endpoints
+### 7.3. API Endpoints
 - `POST /api/register` - Đăng ký tài khoản mới
 - `POST /api/login` - Đăng nhập (tạo session)
 - `POST /api/logout` - Đăng xuất (xóa session)
@@ -177,9 +472,9 @@ class User(UserMixin):
 
 ---
 
-## 5. UI/UX Improvements
+## 8. UI/UX Improvements
 
-### 5.1. Visual Design
+### 8.1. Visual Design
 - **Header**: Background image từ `static/img/background/1.jpg`
 - **Building System**: 
   - Hình ảnh building từ `static/img/building/{building_id}.png`
@@ -189,13 +484,13 @@ class User(UserMixin):
   - Đã xây: Màu bình thường + level badge xanh
   - Chưa xây: Grayscale filter + level badge đỏ
 
-### 5.2. Desktop-Only Experience
+### 8.2. Desktop-Only Experience
 - **Platform Support**: Chỉ hỗ trợ máy tính để bàn và laptop
 - **Screen Requirements**: Độ phân giải tối thiểu 1024x768
 - **Mobile Detection**: Tự động redirect thiết bị mobile đến `/not-implemented`
 - **Optimized Layout**: 3 cột buildings được tối ưu cho màn hình lớn
 
-### 5.3. Mobile Not Supported
+### 8.3. Mobile Not Supported
 - **Auto Detection**: JavaScript kiểm tra User Agent và screen size
 - **Redirect Logic**: Mobile users → `/not-implemented` page
 - **Clear Messaging**: Thông báo rõ ràng về yêu cầu hệ thống
@@ -203,7 +498,7 @@ class User(UserMixin):
 
 ---
 
-## 6. Các Route
+## 9. Các Route
 
 ### A. Trang chính (`/`)
 
@@ -264,9 +559,9 @@ class User(UserMixin):
 
 ---
 
-## 7. Gameplay chính
+## 10. Gameplay chính
 
-### 7.1. Cấu trúc file `enemies.json`
+### 10.1. Cấu trúc file `enemies.json`
 
 (Thư mục ảnh: `static/img/enemies/{enemy_id}_attack_{frame}.png`)
 
@@ -305,7 +600,7 @@ class User(UserMixin):
 
 ---
 
-### 7.2. Cấu trúc file `skills.json`
+### 10.2. Cấu trúc file `skills.json`
 
 (Thư mục ảnh: `static/img/icon/skill/{skill_id}.png`)
 
@@ -329,7 +624,7 @@ class User(UserMixin):
 
 ---
 
-### 7.3. Cấu trúc file `items.json`
+### 10.3. Cấu trúc file `items.json`
 
 (Thư mục ảnh: `static/img/icon/item/{item_id}.png`)
 
@@ -370,7 +665,7 @@ class User(UserMixin):
 
 ---
 
-### 7.4. Cấu trúc file `buildings.json`
+### 10.4. Cấu trúc file `buildings.json`
 
 (Thư mục ảnh: `static/img/icon/building/{building_id}.png` hoặc `static/img/building/{building_id}.png`)
 
@@ -412,7 +707,7 @@ class User(UserMixin):
 
 ---
 
-### 7.5. Cấu trúc file `quests.json`
+### 10.5. Cấu trúc file `quests.json`
 
 (Trang hiển thị: `/quests` – danh sách các nhiệm vụ đang hoạt động hoặc có thể nhận)
 
@@ -462,7 +757,7 @@ class User(UserMixin):
 - Khi login vào game, hệ thống sẽ tự động thêm nhiệm vụ (nếu user có slot trống), bằng cách chọn ngẫu nhiên từ file `quests.json`
 
 ---
-### 7.6. Cấu trúc file `dialogs.json`
+### 10.6. Cấu trúc file `dialogs.json`
 
 (Trang hiển thị: `/dialog/<dialog_id>` — hiện đoạn hội thoại tương tác)
 
@@ -502,7 +797,7 @@ class User(UserMixin):
 
 ---
 
-## 8. Cấu trúc thư mục dự án
+## 11. Cấu trúc thư mục dự án
 
 ```
 herofate/
@@ -522,8 +817,11 @@ herofate/
 │   │   └── dialogs.json
 │   ├── static/                   # Frontend assets
 │   │   ├── css/
+│   │   │   ├── variables.css     # CSS variables cho theming
 │   │   │   └── style.css         # Main CSS với responsive design
 │   │   ├── js/
+│   │   │   ├── gml.js            # Sprite animation library
+│   │   │   ├── support.js        # Utility functions
 │   │   │   └── main.js           # JavaScript với Fetch API
 │   │   └── img/
 │   │       ├── background/       # Background images
@@ -561,32 +859,32 @@ herofate/
 
 ---
 
-## 9. Giao diện & User Experience
+## 12. Giao diện & User Experience
 
-### 9.1. Desktop-Only Design
+### 12.1. Desktop-Only Design
 - **Container**: Width 70% tối ưu cho desktop/laptop
 - **Grid System**: 3 cột buildings cố định cho màn hình lớn
 - **Navigation**: User Info & Navigation tích hợp thành một bar
 - **No Mobile Support**: Loại bỏ responsive CSS để tối ưu performance
 
-### 9.2. Enhanced Navigation  
+### 12.2. Enhanced Navigation  
 - **Integrated Bar**: User stats + navigation actions trong cùng một component
 - **Direct Actions**: Thị trấn, Nhiệm vụ, Chiến đấu, Kho đồ, Đăng xuất
 - **Visual Feedback**: Button states và hover effects
 - **Streamlined UX**: Loại bỏ Action Buttons duplicate
 
-### 9.3. Visual Elements  
+### 12.3. Visual Elements  
 - **Modals**: W3.CSS modal system cho building upgrades
 - **Toasts**: Thông báo success/error với animations
 - **Loading states**: Visual feedback cho API calls
 - **Hover effects**: Smooth transitions và scale effects
 
-### 9.4. Authentication UX
+### 12.4. Authentication UX
 - **Smart redirects**: Tự động điều hướng based on auth status
 - **Session persistence**: Maintain login state across browser sessions
 - **Error handling**: User-friendly error messages
 
-### 9.5. Mobile Detection & Redirect
+### 12.5. Mobile Detection & Redirect
 - **Auto Detection**: JavaScript kiểm tra device type và screen size
 - **Graceful Fallback**: Redirect đến `/not-implemented` với thông báo rõ ràng
 - **System Requirements**: Hiển thị yêu cầu hệ thống cho user
@@ -595,9 +893,9 @@ herofate/
 
 ---
 
-## 10. Cài đặt và triển khai
+## 13. Cài đặt và triển khai
 
-### 10.1. Yêu cầu hệ thống
+### 13.1. Yêu cầu hệ thống
 
 **🖥️ Platform Support:**
 - **Máy tính để bàn hoặc laptop** (bắt buộc)
@@ -609,7 +907,7 @@ herofate/
 - **Không hỗ trợ**: Game tự động redirect mobile users đến `/not-implemented`
 - **Lý do**: Gameplay tối ưu cho mouse/keyboard interaction
 
-### 10.2. Cài đặt dependencies
+### 13.2. Cài đặt dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -621,7 +919,7 @@ pip install -r requirements.txt
 - `PyMongo` - MongoDB driver
 - `python-dotenv` - Environment variables
 
-### 10.3. Cấu hình Database
+### 13.3. Cấu hình Database
 
 #### **MongoDB Local (Development - Khuyến nghị)**
 
@@ -654,7 +952,7 @@ pip install -r requirements.txt
    # Hoặc chỉnh sửa file .env thủ công
    ```
 
-### 10.4. Chuyển đổi giữa Local và Cloud
+### 13.4. Chuyển đổi giữa Local và Cloud
 
 Sử dụng script `switch_db.bat` để chuyển đổi nhanh:
 
@@ -666,7 +964,7 @@ switch_db.bat
 - **Option 1**: MongoDB Local (Development) - Khuyến nghị
 - **Option 2**: MongoDB Atlas (Production)
 
-### 10.5. Cấu trúc file .env
+### 13.5. Cấu trúc file .env
 
 ```env
 # MongoDB Configuration
@@ -680,7 +978,7 @@ SECRET_KEY=your_secret_key_here
 DEBUG=True
 ```
 
-### 10.6. Database Migration
+### 13.6. Database Migration
 
 Nếu cập nhật từ version cũ, chạy migration script:
 
@@ -698,9 +996,9 @@ Script này sẽ cập nhật:
 
 ---
 
-## 11. Development Workflow
+## 14. Development Workflow
 
-### 11.1. Local Development
+### 14.1. Local Development
 ```bash
 # Khởi động với MongoDB local
 start_local.bat
@@ -709,7 +1007,7 @@ start_local.bat
 python app.py
 ```
 
-### 11.2. Production Deployment
+### 14.2. Production Deployment
 ```bash
 # Chuyển sang Atlas
 switch_db.bat
@@ -718,7 +1016,7 @@ switch_db.bat
 # Cập nhật .env với production settings
 ```
 
-### 11.3. Project Management
+### 14.3. Project Management
 ```bash
 # Git workflow
 git-start.bat    # Initialize git repo
@@ -729,7 +1027,7 @@ git-push.bat     # Automated commit & push
 
 ---
 
-## 12. Tác giả & License
+## 15. Tác giả & License
 
 - Dự án phát triển bởi **Gum Code**
 - Phiên bản đầu tiên: Tháng 7 năm 2025

@@ -432,7 +432,7 @@ body {
     bottom: var(--spacing-lg);
     left: var(--spacing-lg);
     right: var(--spacing-lg);
-    background: var(--bg-dark-overlay-strong);
+    background: rgba(0, 0, 0, 0.6);
     color: var(--text-white);
     padding: var(--spacing-lg);
     border-radius: var(--spacing-sm);

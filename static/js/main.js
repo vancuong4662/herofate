@@ -332,19 +332,19 @@ function closeModal() {
 let currentSlide = 0;
 const slides = [
     {
-        image: '/static/img/background/1.jpg',
+        image: '/static/img/background/3.jpg',
         title: 'Xây dựng thị trấn của bạn',
-        description: 'Phát triển các công trình để mở khóa tính năng mới'
+        description: 'Hãy cùng phát triển thị trần của bạn với các công trình để mở khóa tính năng mới.'
     },
     {
         image: '/static/img/background/2.jpg',
         title: 'Chiến đấu với quái vật',
-        description: 'Sử dụng kỹ năng và chiến thuật để chiến thắng'
+        description: 'Hoà mình vào thế giới fantasy. Mỗi trận chiến là một thử thách. Hãy sử dụng kỹ năng và chiến thuật để dành chiến thắng..'
     },
     {
-        image: '/static/img/background/3.jpg',
+        image: '/static/img/background/1.jpg',
         title: 'Hoàn thành nhiệm vụ',
-        description: 'Nhận phần thưởng và nâng cao danh tiếng'
+        description: 'Hành trình thú vị trong thế giới trung cổ. Làm nhiệm vụ, nhận các phần phần thưởng và nâng cao danh tiếng.'
     }
 ];
 
@@ -366,7 +366,7 @@ function initSlideshow() {
     });
     
     // Auto advance slides
-    setInterval(nextSlide, 5000);
+    setInterval(nextSlide, 2000);
 }
 
 function nextSlide() {
