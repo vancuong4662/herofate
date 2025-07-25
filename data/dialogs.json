@@ -1,0 +1,278 @@
+[
+  {
+    "dialog_id": 1,
+    "type": "start",
+    "background": "village.jpg",
+    "lines": [
+      { "speaker": "elder", "text": "Hiệp sĩ! Tôi đã nghe về danh tiếng của ngài." },
+      { "speaker": "elder", "text": "Làng chúng tôi đang gặp nguy hiểm từ bầy quái vật." },
+      { "speaker": "player", "text": "Điều gì đã xảy ra? Tôi sẽ giúp đỡ!" },
+      { "speaker": "elder", "text": "Những con goblin đã xuất hiện gần làng và tấn công dân làng." },
+      { "speaker": "player", "text": "Tôi sẽ tiêu diệt chúng ngay!" }
+    ]
+  },
+  {
+    "dialog_id": 2,
+    "type": "end",
+    "background": "village.jpg",
+    "lines": [
+      { "speaker": "elder", "text": "Ngài đã trở về! Làng giờ đây an toàn rồi." },
+      { "speaker": "player", "text": "Những con goblin đã bị tiêu diệt hết." },
+      { "speaker": "elder", "text": "Tuyệt vời! Xin nhận phần thưởng này." },
+      { "speaker": "elder", "text": "Ngài thực sự là một anh hùng!" }
+    ]
+  },
+  {
+    "dialog_id": 3,
+    "type": "start",
+    "background": "market.jpg",
+    "lines": [
+      { "speaker": "merchant", "text": "Chào mừng đến cửa hàng của tôi!" },
+      { "speaker": "merchant", "text": "Tôi đang cần 10 khúc gỗ cho đơn hàng lớn." },
+      { "speaker": "player", "text": "Tôi có thể giúp ngài tìm gỗ." },
+      { "speaker": "merchant", "text": "Tuyệt vời! Hãy đến khu rừng phía bắc." },
+      { "speaker": "player", "text": "Tôi sẽ quay lại với đủ số gỗ cần thiết!" }
+    ]
+  },
+  {
+    "dialog_id": 4,
+    "type": "end",
+    "background": "market.jpg",
+    "lines": [
+      { "speaker": "merchant", "text": "Ngài đã mang đủ gỗ! Tuyệt vời!" },
+      { "speaker": "player", "text": "Đây là 10 khúc gỗ chất lượng cao." },
+      { "speaker": "merchant", "text": "Đơn hàng của tôi đã hoàn thành!" },
+      { "speaker": "merchant", "text": "Đây là phần thưởng xứng đáng!" }
+    ]
+  },
+  {
+    "dialog_id": 5,
+    "type": "start",
+    "background": "village.jpg",
+    "lines": [
+      { "speaker": "guard", "text": "Hiệp sĩ! Chúng tôi cần sự giúp đỡ gấp!" },
+      { "speaker": "guard", "text": "Có báo cáo về sói rừng tấn công thương gia." },
+      { "speaker": "player", "text": "Ở đâu vậy?" },
+      { "speaker": "guard", "text": "Tại con đường rừng phía đông thị trấn." },
+      { "speaker": "player", "text": "Tôi sẽ đi ngay lập tức!" }
+    ]
+  },
+  {
+    "dialog_id": 6,
+    "type": "end",
+    "background": "forest.jpg",
+    "lines": [
+      { "speaker": "guard", "text": "Ngài đã quay về! Tình hình thế nào?" },
+      { "speaker": "player", "text": "Đã tiêu diệt hết bầy sói rừng." },
+      { "speaker": "guard", "text": "Thương gia giờ có thể đi lại an toàn!" },
+      { "speaker": "guard", "text": "Xin nhận phần thưởng từ thị trấn!" }
+    ]
+  },
+  {
+    "dialog_id": 7,
+    "type": "start",
+    "background": "harbor.jpg",
+    "lines": [
+      { "speaker": "john-fisher", "text": "Ôi! Bạn đến đúng lúc!" },
+      { "speaker": "john-fisher", "text": "Tôi có một khách hàng đặc biệt cần 5 con cá tươi." },
+      { "speaker": "player", "text": "Tôi có thể giúp bạn câu cá." },
+      { "speaker": "john-fisher", "text": "Hãy đến bến sông phía nam!" },
+      { "speaker": "player", "text": "Tôi sẽ mang về những con cá tươi nhất!" }
+    ]
+  },
+  {
+    "dialog_id": 8,
+    "type": "end",
+    "background": "harbor.jpg",
+    "lines": [
+      { "speaker": "john-fisher", "text": "Wow! Những con cá này thật tuyệt!" },
+      { "speaker": "player", "text": "Đây là 5 con cá tươi như bạn yêu cầu." },
+      { "speaker": "john-fisher", "text": "Khách hàng sẽ rất hài lòng!" },
+      { "speaker": "john-fisher", "text": "Hãy nhận cần câu này làm quà!" }
+    ]
+  },
+  {
+    "dialog_id": 9,
+    "type": "start",
+    "background": "cave.jpg",
+    "lines": [
+      { "speaker": "marcus-scholar", "text": "Ah! Một nhà thám hiểm!" },
+      { "speaker": "marcus-scholar", "text": "Tôi đang nghiên cứu về ma thuật cổ đại." },
+      { "speaker": "player", "text": "Tôi có thể giúp gì cho ngài?" },
+      { "speaker": "marcus-scholar", "text": "Tôi cần 3 loại thảo dược quý hiếm." },
+      { "speaker": "player", "text": "Tôi sẽ tìm kiếm trong hang động!" }
+    ]
+  },
+  {
+    "dialog_id": 10,
+    "type": "end",
+    "background": "mine.jpg",
+    "lines": [
+      { "speaker": "marcus-scholar", "text": "Tuyệt vời! Đây chính là những gì tôi cần!" },
+      { "speaker": "player", "text": "3 loại thảo dược quý như yêu cầu." },
+      { "speaker": "marcus-scholar", "text": "Nghiên cứu của tôi sẽ thành công!" },
+      { "speaker": "marcus-scholar", "text": "Hãy nhận những cuộn ma thuật này!" }
+    ]
+  },
+  {
+    "dialog_id": 11,
+    "type": "start",
+    "background": "room.jpg",
+    "lines": [
+      { "speaker": "mina-inn-keeper", "text": "Chào bạn! Tôi đang chuẩn bị cho lễ hội làng." },
+      { "speaker": "mina-inn-keeper", "text": "Cần 8 ổ bánh mì và 5 chai sữa." },
+      { "speaker": "player", "text": "Tôi có thể giúp bạn chuẩn bị." },
+      { "speaker": "mina-inn-keeper", "text": "Tuyệt! Hãy đến chợ và nông trại!" },
+      { "speaker": "player", "text": "Tôi sẽ sắm đủ thức ăn cho lễ hội!" }
+    ]
+  },
+  {
+    "dialog_id": 12,
+    "type": "end",
+    "background": "village.jpg",
+    "lines": [
+      { "speaker": "mina-inn-keeper", "text": "Bạn đã mua đủ rồi! Cảm ơn bạn!" },
+      { "speaker": "player", "text": "Đây là bánh mì và sữa cho lễ hội." },
+      { "speaker": "mina-inn-keeper", "text": "Lễ hội sẽ thành công rực rỡ!" },
+      { "speaker": "mina-inn-keeper", "text": "Hãy nhận những thuốc hồi máu này!" }
+    ]
+  },
+  {
+    "dialog_id": 13,
+    "type": "start",
+    "background": "harbor.jpg",
+    "lines": [
+      { "speaker": "jack-sailor", "text": "Ahoy! Tôi cần một đồng đội dũng cảm!" },
+      { "speaker": "jack-sailor", "text": "Có một kho báu trên đảo hoang kia." },
+      { "speaker": "player", "text": "Nghe có vẻ thú vị! Tôi tham gia!" },
+      { "speaker": "jack-sailor", "text": "Nhưng có quái vật canh giữ đấy!" },
+      { "speaker": "player", "text": "Không vấn đề! Hãy đi thôi!" }
+    ]
+  },
+  {
+    "dialog_id": 14,
+    "type": "end",
+    "background": "cave.jpg",
+    "lines": [
+      { "speaker": "jack-sailor", "text": "Tuyệt vời! Chúng ta đã có kho báu!" },
+      { "speaker": "player", "text": "Những con quái vật đã bị đánh bại!" },
+      { "speaker": "jack-sailor", "text": "Đây là phần chia của bạn!" },
+      { "speaker": "jack-sailor", "text": "Và cả bản đồ kho báu bí mật!" }
+    ]
+  },
+  {
+    "dialog_id": 15,
+    "type": "start",
+    "background": "lavacave.jpg",
+    "lines": [
+      { "speaker": "arch-mage", "text": "Hmm... bạn có khí chất của một chiến binh." },
+      { "speaker": "arch-mage", "text": "Tôi muốn thử nghiệm sức mạnh của bạn." },
+      { "speaker": "player", "text": "Thử nghiệm như thế nào?" },
+      { "speaker": "arch-mage", "text": "Đánh bại con rồng ma thuật trong hang!" },
+      { "speaker": "player", "text": "Tôi sẵn sàng cho thử thách này!" }
+    ]
+  },
+  {
+    "dialog_id": 16,
+    "type": "end",
+    "background": "lavacave.jpg",
+    "lines": [
+      { "speaker": "arch-mage", "text": "Không thể tin được! Bạn đã thắng!" },
+      { "speaker": "player", "text": "Con rồng ma thuật đã bị đánh bại." },
+      { "speaker": "arch-mage", "text": "Bạn xứng đáng với danh hiệu pháp sư!" },
+      { "speaker": "arch-mage", "text": "Hãy nhận cây staff ma thuật này!" }
+    ]
+  },
+  {
+    "dialog_id": 17,
+    "type": "start",
+    "background": "room.jpg",
+    "lines": [
+      { "speaker": "duke", "text": "Hiệp sĩ, tôi có một nhiệm vụ tuyệt mật." },
+      { "speaker": "duke", "text": "Có gián điệp đang uy hiếp an ninh quốc gia." },
+      { "speaker": "player", "text": "Tôi lắng nghe, Ngài Công tước." },
+      { "speaker": "duke", "text": "Hãy tiêu diệt tên thủ lĩnh gián điệp!" },
+      { "speaker": "player", "text": "Nhiệm vụ sẽ được hoàn thành!" }
+    ]
+  },
+  {
+    "dialog_id": 18,
+    "type": "end",
+    "background": "village.jpg",
+    "lines": [
+      { "speaker": "duke", "text": "Xuất sắc! Mối đe dọa đã được loại bỏ." },
+      { "speaker": "player", "text": "Tên thủ lĩnh gián điệp đã bị tiêu diệt." },
+      { "speaker": "duke", "text": "Vương quốc nợ bạn một ân tình!" },
+      { "speaker": "duke", "text": "Hãy nhận thanh kiếm quý tộc và ấn triện!" }
+    ]
+  },
+  {
+    "dialog_id": 19,
+    "type": "start",
+    "background": "harbor.jpg",
+    "lines": [
+      { "speaker": "kyrina-pirate-leader", "text": "Arrr! Bạn có vẻ là người có thể tin tựa!" },
+      { "speaker": "kyrina-pirate-leader", "text": "Băng cướp biển Blackbeard đang đe dọa chúng tôi." },
+      { "speaker": "player", "text": "Bạn muốn tôi giúp đánh bại họ?" },
+      { "speaker": "kyrina-pirate-leader", "text": "Đúng vậy! Hãy cho họ nếm mùi thép!" },
+      { "speaker": "player", "text": "Tôi sẽ chiến đấu bên cạnh các bạn!" }
+    ]
+  },
+  {
+    "dialog_id": 20,
+    "type": "end",
+    "background": "harbor.jpg",
+    "lines": [
+      { "speaker": "kyrina-pirate-leader", "text": "Tuyệt vời! Blackbeard đã bị đánh bại!" },
+      { "speaker": "player", "text": "Băng cướp biển đối thủ không còn đe dọa nữa." },
+      { "speaker": "kyrina-pirate-leader", "text": "Bạn là một chiến binh thực thụ!" },
+      { "speaker": "kyrina-pirate-leader", "text": "Hãy nhận kiếm cướp biển và rum!" }
+    ]
+  },
+  {
+    "dialog_id": 21,
+    "type": "start",
+    "background": "room.jpg",
+    "lines": [
+      { "speaker": "mira-dancer", "text": "Oh! Bạn có thể giúp tôi được không?" },
+      { "speaker": "mira-dancer", "text": "Tôi sẽ biểu diễn trước hoàng gia tuần tới." },
+      { "speaker": "player", "text": "Tôi có thể giúp gì?" },
+      { "speaker": "mira-dancer", "text": "Tôi cần vải lụa và trang sức đặc biệt." },
+      { "speaker": "player", "text": "Tôi sẽ tìm những thứ đẹp nhất cho bạn!" }
+    ]
+  },
+  {
+    "dialog_id": 22,
+    "type": "end",
+    "background": "meadow.jpg",
+    "lines": [
+      { "speaker": "mira-dancer", "text": "Tuyệt đẹp! Đây chính là những gì tôi cần!" },
+      { "speaker": "player", "text": "Vải lụa và trang sức như bạn mong muốn." },
+      { "speaker": "mira-dancer", "text": "Buổi biểu diễn sẽ thành công rực rỡ!" },
+      { "speaker": "mira-dancer", "text": "Hãy nhận đôi giày khiêu vũ ma thuật!" }
+    ]
+  },
+  {
+    "dialog_id": 23,
+    "type": "start",
+    "background": "ruins.png",
+    "lines": [
+      { "speaker": "amon-strange-merchant", "text": "Hehe... bạn có muốn một hợp đồng đặc biệt?" },
+      { "speaker": "amon-strange-merchant", "text": "Tôi có một vật phẩm quý hiếm để bán..." },
+      { "speaker": "player", "text": "Điều kiện là gì?" },
+      { "speaker": "amon-strange-merchant", "text": "Hãy đánh bại con quái vật cổ đại trong hang sâu!" },
+      { "speaker": "player", "text": "Được! Tôi chấp nhận thử thách này!" }
+    ]
+  },
+  {
+    "dialog_id": 24,
+    "type": "end",
+    "background": "ruins.png",
+    "lines": [
+      { "speaker": "amon-strange-merchant", "text": "Haha! Tuyệt vời! Bạn đã làm được!" },
+      { "speaker": "player", "text": "Con quái vật cổ đại đã bị tiêu diệt." },
+      { "speaker": "amon-strange-merchant", "text": "Hợp đồng của chúng ta hoàn thành!" },
+      { "speaker": "amon-strange-merchant", "text": "Đây là cổ vật bí ẩn và những viên đá quý!" }
+    ]
+  }
+]

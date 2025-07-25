@@ -866,7 +866,12 @@ body {
 
 .quest-card.doing {
     border-color: var(--warning-color);
-    background: rgba(255, 193, 7, 0.1);
+    background: rgba(215, 235, 204, 0.877);
+}
+
+.quest-card.doing:hover {
+    border-color: var(--warning-color);
+    background: rgba(255, 255, 255, 0.95);
 }
 
 .quest-card.available {
@@ -989,3 +994,326 @@ body {
 }
 
 /* Desktop-only Game - No Mobile Support */
+
+/* Dialog System Styles */
+.dialog-scene {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    border-radius: var(--border-radius-medium);
+    overflow: hidden;
+    margin-bottom: var(--spacing-md);
+}
+
+.dialog-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+
+.dialog-background.village {
+    background-image: url('/static/img/background/village.jpg');
+}
+
+.dialog-background.forest {
+    background-image: url('/static/img/background/forest.jpg');
+}
+
+.dialog-background.cave {
+    background-image: url('/static/img/background/cave.jpg');
+}
+
+.dialog-textbox {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.7),
+        rgba(0, 0, 0, 0.9)
+    );
+    padding: var(--spacing-md);
+    z-index: 2;
+    border-top: 2px solid var(--border-primary);
+}
+
+.dialog-speaker {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.speaker-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--border-primary);
+    object-fit: cover;
+}
+
+.speaker-name {
+    font-weight: bold;
+    color: var(--text-white);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.dialog-text {
+    color: var(--text-white);
+    font-size: 1.1em;
+    line-height: 1.4;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    min-height: 2.8em;
+}
+
+.dialog-controls {
+    background: var(--bg-secondary);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-medium);
+    border: 1px solid var(--border-primary);
+}
+
+.dialog-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.progress-text {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    min-width: 80px;
+}
+
+.progress-bar {
+    flex: 1;
+    background: var(--bg-dark);
+    height: 8px;
+    border-radius: var(--border-radius-small);
+    overflow: hidden;
+    border: 1px solid var(--border-secondary);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    transition: width 0.3s ease;
+}
+
+/* Debug Panel */
+.debug-panel {
+    position: fixed;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    background: var(--bg-primary);
+    border: 2px solid var(--border-primary);
+    border-radius: var(--border-radius-medium);
+    padding: var(--spacing-md);
+    min-width: 300px;
+    z-index: 1000;
+    box-shadow: var(--box-shadow-strong);
+}
+
+.debug-panel h3 {
+    margin: 0 0 var(--spacing-md) 0;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.debug-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.debug-controls label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.debug-controls select {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-secondary);
+    border-radius: var(--border-radius-small);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.9em;
+}
+
+.debug-controls select:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(var(--accent-primary-rgb), 0.3);
+}
+
+/* Dialog Page Styles */
+.dialog-container {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    margin: 20px auto;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.dialog-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(1.5px);
+    transition: filter 2s ease-in-out;
+}
+
+.dialog-background.focused {
+    filter: blur(1px);
+}
+
+.dialog-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    background: rgba(0, 0, 0, 0.85);
+    border-radius: 15px 15px 0 0;
+    padding: 20px;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+}
+
+.dialog-header {
+    text-align: center;
+    margin-bottom: 15px;
+    color: white;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+}
+
+.dialog-header h3 {
+    margin: 0 0 5px 0;
+    color: var(--primary-color);
+    font-size: 18px;
+}
+
+.dialog-type {
+    margin: 0;
+    color: var(--secondary-color);
+    font-style: italic;
+    font-size: 14px;
+}
+
+.dialog-content {
+    position: relative;
+}
+
+.dialog-messages {
+    min-height: 120px;
+    max-height: 200px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.dialog-message {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.5s ease-in-out;
+}
+
+.dialog-message.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dialog-message.exit {
+    opacity: 0;
+    transform: translateY(-50px);
+}
+
+.message-speaker {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.speaker-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.speaker-name {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 16px;
+}
+
+.message-text {
+    color: white;
+    line-height: 1.6;
+    font-size: 15px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.dialog-controls {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dialog-controls .btn {
+    min-width: 140px;
+    font-size: 16px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-primary));
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dialog-controls .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.dialog-controls .btn-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.dialog-controls .btn-success:hover {
+    background: linear-gradient(135deg, #218838, #1ea085);
+}

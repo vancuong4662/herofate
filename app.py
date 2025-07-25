@@ -1,7 +1,9 @@
 import webbrowser
 import threading
 import os
-from flask import Flask, render_template, request, jsonify, session, redirect
+import random
+from datetime import datetime
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 import json
 from bson import ObjectId
@@ -65,6 +67,91 @@ def load_user(username):
     """Load user for Flask-Login"""
     return User.get(username, db)
 
+def assign_random_quests(username):
+    """Assign random quests to user if they have less than 3 active quests"""
+    try:
+        # Set random seed based on current time and username for better randomness
+        import time
+        random.seed(int(time.time() * 1000) + hash(username))
+        
+        user = db.find_user(username)
+        if not user:
+            print(f"User {username} not found")
+            return
+        
+        # Get current active quests
+        user_quests = user.get('quests', [])
+        active_quests = [q for q in user_quests if q.get('state') == 'active']
+        
+        print(f"User {username} has {len(active_quests)} active quests")
+        
+        # If user already has 3 or more active quests, return
+        if len(active_quests) >= 3:
+            print(f"User {username} already has 3 or more active quests")
+            return
+        
+        # Load all available quests
+        with open('data/quests.json', 'r', encoding='utf-8') as f:
+            all_quests = json.load(f)
+        
+        print(f"Total quests in database: {len(all_quests)}")
+        
+        # Filter quests that user doesn't have and meets level requirement
+        user_level = user.get('level', 1)
+        existing_quest_ids = [q['quest_id'] for q in user_quests]
+        
+        print(f"User level: {user_level}")
+        print(f"Existing quest IDs: {existing_quest_ids}")
+        
+        available_quests = [
+            quest for quest in all_quests 
+            if quest['quest_id'] not in existing_quest_ids 
+            and quest['level_required'] <= user_level
+        ]
+        
+        print(f"Available quests for user: {[q['quest_id'] for q in available_quests]}")
+        
+        # Calculate how many quests to assign
+        quests_needed = 3 - len(active_quests)
+        quests_to_assign = min(quests_needed, len(available_quests))
+        
+        print(f"Quests needed: {quests_needed}, Available: {len(available_quests)}, Will assign: {quests_to_assign}")
+        
+        if quests_to_assign > 0:
+            # Ensure we have enough quests to sample from
+            if len(available_quests) < quests_to_assign:
+                print(f"Not enough available quests. Only {len(available_quests)} available")
+                quests_to_assign = len(available_quests)
+            
+            # Randomly select quests using random.shuffle for better randomness
+            available_quest_copy = available_quests.copy()
+            random.shuffle(available_quest_copy)
+            selected_quests = available_quest_copy[:quests_to_assign]
+            
+            print(f"Selected quests: {[q['quest_id'] for q in selected_quests]}")
+            
+            # Add selected quests to user
+            for quest in selected_quests:
+                new_quest = {
+                    'quest_id': quest['quest_id'],
+                    'state': 'active',
+                    'assigned_at': str(datetime.utcnow()),
+                    'progress': {}
+                }
+                user_quests.append(new_quest)
+                print(f"Added quest {quest['quest_id']} to user {username}")
+            
+            # Update user in database
+            db.update_user(username, {'quests': user_quests})
+            print(f"Successfully assigned {quests_to_assign} random quests to user {username}")
+        else:
+            print(f"No quests to assign to user {username}")
+        
+    except Exception as e:
+        print(f"Error assigning random quests to {username}: {e}")
+        import traceback
+        traceback.print_exc()
+
 @app.route("/")
 def index():
     # Nếu user đã đăng nhập, redirect sang town
@@ -81,7 +168,19 @@ def not_implemented():
 def town():
     return render_template("town.html")
 
-@app.route("/quests")
+@app.route('/dialog')
+@login_required
+def dialog():
+    quest_id = request.args.get('quest')
+    dialog_type = request.args.get('type', 'start')  # start or complete
+    
+    if not quest_id:
+        flash('Không tìm thấy quest ID!')
+        return redirect(url_for('quests'))
+    
+    return render_template('dialog.html', quest_id=quest_id, dialog_type=dialog_type)
+
+@app.route('/quests')
 @login_required
 def quests():
     return render_template("quests.html")
@@ -124,6 +223,13 @@ def api_login():
             # Create User object and login
             user = User(user_data)
             login_user(user)
+            
+            # Assign random quests if user has less than 3 active quests
+            assign_random_quests(username)
+            
+            # Reload user data after quest assignment
+            updated_user_data = db.find_user(username)
+            user = User(updated_user_data)
             
             # Return user data (password already excluded by User.to_dict())
             return jsonify({"success": True, "user": user.to_dict(), "message": "Đăng nhập thành công"})
@@ -237,11 +343,36 @@ def api_items():
         return jsonify({"success": False, "message": str(e)}), 500
 
 @app.route("/api/quests", methods=["GET"])
+@login_required
 def api_quests():
     try:
+        # Load all quest data
         with open("data/quests.json", "r", encoding="utf-8") as f:
-            quests = json.load(f)
-        return jsonify({"success": True, "quests": quests})
+            all_quests = json.load(f)
+        
+        # Get user's assigned quests
+        username = current_user.username
+        user = db.find_user(username)
+        
+        if not user:
+            return jsonify({"success": False, "message": "User not found"}), 404
+        
+        user_quests = user.get('quests', [])
+        
+        # Filter to only return user's assigned quests with full quest data
+        user_quest_data = []
+        for user_quest in user_quests:
+            # Find the full quest data
+            full_quest = next((q for q in all_quests if q['quest_id'] == user_quest['quest_id']), None)
+            if full_quest:
+                # Merge quest data with user's quest state
+                quest_with_state = full_quest.copy()
+                quest_with_state['state'] = user_quest.get('state', 'active')
+                quest_with_state['assigned_at'] = user_quest.get('assigned_at')
+                quest_with_state['progress'] = user_quest.get('progress', {})
+                user_quest_data.append(quest_with_state)
+        
+        return jsonify({"success": True, "quests": user_quest_data})
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
@@ -336,6 +467,230 @@ def api_buy_item():
         else:
             return jsonify({"success": False, "message": "Lỗi cập nhật dữ liệu"}), 500
             
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@app.route('/api/dialog/<int:dialog_id>')
+@login_required
+def get_dialog(dialog_id):
+    """Get dialog data by ID"""
+    try:
+        with open('data/dialogs.json', 'r', encoding='utf-8') as f:
+            dialogs = json.load(f)
+        
+        dialog = next((d for d in dialogs if d['dialog_id'] == dialog_id), None)
+        
+        if not dialog:
+            return jsonify({"success": False, "message": "Dialog not found"}), 404
+        
+        return jsonify({"success": True, "dialog": dialog})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@app.route('/dialog')
+@login_required
+def dialog_page():
+    """Dialog system page"""
+    quest_id = request.args.get('quest')
+    dialog_type = request.args.get('type', 'start')  # start or complete
+    
+    if not quest_id:
+        flash('Không tìm thấy quest ID!')
+        return redirect(url_for('quests'))
+    
+    return render_template('dialog.html', quest_id=quest_id, dialog_type=dialog_type)
+
+@app.route('/data/dialogs.json')
+def get_dialogs():
+    """API endpoint to get dialog data"""
+    try:
+        with open('data/dialogs.json', 'r', encoding='utf-8') as f:
+            dialogs = json.load(f)
+        return jsonify(dialogs)
+    except FileNotFoundError:
+        return jsonify([]), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/dialog/complete', methods=['POST'])
+@login_required
+def complete_dialog():
+    """Handle dialog completion"""
+    try:
+        data = request.get_json()
+        dialog_id = data.get('dialog_id')
+        dialog_type = data.get('type')
+        
+        username = current_user.username
+        user = db.find_user(username)
+        
+        if not user:
+            return jsonify({"success": False, "message": "User not found"}), 404
+        
+        # Initialize completed_dialogs if not exists
+        completed_dialogs = user.get('completed_dialogs', [])
+        
+        # Add dialog to completed list if not already there
+        if dialog_id not in completed_dialogs:
+            completed_dialogs.append(dialog_id)
+            
+            # Update user in database
+            db.update_user(username, {"completed_dialogs": completed_dialogs})
+            
+            # Give rewards based on dialog type
+            rewards = {}
+            if dialog_type == 'end':
+                # End dialogs give rewards
+                rewards = {
+                    'gold': 100,
+                    'exp': 50
+                }
+                
+                # Update user stats
+                new_gold = user.get('gold', 0) + rewards['gold']
+                new_exp = user.get('exp', 0) + rewards['exp']
+                
+                db.update_user(username, {
+                    'gold': new_gold,
+                    'exp': new_exp
+                })
+                
+                rewards['new_gold'] = new_gold
+                rewards['new_exp'] = new_exp
+            
+            return jsonify({
+                "success": True, 
+                "message": f"Dialog {dialog_id} completed",
+                "rewards": rewards
+            })
+        else:
+            return jsonify({
+                "success": True, 
+                "message": f"Dialog {dialog_id} already completed"
+            })
+            
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@app.route('/api/start-quest', methods=['POST'])
+@login_required
+def start_quest():
+    try:
+        data = request.get_json()
+        quest_id = data.get('quest_id')
+        
+        if not quest_id:
+            return jsonify({'success': False, 'message': 'Thiếu quest ID!'})
+        
+        # Get user from database
+        user = db.find_user(current_user.username)
+        if not user:
+            return jsonify({'success': False, 'message': 'Không tìm thấy người dùng!'})
+        
+        # Check if quest is assigned to user and in 'active' state
+        user_quests = user.get('quests', [])
+        quest_found = False
+        
+        for i, quest in enumerate(user_quests):
+            if quest['quest_id'] == quest_id:
+                if quest['state'] == 'active':
+                    # Update quest state to 'doing'
+                    user_quests[i]['state'] = 'doing'
+                    quest_found = True
+                    break
+                else:
+                    return jsonify({'success': False, 'message': 'Quest không ở trạng thái có thể bắt đầu!'})
+        
+        if not quest_found:
+            return jsonify({'success': False, 'message': 'Quest không được gán cho người chơi này!'})
+        
+        # Update user in database
+        db.update_user(current_user.username, {'quests': user_quests})
+        
+        return jsonify({
+            'success': True,
+            'message': 'Đã bắt đầu quest!'
+        })
+        
+    except Exception as e:
+        print(f"Error starting quest: {e}")
+        return jsonify({'success': False, 'message': 'Lỗi server khi bắt đầu quest!'})
+
+@app.route('/api/complete-quest', methods=['POST'])
+@login_required
+def complete_quest():
+    """Complete a quest for the user"""
+    try:
+        data = request.get_json()
+        quest_id = data.get('quest_id')
+        
+        if not quest_id:
+            return jsonify({"success": False, "message": "Quest ID required"}), 400
+        
+        username = current_user.username
+        user = db.find_user(username)
+        
+        if not user:
+            return jsonify({"success": False, "message": "User not found"}), 404
+        
+        # Load quest data
+        with open('data/quests.json', 'r', encoding='utf-8') as f:
+            quests = json.load(f)
+        
+        quest = next((q for q in quests if q['quest_id'] == quest_id), None)
+        if not quest:
+            return jsonify({"success": False, "message": "Quest not found"}), 404
+        
+        # Find user's quest
+        user_quests = user.get('quests', [])
+        user_quest = next((uq for uq in user_quests if uq['quest_id'] == quest_id), None)
+        
+        if not user_quest or user_quest['state'] not in ['active', 'doing']:
+            return jsonify({"success": False, "message": "Quest not active or doing"}), 400
+        
+        # Mark quest as completed
+        user_quest['state'] = 'completed'
+        user_quest['completed_at'] = str(datetime.utcnow())
+        
+        # Give rewards
+        rewards = quest['reward']
+        new_gold = user.get('gold', 0) + rewards['gold']
+        new_exp = user.get('exp', 0) + rewards['exp']
+        
+        # Add items to inventory
+        inventory = user.get('inventory', [])
+        for item_reward in rewards.get('items', []):
+            existing_item = next((item for item in inventory if item['item_id'] == item_reward['item_id']), None)
+            if existing_item:
+                existing_item['quantity'] += item_reward['quantity']
+            else:
+                inventory.append({
+                    'item_id': item_reward['item_id'],
+                    'quantity': item_reward['quantity']
+                })
+        
+        # Update user
+        update_data = {
+            'quests': user_quests,
+            'gold': new_gold,
+            'exp': new_exp,
+            'inventory': inventory
+        }
+        
+        db.update_user(username, update_data)
+        
+        return jsonify({
+            "success": True,
+            "message": f"Quest {quest_id} completed",
+            "rewards": {
+                "gold": rewards['gold'],
+                "exp": rewards['exp'],
+                "items": rewards.get('items', []),
+                "new_gold": new_gold,
+                "new_exp": new_exp
+            }
+        })
+        
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 

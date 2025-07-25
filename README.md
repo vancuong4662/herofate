@@ -498,7 +498,163 @@ class User(UserMixin):
 
 ---
 
-## 9. Các Route
+## 9. Quest & Dialog System (Enhanced)
+
+### 9.1. Quest Management System
+
+**🎯 Core Quest Features:**
+- **Active Quest Limit**: Tối đa 5 quest active đồng thời
+- **Auto Quest Assignment**: Tự động assign quest mới khi có slot trống
+- **Level-based Filtering**: Quest chỉ xuất hiện khi đủ level requirement
+- **State Management**: Available → Doing → Completed lifecycle
+
+**📋 Quest Interface Design:**
+- **Grid Layout**: Quest cards hiển thị dạng grid responsive
+- **Quest Preview**: Name, description, level requirement, rewards
+- **Action States**: 
+  - "Bắt đầu" → Available quests
+  - "Hoàn thành" → Quests với completed conditions
+  - "Đang thực hiện" → Active quests in progress
+
+**🔄 Quest Execution Flow:**
+```mermaid
+graph TD
+    A[Quest Available] --> B{Has start_dialog_id?}
+    B -->|Yes| C[Show Start Dialog]
+    B -->|No| D[Direct to Battle/Collection]
+    C --> D
+    D --> E[Quest Progress]
+    E --> F{Completion Check}
+    F -->|Complete| G{Has complete_dialog_id?}
+    F -->|Not Complete| E
+    G -->|Yes| H[Show Complete Dialog]
+    G -->|No| I[Show Rewards]
+    H --> I
+    I --> J[Remove from Active]
+```
+
+### 9.2. Dialog System Architecture
+
+**💬 Advanced Dialog Features:**
+- **Dynamic Backgrounds**: Priority system cho background selection
+- **Progressive Blur**: Background blur effect với smooth transition
+- **Sequential Messaging**: Messages hiển thị tuần tự với animations
+- **Speaker Integration**: Avatar + localized names cho NPCs
+
+**🎭 Dialog Interface Components:**
+
+```html
+<!-- Dialog Structure -->
+<div class="dialog-container">
+    <div class="dialog-background" style="background-image: url(...)"></div>
+    <div class="dialog-wrapper">
+        <div class="dialog-header">
+            <h3>Quest Name</h3>
+            <p class="dialog-type">Bắt đầu/Hoàn thành nhiệm vụ</p>
+        </div>
+        <div class="dialog-content">
+            <div class="dialog-messages">
+                <div class="dialog-message">
+                    <div class="message-speaker">
+                        <img src="avatar.png" class="speaker-avatar">
+                        <span class="speaker-name">Speaker Name</span>
+                    </div>
+                    <div class="message-text">Dialog text...</div>
+                </div>
+            </div>
+            <div class="dialog-controls">
+                <button class="btn btn-primary">Tiếp tục</button>
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+**🎨 Visual Enhancement System:**
+```css
+/* Background blur chỉ áp dụng cho background */
+.dialog-background {
+    filter: blur(2px);
+    transition: filter 0.3s ease;
+}
+
+.dialog-background.focused {
+    filter: blur(1px);
+}
+
+/* Message animation */
+.dialog-message {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.dialog-message.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+```
+
+### 9.3. Background Asset Management
+
+**🖼️ Rich Background Collection:**
+- **16 Different Backgrounds**: village, forest, cave, harbor, market, etc.
+- **Context-Aware Mapping**: Background phù hợp với dialog content
+- **Priority System**: `dialogData.background` → `quest.background` → fallback
+
+**📂 Background Categories:**
+```javascript
+const backgroundCategories = {
+    'Urban': ['village.jpg', 'market.jpg', 'room.jpg'],
+    'Nature': ['forest.jpg', 'meadow.jpg', 'grassland.jpg'], 
+    'Underground': ['cave.jpg', 'mine.jpg', 'lavacave.jpg'],
+    'Coastal': ['harbor.jpg'],
+    'Mysterious': ['ruins.png', 'desert.jpg'],
+    'Specialized': ['snowfield.jpg', '1.jpg', '2.jpg', '3.jpg']
+};
+```
+
+### 9.4. Speaker & Character System
+
+**🎪 Comprehensive Speaker Database:**
+```javascript
+const speakerDatabase = {
+    // NPCs
+    'elder': { name: 'Trưởng làng', avatar: 'elder.png' },
+    'merchant': { name: 'Thương gia', avatar: 'merchant.png' },
+    'guard': { name: 'Lính canh', avatar: 'guard.png' },
+    'john-fisher': { name: 'John - Ngư dân', avatar: 'john-fisher.png' },
+    'marcus-scholar': { name: 'Marcus - Học giả', avatar: 'marcus-scholar.png' },
+    'mina-inn-keeper': { name: 'Mina - Chủ quán trọ', avatar: 'mina-inn-keeper.png' },
+    'jack-sailor': { name: 'Jack - Thủy thủ', avatar: 'jack-sailor.png' },
+    'arch-mage': { name: 'Đại pháp sư', avatar: 'arch-mage.png' },
+    'duke': { name: 'Công tước', avatar: 'duke.png' },
+    'kyrina-pirate-leader': { name: 'Kyrina - Thủ lĩnh cướp biển', avatar: 'kyrina-pirate-leader.png' },
+    'mira-dancer': { name: 'Mira - Vũ công', avatar: 'mira-dancer.png' },
+    'amon-strange-merchant': { name: 'Amon - Thương gia bí ẩn', avatar: 'amon-strange-merchant.png' },
+    
+    // Player
+    'player': { name: 'Người chơi', avatar: 'player.png' }
+};
+```
+
+### 9.5. Quest-Dialog Integration
+
+**🔗 Seamless Integration Features:**
+- **Dialog Triggering**: Auto-trigger dialog dựa trên quest state
+- **Context Passing**: Quest data được pass vào dialog system
+- **State Synchronization**: Dialog completion updates quest state
+- **Reward Processing**: Integrated reward system sau dialog completion
+
+**⚡ Enhanced User Experience:**
+- **Consistent Navigation**: Header + nav bar trong mọi trang
+- **Smooth Transitions**: Animation giữa dialog messages
+- **User Info Integration**: Real-time display user stats
+- **Error Handling**: Graceful fallbacks cho missing data
+
+---
+
+## 10. Các Route
 
 ### A. Trang chính (`/`)
 
@@ -738,28 +894,40 @@ class User(UserMixin):
 - `quest_id`: chuỗi định danh nhiệm vụ (dạng `"q001"`)
 - `name`: tên nhiệm vụ
 - `description`: nội dung mô tả nhiệm vụ, hiển thị ở `/quests`
-- `background`: tên file ảnh nền mà trận chiến của nhiệm vụ sẽ sử dụng (nằm trong thư mục `static/img/background/`)
+- `background`: tên file ảnh nền cho trận chiến hoặc dialog (trong `static/img/background/`)
 - `enemy_id`: id kẻ địch cần tiêu diệt nếu là nhiệm vụ dạng chiến đấu
 - `start_dialog_id`: id hội thoại khởi đầu nhiệm vụ. Nếu là -1 thì không có hội thoại dẫn truyện
 - `complete_dialog_id`: id hội thoại khi hoàn thành nhiệm vụ. Nếu là -1 thì không có hội thoại kết thúc
-- `required_items`: (tuỳ chọn) danh sách item cần giao nộp để hoàn thành nhiệm vụ (dạng `[{ "item_id": 1008, "quantity": 5 }]`)
-- `reward`: phần thưởng khi hoàn thành nhiệm vụ
-  - `gold`: số vàng nhận được
-  - `exp`: số EXP nhận được
-  - `items`: danh sách item nhận được (dạng mảng id)
-- `level_required`: cấp độ tối thiểu (tính từ EXP) để hiển thị nhiệm vụ
+- `required_items`: (tuỳ chọn) danh sách item cần giao nộp để hoàn thành nhiệm vụ
+- `reward`: phần thưởng khi hoàn thành nhiệm vụ (gold, exp, items)
+- `level_required`: cấp độ tối thiểu để hiển thị nhiệm vụ
 
-### Ghi chú thêm:
+### Quest System Features:
 
-- Nếu `enemy_id` tồn tại → hệ thống hiểu đây là nhiệm vụ chiến đấu, sẽ lưu `battle_enemy` vào localStorage để chuyển qua `/battle`
-- Nếu không có `enemy_id` nhưng có `required_items` → là nhiệm vụ thu thập
-- `start_dialog_id` và `end_dialog_id` giúp liên kết với file `dialogs.json` để tạo dẫn truyện mượt mà
-- Khi login vào game, hệ thống sẽ tự động thêm nhiệm vụ (nếu user có slot trống), bằng cách chọn ngẫu nhiên từ file `quests.json`
+**🎯 Quest Assignment Logic:**
+- **Auto-generation**: Tự động thêm quest mới khi user có slot trống (tối đa 5)
+- **Level filtering**: Chỉ assign quest phù hợp với level của player
+- **Random selection**: Chọn ngẫu nhiên từ pool quest available
+- **State management**: Track quest states (available → doing → completed)
+
+**🔄 Quest Execution Flow:**
+1. **Start Quest**: Click "Bắt đầu" → Check `start_dialog_id`
+   - Có dialog → Redirect `/dialog/{start_dialog_id}/{quest_id}`
+   - Không dialog → Direct to battle/collection
+2. **Quest Progress**: Battle enemies hoặc collect required items
+3. **Complete Quest**: Check completion conditions → Show `complete_dialog_id`
+4. **Rewards**: Process rewards → Update user stats → Remove from active quests
+
+**⚡ Enhanced Quest Types:**
+- **Combat Quest**: Có `enemy_id` → Battle system
+- **Collection Quest**: Có `required_items` → Item gathering
+- **Story Quest**: Có dialog IDs → Rich narrative experience
+- **Hybrid Quest**: Kết hợp combat + collection + story
 
 ---
 ### 10.6. Cấu trúc file `dialogs.json`
 
-(Trang hiển thị: `/dialog/<dialog_id>` — hiện đoạn hội thoại tương tác)
+(Trang hiển thị: `/dialog/<dialog_id>/<quest_id>` — hiện đoạn hội thoại tương tác)
 
 ```json
 {
@@ -780,19 +948,58 @@ class User(UserMixin):
 
 - `dialog_id`: số nguyên định danh đoạn hội thoại, liên kết với nhiệm vụ
 - `type`: `"start"` hoặc `"end"` — phân biệt hội thoại mở đầu hay kết thúc nhiệm vụ
-- `background`: tên file ảnh nền hiển thị trong hội thoại (nằm trong thư mục `static/img/background/`)
-- `lines`: mảng các dòng hội thoại
-  - `speaker`: tên người nói (có thể là `"hero"` hoặc `"npc"`, `"elder"`, v.v...)
-  - `text`: nội dung hiển thị từng câu
-- Hình ảnh speaker sẽ được lấy từ thư mục `static/img/npc/` hoặc `static/img/player/` (nếu là nhân vật người chơi)
+- `background`: tên file ảnh nền hiển thị trong hội thoại (từ `static/img/background/`)
+- `lines`: mảng các dòng hội thoại với speaker và text
 
-### Luồng hoạt động:
+### Dialog System Features:
 
-- Khi user truy cập `/dialog/<id>`, hệ thống load đoạn hội thoại tương ứng từ `dialogs.json`
-- Mỗi dòng hiển thị lần lượt, có nút **"Tiếp tục"** để chuyển dòng kế
-- Sau khi hội thoại kết thúc:
-  - Nếu là `type: "start"` → nhiệm vụ được đánh dấu là `doing`, rồi redirect về `/quests`
-  - Nếu là `type: "end"` → mở modal phần thưởng, sau đó redirect về `/town`
+**🎭 Advanced Dialog Interface:**
+- **Dynamic Background**: Ưu tiên `dialogData.background` → `quest.background` → fallback
+- **Background Blur**: Blur effect chỉ áp dụng cho background, không ảnh hưởng UI
+- **Sequential Display**: Messages hiển thị tuần tự với smooth animations
+- **Speaker Integration**: Avatar + localized name cho mỗi speaker
+
+**🎨 Visual & Animation System:**
+```javascript
+// Background selection priority
+let backgroundUrl = '/static/img/background/village.jpg'; // Default
+if (dialogData.background) {
+    backgroundUrl = `/static/img/background/${dialogData.background}`;
+} else if (quest.background) {
+    backgroundUrl = `/static/img/background/${quest.background}`;
+}
+```
+
+**🔄 Dialog Execution Flow:**
+1. **Load Dialog**: API call `/api/dialog/{dialog_id}` với quest context
+2. **Initialize UI**: Set background với blur, create dialog structure
+3. **Message Display**: Show messages tuần tự với "Tiếp tục" button
+4. **Quest Integration**: 
+   - `type: "start"` → Mark quest as "doing" → Redirect `/quests`
+   - `type: "end"` → Complete quest → Show rewards → Redirect `/town`
+5. **Animation Control**: Start/stop blur effects based on dialog state
+
+**🎪 Enhanced Speaker System:**
+- **Localized Names**: Việt hóa speaker names (elder → Trưởng làng)
+- **Avatar System**: Dynamic loading từ `/static/img/avatar/{speaker}.png`
+- **Fallback Support**: Default avatar nếu speaker image không tồn tại
+- **Speaker Types**: Support cho NPCs, player, và custom characters
+
+**📚 Background Asset Integration:**
+- **Rich Backgrounds**: 16 different backgrounds (village, forest, cave, harbor, ruins, etc.)
+- **Context Matching**: Background phù hợp với scene content
+- **Example Mappings**:
+  - Village dialogs → `village.jpg`
+  - Merchant dialogs → `market.jpg`
+  - Fisher quests → `harbor.jpg`
+  - Cave exploration → `cave.jpg`, `mine.jpg`, `lavacave.jpg`
+  - Mysterious encounters → `ruins.png`
+
+**🔧 Technical Implementation:**
+- **Progressive Enhancement**: Blur effect tăng dần sau khi load
+- **Memory Optimization**: Animation chỉ chạy khi dialog active
+- **Error Handling**: Graceful fallbacks cho missing assets
+- **Navigation Integration**: Consistent với main app navigation
 ---
 
 ---

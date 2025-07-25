@@ -1,37 +1,38 @@
 [
   {
     "quest_id": "q001",
-    "name": "Giải cứu dân làng",
-    "description": "Một nhóm quái vật đang đe dọa ngôi làng gần thị trấn. Hãy đánh bại chúng!",
-    "background": "forest.jpg",
-    "enemy_id": 1023,
-    "start_dialog_id": 12,
-    "complete_dialog_id": 13,
+    "name": "Lời thỉnh cầu của Elder",
+    "description": "Elder cần người giúp đỡ giải quyết vấn đề quái vật đang đe dọa làng.",
+    "background": "village.jpg",
+    "enemy_id": 1001,
+    "start_dialog_id": 1,
+    "complete_dialog_id": 2,
+    "npc": "elder",
     "required_items": [],
     "reward": {
-      "gold": 300,
-      "exp": 150,
+      "gold": 200,
+      "exp": 100,
       "items": [
-        {"item_id": "iron", "quantity": 2},
         {"item_id": "herb", "quantity": 3}
       ]
     },
     "level_required": 1
   },
   {
-    "quest_id": "q002",
-    "name": "Thu thập gỗ",
-    "description": "Thị trấn cần gỗ để xây dựng. Hãy thu thập 10 khúc gỗ.",
+    "quest_id": "q002", 
+    "name": "Đơn hàng của Merchant",
+    "description": "Merchant cần 10 khúc gỗ để hoàn thành đơn hàng quan trọng.",
     "background": "forest.jpg",
     "enemy_id": null,
-    "start_dialog_id": -1,
-    "complete_dialog_id": -1,
+    "start_dialog_id": 3,
+    "complete_dialog_id": 4,
+    "npc": "merchant",
     "required_items": [
       {"item_id": "wood", "quantity": 10}
     ],
     "reward": {
-      "gold": 100,
-      "exp": 50,
+      "gold": 150,
+      "exp": 75,
       "items": [
         {"item_id": "stone", "quantity": 5}
       ]
@@ -40,20 +41,208 @@
   },
   {
     "quest_id": "q003",
-    "name": "Tiêu diệt sói rừng",
-    "description": "Những con sói rừng đang tấn công các thương gia. Hãy tiêu diệt chúng!",
-    "background": "forest.jpg",
-    "enemy_id": 1001,
-    "start_dialog_id": 14,
-    "complete_dialog_id": 15,
+    "name": "Nhiệm vụ bảo vệ của Guard",
+    "description": "Guard báo cáo có sói rừng tấn công thương gia. Hãy tiêu diệt chúng!",
+    "background": "forest.jpg", 
+    "enemy_id": 1002,
+    "start_dialog_id": 5,
+    "complete_dialog_id": 6,
+    "npc": "guard",
     "required_items": [],
     "reward": {
-      "gold": 200,
-      "exp": 100,
+      "gold": 250,
+      "exp": 125,
       "items": [
         {"item_id": "leather_armor", "quantity": 1}
       ]
     },
+    "level_required": 1
+  },
+  {
+    "quest_id": "q004",
+    "name": "Yêu cầu của John Fisher",
+    "description": "John Fisher cần 5 con cá tươi để phục vụ khách hàng đặc biệt.",
+    "background": "village.jpg",
+    "enemy_id": null,
+    "start_dialog_id": 7,
+    "complete_dialog_id": 8,
+    "npc": "john-fisher",
+    "required_items": [
+      {"item_id": "fresh_fish", "quantity": 5}
+    ],
+    "reward": {
+      "gold": 180,
+      "exp": 90,
+      "items": [
+        {"item_id": "fishing_rod", "quantity": 1}
+      ]
+    },
+    "level_required": 1
+  },
+  {
+    "quest_id": "q005",
+    "name": "Nghiên cứu của Marcus Scholar",
+    "description": "Marcus Scholar cần thảo dược quý để hoàn thành nghiên cứu ma thuật.",
+    "background": "cave.jpg",
+    "enemy_id": null,
+    "start_dialog_id": 9,
+    "complete_dialog_id": 10,
+    "npc": "marcus-scholar",
+    "required_items": [
+      {"item_id": "rare_herb", "quantity": 3}
+    ],
+    "reward": {
+      "gold": 300,
+      "exp": 150,
+      "items": [
+        {"item_id": "magic_scroll", "quantity": 2}
+      ]
+    },
     "level_required": 2
+  },
+  {
+    "quest_id": "q006",
+    "name": "Phục vụ tại Inn của Mina",
+    "description": "Mina Inn Keeper cần người giúp chuẩn bị đồ ăn cho lễ hội làng.",
+    "background": "village.jpg",
+    "enemy_id": null,
+    "start_dialog_id": 11,
+    "complete_dialog_id": 12,
+    "npc": "mina-inn-keeper",
+    "required_items": [
+      {"item_id": "bread", "quantity": 8},
+      {"item_id": "milk", "quantity": 5}
+    ],
+    "reward": {
+      "gold": 220,
+      "exp": 110,
+      "items": [
+        {"item_id": "health_potion", "quantity": 3}
+      ]
+    },
+    "level_required": 1
+  },
+  {
+    "quest_id": "q007",
+    "name": "Cuộc phiêu lưu của Jack Sailor",
+    "description": "Jack Sailor cần đồng hành để tìm kiếm kho báu trên đảo hoang.",
+    "background": "cave.jpg",
+    "enemy_id": 1003,
+    "start_dialog_id": 13,
+    "complete_dialog_id": 14,
+    "npc": "jack-sailor",
+    "required_items": [],
+    "reward": {
+      "gold": 400,
+      "exp": 200,
+      "items": [
+        {"item_id": "treasure_map", "quantity": 1},
+        {"item_id": "gold_coin", "quantity": 5}
+      ]
+    },
+    "level_required": 2
+  },
+  {
+    "quest_id": "q008",
+    "name": "Thử thách ma thuật của Arch Mage",
+    "description": "Arch Mage muốn kiểm tra khả năng của bạn trong việc đối phó với quái vật ma thuật.",
+    "background": "cave.jpg",
+    "enemy_id": 1004,
+    "start_dialog_id": 15,
+    "complete_dialog_id": 16,
+    "npc": "arch-mage",
+    "required_items": [],
+    "reward": {
+      "gold": 500,
+      "exp": 250,
+      "items": [
+        {"item_id": "magic_staff", "quantity": 1},
+        {"item_id": "mana_potion", "quantity": 3}
+      ]
+    },
+    "level_required": 3
+  },
+  {
+    "quest_id": "q009",
+    "name": "Nhiệm vụ bí mật của Duke",
+    "description": "Duke có một nhiệm vụ bí mật cần người đáng tin cậy thực hiện.",
+    "background": "village.jpg",
+    "enemy_id": 1005,
+    "start_dialog_id": 17,
+    "complete_dialog_id": 18,
+    "npc": "duke",
+    "required_items": [],
+    "reward": {
+      "gold": 600,
+      "exp": 300,
+      "items": [
+        {"item_id": "noble_sword", "quantity": 1},
+        {"item_id": "royal_seal", "quantity": 1}
+      ]
+    },
+    "level_required": 3
+  },
+  {
+    "quest_id": "q010",
+    "name": "Điệp vụ của Kyrina Pirate Leader",
+    "description": "Kyrina cần người giúp đỡ trong cuộc chiến chống lại băng cướp biển đối thủ.",
+    "background": "forest.jpg",
+    "enemy_id": 1006,
+    "start_dialog_id": 19,
+    "complete_dialog_id": 20,
+    "npc": "kyrina-pirate-leader",
+    "required_items": [],
+    "reward": {
+      "gold": 450,
+      "exp": 225,
+      "items": [
+        {"item_id": "pirate_cutlass", "quantity": 1},
+        {"item_id": "rum", "quantity": 2}
+      ]
+    },
+    "level_required": 2
+  },
+  {
+    "quest_id": "q011",
+    "name": "Buổi biểu diễn của Mira Dancer",
+    "description": "Mira Dancer cần trang phục đặc biệt cho buổi biểu diễn hoàng gia.",
+    "background": "village.jpg",
+    "enemy_id": null,
+    "start_dialog_id": 21,
+    "complete_dialog_id": 22,
+    "npc": "mira-dancer",
+    "required_items": [
+      {"item_id": "silk_fabric", "quantity": 3},
+      {"item_id": "jewelry", "quantity": 2}
+    ],
+    "reward": {
+      "gold": 280,
+      "exp": 140,
+      "items": [
+        {"item_id": "dance_shoes", "quantity": 1},
+        {"item_id": "perfume", "quantity": 1}
+      ]
+    },
+    "level_required": 2
+  },
+  {
+    "quest_id": "q012",
+    "name": "Hợp đồng của Amon Strange Merchant",
+    "description": "Amon Strange Merchant có một hợp đồng bí ẩn với phần thưởng hấp dẫn.",
+    "background": "cave.jpg",
+    "enemy_id": 1007,
+    "start_dialog_id": 23,
+    "complete_dialog_id": 24,
+    "npc": "amon-strange-merchant",
+    "required_items": [],
+    "reward": {
+      "gold": 700,
+      "exp": 350,
+      "items": [
+        {"item_id": "mysterious_artifact", "quantity": 1},
+        {"item_id": "rare_gem", "quantity": 3}
+      ]
+    },
+    "level_required": 4
   }
 ]

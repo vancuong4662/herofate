@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hội thoại - Hero Fate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <h1><img src="/static/img/icon/button/quest.png" style="width: 24px; height: 24px; object-fit: contain; margin-right: 10px; vertical-align: middle;" alt="Dialog"> Hội thoại nhiệm vụ</h1>
+        </div>
+
+        <!-- User Info & Navigation Bar -->
+        <div class="game-info-nav">
+            <!-- User Stats -->
+            <div class="user-stats">
+                <div class="info-item">
+                    <img src="/static/img/icon/info/exp.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Level">
+                    <span>Cấp độ: <strong id="userLevel">1</strong></span>
+                </div>
+                <div class="info-item">
+                    <img src="/static/img/icon/info/gold.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Gold">
+                    <span>Vàng: <strong id="userGold">0</strong></span>
+                </div>
+                <div class="info-item">
+                    <img src="/static/img/icon/info/exp.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="EXP">
+                    <span>EXP: <strong id="userExp">0</strong></span>
+                </div>
+                <div class="info-item">
+                    <img src="/static/img/icon/info/reputation.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Reputation">
+                    <span>Danh tiếng: <strong id="userReputation">0</strong></span>
+                </div>
+            </div>
+            
+            <!-- Navigation Actions -->
+            <div class="nav-actions">
+                <a href="/quests" class="btn btn-primary btn-icon">
+                    <img src="/static/img/icon/button/quest.png" alt="Quests"> Quay lại nhiệm vụ
+                </a>
+                <button class="btn btn-secondary btn-icon" onclick="logout()">
+                    <img src="/static/img/icon/button/logout.png" alt="Logout"> Đăng xuất
+                </button>
+            </div>
+        </div>
+
+        <!-- Dialog Container -->
+        <div id="dialogContainer" class="dialog-container">
+            <!-- Dialog content will be loaded by JavaScript -->
+        </div>
+    </div>
+
+    <script src="/static/js/support.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script>
+        const questId = '{{ quest_id }}';
+        const dialogType = '{{ dialog_type }}';
+        
+        // Dialog functions
+        async function loadDialogForQuest() {
+            try {
+                const userData = getUserData();
+                if (!userData) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                // Get quest data first
+                const questResponse = await apiCall('/api/quests');
+                const quest = questResponse.quests.find(q => q.quest_id === questId);
+                
+                if (!quest) {
+                    showToast('Không tìm thấy quest!', 'error');
+                    window.location.href = '/quests';
+                    return;
+                }
+                
+                // Determine dialog ID based on type
+                let dialogId;
+                if (dialogType === 'start') {
+                    dialogId = quest.start_dialog_id;
+                } else if (dialogType === 'complete') {
+                    dialogId = quest.complete_dialog_id;
+                } else {
+                    showToast('Loại dialog không hợp lệ!', 'error');
+                    window.location.href = '/quests';
+                    return;
+                }
+                
+                if (!dialogId || dialogId <= 0) {
+                    showToast('Quest này không có dialog!', 'info');
+                    window.location.href = '/quests';
+                    return;
+                }
+                
+                // Load dialog data
+                const dialogResponse = await apiCall(`/api/dialog/${dialogId}`);
+                const dialogData = dialogResponse.dialog;
+                
+                if (!dialogData) {
+                    showToast('Không tìm thấy dialog!', 'error');
+                    window.location.href = '/quests';
+                    return;
+                }
+                
+                // Initialize dialog with quest context
+                initializeDialog(dialogData, quest, dialogType);
+                
+            } catch (error) {
+                console.error('Error loading dialog:', error);
+                showToast('Lỗi khi tải dialog!', 'error');
+                window.location.href = '/quests';
+            }
+        }
+        
+        function initializeDialog(dialogData, quest, type) {
+            const container = document.getElementById('dialogContainer');
+            
+            // Set background - use dialog background data first
+            let backgroundUrl = '/static/img/background/village.jpg'; // Default fallback
+            if (dialogData.background) {
+                backgroundUrl = `/static/img/background/${dialogData.background}`;
+            } else if (quest.background) {
+                // If dialog doesn't have background, try quest data
+                backgroundUrl = `/static/img/background/${quest.background}`;
+            }
+            
+            // Create dialog structure with separate background element
+            container.innerHTML = `
+                <div class="dialog-background" id="dialogBackground"></div>
+                <div class="dialog-wrapper">
+                    <div class="dialog-header">
+                        <h3>${quest.name}</h3>
+                        <p class="dialog-type">${type === 'start' ? 'Bắt đầu nhiệm vụ' : 'Hoàn thành nhiệm vụ'}</p>
+                    </div>
+                    
+                    <div class="dialog-content">
+                        <div class="dialog-messages" id="dialogMessages">
+                            <!-- Current message will be shown here -->
+                        </div>
+                        
+                        <div class="dialog-controls">
+                            <button id="actionButton" class="btn btn-primary" onclick="handleDialogAction()">
+                                Tiếp tục
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Set background image
+            const backgroundElement = document.getElementById('dialogBackground');
+            backgroundElement.style.backgroundImage = `url('${backgroundUrl}')`;
+            
+            // Apply initial blur and then reduce it
+            setTimeout(() => {
+                backgroundElement.classList.add('focused');
+            }, 100);
+            
+            // Initialize dialog system
+            window.currentDialog = dialogData;
+            window.currentQuest = quest;
+            window.currentDialogType = type;
+            window.currentMessageIndex = 0;
+            
+            // Start showing first message
+            showCurrentMessage();
+            
+            // Update user info display
+            const userData = getUserData();
+            if (userData) {
+                updateUserInfoDisplay(userData);
+            }
+        }
+        
+        function showCurrentMessage() {
+            const dialog = window.currentDialog;
+            const messageIndex = window.currentMessageIndex;
+            const messagesContainer = document.getElementById('dialogMessages');
+            
+            if (messageIndex >= dialog.lines.length) {
+                // All messages shown, show finish button
+                showFinishButton();
+                return;
+            }
+            
+            const line = dialog.lines[messageIndex];
+            
+            // Get speaker info
+            const speakerName = getSpeakerDisplayName(line.speaker);
+            const speakerAvatar = getSpeakerAvatar(line.speaker);
+            
+            // Create new message element
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'dialog-message';
+            messageDiv.innerHTML = `
+                <div class="message-speaker">
+                    <img src="${speakerAvatar}" alt="${speakerName}" class="speaker-avatar">
+                    <span class="speaker-name">${speakerName}</span>
+                </div>
+                <div class="message-text">${line.text}</div>
+            `;
+            
+            // Clear previous message and add new one
+            messagesContainer.innerHTML = '';
+            messagesContainer.appendChild(messageDiv);
+            
+            // Animate message in
+            setTimeout(() => {
+                messageDiv.classList.add('active');
+            }, 50);
+        }
+        
+        function handleDialogAction() {
+            const actionButton = document.getElementById('actionButton');
+            
+            if (actionButton.textContent.trim() === 'Xem nhiệm vụ') {
+                // Finish dialog
+                finishDialog();
+                return;
+            }
+            
+            // Move to next message
+            window.currentMessageIndex++;
+            showCurrentMessage();
+        }
+        
+        function showFinishButton() {
+            const actionButton = document.getElementById('actionButton');
+            actionButton.textContent = 'Xem nhiệm vụ';
+            actionButton.classList.remove('btn-primary');
+            actionButton.classList.add('btn-success');
+        }
+        
+        async function finishDialog() {
+            const quest = window.currentQuest;
+            const type = window.currentDialogType;
+            
+            try {
+                if (type === 'start') {
+                    // Mark quest as "doing" after start dialog
+                    const response = await apiCall('/api/start-quest', 'POST', { 
+                        quest_id: quest.quest_id 
+                    });
+                    
+                    if (response.success) {
+                        showToast('Nhiệm vụ đã bắt đầu!', 'success');
+                    } else {
+                        showToast(response.message || 'Lỗi khi bắt đầu nhiệm vụ!', 'error');
+                    }
+                } else if (type === 'complete') {
+                    // Complete quest after complete dialog
+                    const response = await apiCall('/api/complete-quest', 'POST', { 
+                        quest_id: quest.quest_id 
+                    });
+                    
+                    if (response.success) {
+                        showToast(`Nhiệm vụ hoàn thành! +${response.rewards.gold} vàng, +${response.rewards.exp} EXP`, 'success');
+                    } else {
+                        showToast(response.message || 'Lỗi khi hoàn thành nhiệm vụ!', 'error');
+                    }
+                }
+                
+                // Return to quests page after a short delay
+                setTimeout(() => {
+                    window.location.href = '/quests';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error finishing dialog:', error);
+                showToast('Lỗi khi xử lý nhiệm vụ!', 'error');
+                window.location.href = '/quests';
+            }
+        }
+        
+        // Helper functions for speaker display
+        function getSpeakerDisplayName(speaker) {
+            const displayNames = {
+                'elder': 'Trưởng làng',
+                'player': 'Người chơi',
+                'merchant': 'Thương gia',
+                'guard': 'Lính canh',
+                'john-fisher': 'John - Ngư dân',
+                'marcus-scholar': 'Marcus - Học giả',
+                'mina-inn-keeper': 'Mina - Chủ quán trọ',
+                'jack-sailor': 'Jack - Thủy thủ',
+                'arch-mage': 'Đại pháp sư',
+                'duke': 'Công tước',
+                'kyrina-pirate-leader': 'Kyrina - Thủ lĩnh cướp biển',
+                'mira-dancer': 'Mira - Vũ công',
+                'amon-strange-merchant': 'Amon - Thương gia bí ẩn'
+            };
+            return displayNames[speaker] || speaker;
+        }
+
+        function getSpeakerAvatar(speaker) {
+            const avatars = {
+                'elder': '/static/img/avatar/elder.png',
+                'player': '/static/img/avatar/player.png',
+                'merchant': '/static/img/avatar/merchant.png',
+                'guard': '/static/img/avatar/guard.png',
+                'john-fisher': '/static/img/avatar/john-fisher.png',
+                'marcus-scholar': '/static/img/avatar/marcus-scholar.png',
+                'mina-inn-keeper': '/static/img/avatar/mina-inn-keeper.png',
+                'jack-sailor': '/static/img/avatar/jack-sailor.png',
+                'arch-mage': '/static/img/avatar/arch-mage.png',
+                'duke': '/static/img/avatar/duke.png',
+                'kyrina-pirate-leader': '/static/img/avatar/kyrina-pirate-leader.png',
+                'mira-dancer': '/static/img/avatar/mira-dancer.png',
+                'amon-strange-merchant': '/static/img/avatar/amon-strange-merchant.png'
+            };
+            return avatars[speaker] || '/static/img/avatar/default.png';
+        }
+        
+        // Initialize dialog when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = getUserData();
+            if (!userData) {
+                window.location.href = '/';
+                return;
+            }
+            
+            // Update user info display
+            updateUserInfoDisplay(userData);
+            
+            loadDialogForQuest();
+        });
+    </script>
+</body>
+</html>
