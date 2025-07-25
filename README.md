@@ -1015,52 +1015,210 @@ herofate/
 │   └── .env                      # Environment configuration
 │
 ├── 📊 Data & Assets
-│   ├── data/                     # JSON data files
-│   │   ├── enemies.json
-│   │   ├── skills.json  
-│   │   ├── items.json
-│   │   ├── buildings.json
-│   │   ├── quests.json
-│   │   └── dialogs.json
-│   ├── static/                   # Frontend assets
+│   ├── data/                     # JSON data files (Game content)
+│   │   ├── enemies.json          # Enemy definitions & stats
+│   │   ├── skills.json           # Skill database & effects
+│   │   ├── items.json            # Equipment & materials
+│   │   ├── buildings.json        # Building upgrade requirements
+│   │   ├── quests.json           # Quest definitions & rewards
+│   │   └── dialogs.json          # Dialog scripts & backgrounds
+│   │
+│   ├── static/                   # Frontend assets & media resources
 │   │   ├── css/
 │   │   │   ├── variables.css     # CSS variables cho theming
-│   │   │   └── style.css         # Main CSS với responsive design
+│   │   │   └── style.css         # Main CSS với animations & responsive
+│   │   │
 │   │   ├── js/
-│   │   │   ├── gml.js            # Sprite animation library
-│   │   │   ├── support.js        # Utility functions
-│   │   │   └── main.js           # JavaScript với Fetch API
-│   │   └── img/
-│   │       ├── background/       # Background images
-│   │       ├── building/         # Building sprites + ground.png
-│   │       ├── icon/             # Icons cho UI
-│   │       ├── enemies/          # Enemy sprites
-│   │       ├── player/           # Player avatars
-│   │       └── npc/              # NPC portraits
-│   └── templates/                # Jinja2 templates
-│       ├── index.html            # Landing page với auth
+│   │   │   ├── gml.js            # Sprite animation library (tự phát triển)
+│   │   │   ├── support.js        # Utility functions & API wrapper
+│   │   │   └── main.js           # Core JavaScript với Fetch API
+│   │   │
+│   │   └── img/                  # 🎨 Rich Media Assets Collection
+│   │       │
+│   │       ├── background/       # 🖼️ Background Images (16 files)
+│   │       │   ├── village.jpg   # Village & urban scenes
+│   │       │   ├── forest.jpg    # Nature environments
+│   │       │   ├── cave.jpg      # Underground locations
+│   │       │   ├── harbor.jpg    # Coastal & maritime
+│   │       │   ├── market.jpg    # Commercial areas
+│   │       │   ├── room.jpg      # Indoor scenes
+│   │       │   ├── mine.jpg      # Mining locations
+│   │       │   ├── lavacave.jpg  # Volcanic environments
+│   │       │   ├── ruins.png     # Ancient ruins
+│   │       │   ├── desert.jpg    # Desert landscapes
+│   │       │   ├── meadow.jpg    # Peaceful meadows
+│   │       │   ├── grassland.jpg # Open grasslands
+│   │       │   ├── snowfield.jpg # Winter environments
+│   │       │   ├── 1.jpg         # Generic background 1
+│   │       │   ├── 2.jpg         # Generic background 2
+│   │       │   └── 3.jpg         # Generic background 3
+│   │       │
+│   │       ├── building/         # 🏗️ Building Assets
+│   │       │   ├── ground.png    # Ground texture base
+│   │       │   ├── town_hall.png # Tòa thị chính
+│   │       │   ├── storage.png   # Kho lưu trữ
+│   │       │   ├── blacksmith.png# Thợ rèn
+│   │       │   ├── market.png    # Chợ
+│   │       │   └── mage_tower.png# Tháp phép thuật
+│   │       │
+│   │       ├── icon/             # 🎯 UI Icon Collections
+│   │       │   ├── building/     # Building icons cho UI
+│   │       │   ├── button/       # Action button icons
+│   │       │   │   ├── quest.png # Quest icon
+│   │       │   │   ├── logout.png# Logout icon
+│   │       │   │   └── battle.png# Battle icon
+│   │       │   ├── info/         # User stat icons
+│   │       │   │   ├── gold.png  # Gold currency
+│   │       │   │   ├── exp.png   # Experience points
+│   │       │   │   └── reputation.png # Reputation
+│   │       │   ├── item/         # Item icons (.webp format)
+│   │       │   │   ├── bronze_sword.webp
+│   │       │   │   ├── wood.webp
+│   │       │   │   └── ...       # Extensive item collection
+│   │       │   └── skill/        # Skill icons
+│   │       │       ├── 1001.png  # Basic attack
+│   │       │       └── ...       # Magic & combat skills
+│   │       │
+│   │       ├── enemies/          # 👹 Enemy Sprites
+│   │       │   ├── {enemy_id}_attack_1.png
+│   │       │   ├── {enemy_id}_attack_2.png
+│   │       │   ├── {enemy_id}_attack_3.png
+│   │       │   └── {enemy_id}_attack_4.png
+│   │       │   # Multi-frame attack animations
+│   │       │
+│   │       ├── player/           # 🧙‍♂️ Player Character Assets
+│   │       │   ├── male_idle.png # Male character sprite sheet
+│   │       │   ├── female_idle.png # Female character sprite sheet
+│   │       │   └── avatars/      # Character portraits
+│   │       │
+│   │       ├── avatar/           # 👥 NPC & Speaker Portraits
+│   │       │   ├── elder.png     # Trưởng làng
+│   │       │   ├── merchant.png  # Thương gia
+│   │       │   ├── guard.png     # Lính canh
+│   │       │   ├── john-fisher.png # John - Ngư dân
+│   │       │   ├── marcus-scholar.png # Marcus - Học giả
+│   │       │   ├── mina-inn-keeper.png # Mina - Chủ quán trọ
+│   │       │   ├── jack-sailor.png # Jack - Thủy thủ
+│   │       │   ├── arch-mage.png # Đại pháp sư
+│   │       │   ├── duke.png      # Công tước
+│   │       │   ├── kyrina-pirate-leader.png # Kyrina - Thủ lĩnh cướp biển
+│   │       │   ├── mira-dancer.png # Mira - Vũ công
+│   │       │   ├── amon-strange-merchant.png # Amon - Thương gia bí ẩn
+│   │       │   ├── player.png    # Player avatar
+│   │       │   └── default.png   # Fallback avatar
+│   │       │
+│   │       └── npc/              # 📖 Legacy NPC Portraits
+│   │           └── ...           # Additional character images
+│   │
+│   └── templates/                # 🌐 Jinja2 HTML Templates
+│       ├── index.html            # Landing page với auth system
 │       ├── town.html             # Main game interface
 │       ├── battle.html           # Combat interface
-│       ├── quests.html           # Quest management
-│       └── dialog.html           # Dialog system
+│       ├── quests.html           # Quest management system
+│       └── dialog.html           # Dialog system với animations
 │
 ├── 🔧 Scripts & Utils
 │   ├── start.bat                 # Main startup script
-│   ├── start_local.bat           # Local development
-│   ├── switch_db.bat             # Environment switching
-│   ├── migrate_buildings.py      # Database migration
+│   ├── start_local.bat           # Local development với MongoDB local
+│   ├── switch_db.bat             # Environment switching utility
+│   ├── migrate_buildings.py      # Database migration tool
 │   └── requirements.txt          # Python dependencies
 │
 ├── 📖 Documentation & Config
-│   ├── README.md                 # Project documentation
+│   ├── README.md                 # Comprehensive project documentation
 │   ├── .gitignore               # Git ignore rules
 │   └── CLEANUP_SUMMARY.md       # Project cleanup log
 │
 └── 🗃️ Development
     ├── git-push.bat             # Git automation scripts
-    ├── git-start.bat
-    └── __pycache__/             # Python cache
+    ├── git-start.bat            # Git repository initialization
+    └── __pycache__/             # Python cache directory
 ```
+
+### 📂 **Static Assets Breakdown & Usage**
+
+#### 🎨 **Background Images (16 files)**
+Hệ thống background đa dạng cho dialog và battle scenes:
+
+**Urban Environments:**
+- `village.jpg` - Làng quê, NPC conversations
+- `market.jpg` - Khu chợ, merchant interactions
+- `room.jpg` - Phòng kín, private meetings
+
+**Nature Environments:**
+- `forest.jpg` - Rừng cây, adventure quests
+- `meadow.jpg` - Đồng cỏ, peaceful scenes
+- `grassland.jpg` - Thảo nguyên rộng lớn
+
+**Underground/Cave Systems:**
+- `cave.jpg` - Hang động thông thường
+- `mine.jpg` - Hầm mỏ, resource gathering
+- `lavacave.jpg` - Hang động nham thạch, boss battles
+
+**Specialized Locations:**
+- `harbor.jpg` - Bến cảng, sailor/fishing quests
+- `ruins.png` - Tàn tích cổ đại, mysterious encounters
+- `desert.jpg` - Sa mạc, extreme environments
+- `snowfield.jpg` - Vùng tuyết, winter quests
+
+#### 🎯 **Icon System Architecture**
+Hệ thống icon được tổ chức theo chức năng:
+
+**UI Navigation Icons (`icon/button/`):**
+- Quest, battle, logout buttons
+- Consistent design language
+- 24x24px standard size
+
+**User Stats Icons (`icon/info/`):**
+- Gold, EXP, reputation indicators
+- 16x16px for compact display
+- Visual feedback system
+
+**Game Content Icons:**
+- **Items** (`icon/item/`): .webp format, optimized loading
+- **Skills** (`icon/skill/`): .png format, clear visualization
+- **Buildings** (`icon/building/`): Consistent với building sprites
+
+#### 👥 **Character & Avatar System**
+Comprehensive character representation:
+
+**Player Characters (`player/`):**
+- Gender-based sprite sheets (male/female)
+- 4-frame idle animations (128x128px)
+- GML.js animation integration
+
+**NPC Avatars (`avatar/`):**
+- 13 unique NPCs với localized names
+- Consistent art style
+- Dialog system integration
+- Fallback support cho missing characters
+
+#### 🏗️ **Building Visual Assets**
+Complete building ecosystem:
+- Individual building sprites
+- Ground texture base
+- Scale 2x cho visual emphasis
+- Level badges (xanh/đỏ states)
+
+### 🔄 **Asset Loading Strategy**
+
+**Performance Optimizations:**
+- **Lazy Loading**: Chỉ load assets khi cần
+- **Format Optimization**: .webp cho items, .png cho UI
+- **Fallback System**: Graceful degradation
+- **Caching Strategy**: Browser cache optimization
+
+**Error Handling:**
+```javascript
+// Fallback system example
+<img src="item_icon.webp" 
+     onerror="this.src='fallback_icon.png'">
+```
+
+**Memory Management:**
+- Conditional asset loading
+- Animation frame optimization
+- Background image preloading
 
 ---
 
