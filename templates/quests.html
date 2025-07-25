@@ -16,7 +16,7 @@
     <div class="main-container">
         <!-- Header -->
         <div class="header">
-            <h1><i class="fas fa-scroll"></i> Nhiệm vụ</h1>
+            <h1><img src="/static/img/icon/button/quest.png" style="width: 24px; height: 24px; object-fit: contain; margin-right: 10px; vertical-align: middle;" alt="Quest"> Nhiệm vụ</h1>
         </div>
 
         <!-- User Info & Navigation Bar -->
@@ -24,30 +24,30 @@
             <!-- User Stats -->
             <div class="user-stats">
                 <div class="info-item">
-                    <i class="fas fa-star"></i>
+                    <img src="/static/img/icon/info/exp.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Level">
                     <span>Cấp độ: <strong id="userLevel">1</strong></span>
                 </div>
                 <div class="info-item">
-                    <i class="fas fa-coins"></i>
+                    <img src="/static/img/icon/info/gold.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Gold">
                     <span>Vàng: <strong id="userGold">0</strong></span>
                 </div>
                 <div class="info-item">
-                    <i class="fas fa-bolt"></i>
+                    <img src="/static/img/icon/info/exp.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="EXP">
                     <span>EXP: <strong id="userExp">0</strong></span>
                 </div>
                 <div class="info-item">
-                    <i class="fas fa-heart"></i>
+                    <img src="/static/img/icon/info/reputation.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Reputation">
                     <span>Danh tiếng: <strong id="userReputation">0</strong></span>
                 </div>
             </div>
             
             <!-- Navigation Actions -->
             <div class="nav-actions">
-                <a href="/town" class="btn btn-primary">
-                    <i class="fas fa-city"></i> Quay lại thị trấn
+                <a href="/town" class="btn btn-primary btn-icon">
+                    <img src="/static/img/icon/button/town.png" alt="Town"> Quay lại thị trấn
                 </a>
-                <button class="btn btn-secondary" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                <button class="btn btn-secondary btn-icon" onclick="logout()">
+                    <img src="/static/img/icon/button/logout.png" alt="Logout"> Đăng xuất
                 </button>
             </div>
         </div>
@@ -85,7 +85,7 @@
                 if (activeQuests.length > 0) {
                     const activeSection = document.createElement('div');
                     activeSection.className = 'quest-section';
-                    activeSection.innerHTML = '<h3 class="quest-section-title"><i class="fas fa-play"></i> Nhiệm vụ đang thực hiện</h3>';
+                    activeSection.innerHTML = '<h3 class="quest-section-title"><img src="/static/img/icon/button/quest.png" style="width: 20px; height: 20px; object-fit: contain; margin-right: 8px; vertical-align: middle;" alt="Active"> Nhiệm vụ đang thực hiện</h3>';
                     
                     activeQuests.forEach(userQuest => {
                         const quest = allQuests.find(q => q.quest_id === userQuest.quest_id);
@@ -108,7 +108,7 @@
                 if (availableQuests.length > 0) {
                     const availableSection = document.createElement('div');
                     availableSection.className = 'quest-section';
-                    availableSection.innerHTML = '<h3 class="quest-section-title"><i class="fas fa-plus"></i> Nhiệm vụ có thể nhận</h3>';
+                    availableSection.innerHTML = '<h3 class="quest-section-title"><img src="/static/img/icon/button/start.png" style="width: 20px; height: 20px; object-fit: contain; margin-right: 8px; vertical-align: middle;" alt="Available"> Nhiệm vụ có thể nhận</h3>';
                     
                     availableQuests.slice(0, 5 - activeQuests.length).forEach(quest => {
                         const questCard = createQuestCard(quest, 'available');
@@ -122,7 +122,7 @@
                 if (activeQuests.length === 0 && availableQuests.length === 0) {
                     container.innerHTML = `
                         <div class="quests-empty">
-                            <i class="fas fa-scroll"></i>
+                            <img src="/static/img/icon/button/quest.png" style="width: 48px; height: 48px; object-fit: contain; opacity: 0.5;" alt="No Quest">
                             <h3>Không có nhiệm vụ nào</h3>
                             <p>Hãy nâng cấp level để mở khóa nhiệm vụ mới!</p>
                         </div>
@@ -149,15 +149,15 @@
             const rewardsHtml = `
                 <div class="quest-rewards">
                     <div class="quest-reward-item">
-                        <i class="fas fa-coins"></i>
+                        <img src="/static/img/icon/info/gold.png" style="width: 14px; height: 14px; object-fit: contain; margin-right: 4px;" alt="Gold">
                         <span>${quest.reward.gold} vàng</span>
                     </div>
                     <div class="quest-reward-item">
-                        <i class="fas fa-bolt"></i>
+                        <img src="/static/img/icon/info/exp.png" style="width: 14px; height: 14px; object-fit: contain; margin-right: 4px;" alt="EXP">
                         <span>${quest.reward.exp} EXP</span>
                     </div>
                     <div class="quest-reward-item">
-                        <i class="fas fa-star"></i>
+                        <img src="/static/img/icon/info/exp.png" style="width: 14px; height: 14px; object-fit: contain; margin-right: 4px;" alt="Level">
                         <span>Cấp ${quest.level_required}+</span>
                     </div>
                 </div>
@@ -191,8 +191,8 @@
                         <div class="quest-status ${stateClass}">
                             ${stateText}
                         </div>
-                        <button class="btn btn-primary quest-action-btn" onclick="startQuest('${quest.quest_id}')">
-                            <i class="fas fa-play"></i> ${buttonText}
+                        <button class="btn btn-primary quest-action-btn btn-icon" onclick="startQuest('${quest.quest_id}')">
+                            <img src="/static/img/icon/button/start.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px;" alt="Play"> ${buttonText}
                         </button>
                     </div>
                 </div>

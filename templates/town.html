@@ -17,7 +17,7 @@
     <div class="main-container">
         <!-- Header -->
         <div class="header">
-            <h1><i class="fas fa-city"></i> Thị Trấn</h1>
+            <h1><img src="/static/img/icon/button/town.png" style="width: 24px; height: 24px; object-fit: contain; margin-right: 10px; vertical-align: middle;" alt="Town"> Thị Trấn</h1>
         </div>
 
         <!-- User Info & Navigation Bar -->
@@ -25,36 +25,36 @@
             <!-- User Stats -->
             <div class="user-stats">
                 <div class="info-item">
-                    <i class="fas fa-star"></i>
+                    <img src="/static/img/icon/info/exp.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Level">
                     <span>Cấp độ: <strong id="userLevel">1</strong></span>
                 </div>
                 <div class="info-item">
-                    <i class="fas fa-coins"></i>
+                    <img src="/static/img/icon/info/gold.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Gold">
                     <span>Vàng: <strong id="userGold">0</strong></span>
                 </div>
                 <div class="info-item">
-                    <i class="fas fa-bolt"></i>
+                    <img src="/static/img/icon/info/exp.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="EXP">
                     <span>EXP: <strong id="userExp">0</strong></span>
                 </div>
                 <div class="info-item">
-                    <i class="fas fa-heart"></i>
+                    <img src="/static/img/icon/info/reputation.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Reputation">
                     <span>Danh tiếng: <strong id="userReputation">0</strong></span>
                 </div>
             </div>
             
             <!-- Navigation Actions -->
             <div class="nav-actions">
-                <button class="btn btn-primary" onclick="showPlayerInfo()">
-                    <i class="fas fa-user"></i> Thông tin
+                <button class="btn btn-primary btn-icon" onclick="showPlayerInfo()">
+                    <img src="/static/img/icon/button/info.png" alt="Info"> Thông tin
                 </button>
-                <a href="/quests" class="btn btn-primary">
-                    <i class="fas fa-scroll"></i> Nhiệm vụ
+                <a href="/quests" class="btn btn-primary btn-icon">
+                    <img src="/static/img/icon/button/quest.png" alt="Quest"> Nhiệm vụ
                 </a>
-                <button class="btn btn-primary" onclick="showInventory()">
-                    <i class="fas fa-boxes"></i> Kho đồ
+                <button class="btn btn-primary btn-icon" onclick="showInventory()">
+                    <img src="/static/img/icon/button/inventory.png" alt="Inventory"> Kho đồ
                 </button>
-                <button class="btn btn-secondary" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                <button class="btn btn-secondary btn-icon" onclick="logout()">
+                    <img src="/static/img/icon/button/logout.png" alt="Logout"> Đăng xuất
                 </button>
             </div>
         </div>
@@ -71,10 +71,10 @@
             <!-- Modal Header -->
             <div class="modal-header">
                 <h2 class="modal-title">
-                    <i class="fas fa-user"></i> Thông tin nhân vật
+                    <img src="/static/img/icon/info/user.png" style="width: 20px; height: 20px; object-fit: contain; margin-right: 8px; vertical-align: middle;" alt="User"> Thông tin nhân vật
                 </h2>
                 <button class="modal-close" onclick="closeModal()">
-                    <i class="fas fa-times"></i>
+                    <img src="/static/img/icon/button/close.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Close">
                 </button>
             </div>
             
@@ -85,7 +85,7 @@
                     <div class="player-info-avatar">
                         <canvas id="playerInfoCanvas" width="128" height="128"></canvas>
                         <div class="avatar-label">
-                            <i class="fas fa-gamepad"></i>
+                            <img src="/static/img/icon/info/user.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Player">
                             <span id="playerUsername">Tên tài khoản</span>
                         </div>
                     </div>
@@ -94,7 +94,7 @@
                     <div class="player-info-stats">
                         <div class="stats-grid">
                             <div class="stat-item">
-                                <i class="fas fa-star"></i>
+                                <img src="/static/img/icon/info/exp.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Level">
                                 <div class="stat-content">
                                     <span class="stat-label">Cấp độ</span>
                                     <span class="stat-value" id="playerInfoLevel">1</span>
@@ -102,7 +102,7 @@
                             </div>
                             
                             <div class="stat-item">
-                                <i class="fas fa-coins"></i>
+                                <img src="/static/img/icon/info/gold.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Gold">
                                 <div class="stat-content">
                                     <span class="stat-label">Vàng</span>
                                     <span class="stat-value" id="playerInfoGold">0</span>
@@ -110,7 +110,7 @@
                             </div>
                             
                             <div class="stat-item">
-                                <i class="fas fa-bolt"></i>
+                                <img src="/static/img/icon/info/exp.png" style="width: 16px; height: 16px; object-fit: contain;" alt="EXP">
                                 <div class="stat-content">
                                     <span class="stat-label">Kinh nghiệm</span>
                                     <span class="stat-value" id="playerInfoExp">0</span>
@@ -118,7 +118,7 @@
                             </div>
                             
                             <div class="stat-item">
-                                <i class="fas fa-heart"></i>
+                                <img src="/static/img/icon/info/reputation.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Reputation">
                                 <div class="stat-content">
                                     <span class="stat-label">Danh tiếng</span>
                                     <span class="stat-value" id="playerInfoReputation">0</span>
@@ -126,7 +126,7 @@
                             </div>
                             
                             <div class="stat-item">
-                                <i class="fas fa-fist-raised"></i>
+                                <img src="/static/img/icon/info/stat/str.png" style="width: 16px; height: 16px; object-fit: contain;" alt="STR">
                                 <div class="stat-content">
                                     <span class="stat-label">Sức mạnh (STR)</span>
                                     <span class="stat-value" id="playerInfoSTR">10</span>
@@ -134,7 +134,7 @@
                             </div>
                             
                             <div class="stat-item">
-                                <i class="fas fa-running"></i>
+                                <img src="/static/img/icon/info/stat/agi.png" style="width: 16px; height: 16px; object-fit: contain;" alt="AGI">
                                 <div class="stat-content">
                                     <span class="stat-label">Nhanh nhẹn (AGI)</span>
                                     <span class="stat-value" id="playerInfoAGI">10</span>
@@ -142,7 +142,7 @@
                             </div>
                             
                             <div class="stat-item">
-                                <i class="fas fa-brain"></i>
+                                <img src="/static/img/icon/info/stat/int.png" style="width: 16px; height: 16px; object-fit: contain;" alt="INT">
                                 <div class="stat-content">
                                     <span class="stat-label">Trí tuệ (INT)</span>
                                     <span class="stat-value" id="playerInfoINT">10</span>
@@ -150,7 +150,7 @@
                             </div>
                             
                             <div class="stat-item">
-                                <i class="fas fa-shield-alt"></i>
+                                <img src="/static/img/icon/info/stat/vit.png" style="width: 16px; height: 16px; object-fit: contain;" alt="VIT">
                                 <div class="stat-content">
                                     <span class="stat-label">Thể lực (VIT)</span>
                                     <span class="stat-value" id="playerInfoVIT">10</span>
@@ -158,7 +158,7 @@
                             </div>
                             
                             <div class="stat-item">
-                                <i class="fas fa-eye"></i>
+                                <img src="/static/img/icon/info/stat/wis.png" style="width: 16px; height: 16px; object-fit: contain;" alt="WIS">
                                 <div class="stat-content">
                                     <span class="stat-label">Khôn ngoan (WIS)</span>
                                     <span class="stat-value" id="playerInfoWIS">10</span>
@@ -166,7 +166,7 @@
                             </div>
                             
                             <div class="stat-item">
-                                <i class="fas fa-crosshairs"></i>
+                                <img src="/static/img/icon/info/stat/str.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Crit">
                                 <div class="stat-content">
                                     <span class="stat-label">Tỷ lệ chí mạng</span>
                                     <span class="stat-value" id="playerInfoCrit">10%</span>
@@ -179,8 +179,8 @@
             
             <!-- Modal Footer -->
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal()">
-                    <i class="fas fa-times"></i> Đóng
+                <button class="btn btn-secondary btn-icon" onclick="closeModal()">
+                    <img src="/static/img/icon/button/cancel.png" alt="Close"> Đóng
                 </button>
             </div>
         </div>
@@ -193,7 +193,7 @@
             <div class="modal-header">
                 <h2 class="modal-title" id="modalBuildingName">Tên công trình</h2>
                 <button class="modal-close" onclick="closeModal()">
-                    <i class="fas fa-times"></i>
+                    <img src="/static/img/icon/button/close.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Close">
                 </button>
             </div>
             
@@ -208,11 +208,11 @@
             
             <!-- Modal Footer -->
             <div class="modal-footer">
-                <button id="upgradeButton" class="btn btn-primary">
-                    <i class="fas fa-hammer"></i> Xây dựng
+                <button id="upgradeButton" class="btn btn-primary btn-icon">
+                    <img src="/static/img/icon/button/build.png" alt="Build"> Xây dựng
                 </button>
-                <button class="btn btn-secondary" onclick="closeModal()">
-                    <i class="fas fa-times"></i> Đóng
+                <button class="btn btn-secondary btn-icon" onclick="closeModal()">
+                    <img src="/static/img/icon/button/cancel.png" alt="Close"> Đóng
                 </button>
             </div>
         </div>
@@ -224,10 +224,10 @@
             <!-- Modal Header -->
             <div class="modal-header">
                 <h2 class="modal-title">
-                    <i class="fas fa-boxes"></i> Kho đồ
+                    <img src="/static/img/icon/button/inventory.png" style="width: 20px; height: 20px; object-fit: contain; margin-right: 8px; vertical-align: middle;" alt="Inventory"> Kho đồ
                 </h2>
                 <button class="modal-close" onclick="closeModal()">
-                    <i class="fas fa-times"></i>
+                    <img src="/static/img/icon/button/close.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Close">
                 </button>
             </div>
             
@@ -237,11 +237,11 @@
                     <!-- Main Inventory Panel (70%) -->
                     <div class="inventory-main">
                         <div class="inventory-tabs">
-                            <button class="btn btn-primary" onclick="showInventoryTab('equipment')">
-                                <i class="fas fa-sword"></i> Trang bị
+                            <button class="btn btn-primary btn-icon" onclick="showInventoryTab('equipment')">
+                                <img src="/static/img/icon/button/blacksmith.png" alt="Equipment"> Trang bị
                             </button>
-                            <button class="btn btn-primary" onclick="showInventoryTab('material')">
-                                <i class="fas fa-cubes"></i> Nguyên liệu
+                            <button class="btn btn-primary btn-icon" onclick="showInventoryTab('material')">
+                                <img src="/static/img/icon/button/market.png" alt="Material"> Nguyên liệu
                             </button>
                         </div>
                         
@@ -254,7 +254,7 @@
                     <div class="inventory-sidebar">
                         <div class="item-detail empty" id="itemDetail">
                             <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
-                                <i class="fas fa-mouse-pointer" style="font-size: 2em; margin-bottom: 10px; opacity: 0.5;"></i>
+                                <img src="/static/img/icon/info/user.png" style="width: 32px; height: 32px; object-fit: contain; margin-bottom: 10px; opacity: 0.5;" alt="Select Item">
                                 <p>Di chuột qua item để xem chi tiết</p>
                             </div>
                         </div>
@@ -264,11 +264,11 @@
             
             <!-- Modal Footer -->
             <div class="modal-footer">
-                <button id="useItemButton" class="btn btn-primary" style="display: none;" onclick="useSelectedItem()">
-                    <i class="fas fa-hand-paper"></i> Sử dụng
+                <button id="useItemButton" class="btn btn-primary btn-icon" style="display: none;" onclick="useSelectedItem()">
+                    <img src="/static/img/icon/button/start.png" alt="Use"> Sử dụng
                 </button>
-                <button class="btn btn-secondary" onclick="closeModal()">
-                    <i class="fas fa-times"></i> Đóng
+                <button class="btn btn-secondary btn-icon" onclick="closeModal()">
+                    <img src="/static/img/icon/button/cancel.png" alt="Close"> Đóng
                 </button>
             </div>
         </div>

@@ -315,11 +315,35 @@ body {
     transition: all var(--transition-medium);
     font-weight: bold;
     font-family: var(--font-primary);
+    position: relative;
 }
 
 .btn:hover {
     background: var(--primary-color-hover);
     transform: translateY(-2px);
+}
+
+/* Button with icon image */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+}
+
+.btn-icon img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+/* Feature icons for landing page */
+.feature-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    margin-right: 8px;
+    vertical-align: middle;
 }
 
 .btn-success {
