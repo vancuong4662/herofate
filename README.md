@@ -2,7 +2,7 @@
 
 ## 1. Giới thiệu chung
 
-**Hero Fate** là một web game online đơn giản, được thiết kế như một dự án học tập để học viên mới bắt đầu học lập tr#### Giao diện `/town`
+**Hero Fate** là một web game online đơn giản, được thiết kế như một dự án học tập để học viên mới bắt đầu học lập trình có thể thực hành theo. Game có lối chơi nhẹ nhàng, gồm hai phần chính: **xây dựng thị trấn** và **chiến đấu theo lượt (turn-based)**.
 
 **🎮 Enhanced Navigation Bar:**
 - **User Stats**: Cấp độ, Vàng, EXP, Danh tiếng với icons  

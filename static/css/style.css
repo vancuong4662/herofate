@@ -282,6 +282,29 @@ body {
     background: linear-gradient(135deg, #27ae60, #2ecc71);
 }
 
+/* New level badge style */
+.building-level-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 10;
+    background: #e74c3c;
+    color: white;
+}
+
+.building-level-badge.built {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+}
+
+.building-level-badge.not-built {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+}
+
 .building-name {
     font-weight: bold;
     margin-bottom: 8px;
@@ -300,6 +323,109 @@ body {
 .action-buttons {
     text-align: center;
     margin-top: 20px;
+}
+
+/* Building Card Action Buttons */
+.building-card .action-buttons {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.building-card .btn {
+    padding: 8px 12px;
+    font-size: 0.9em;
+    min-width: 90px;
+    flex: 0 1 auto;
+}
+
+/* Build button style */
+.btn-build {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    border: 2px solid #229954;
+}
+
+.btn-build:hover {
+    background: linear-gradient(135deg, #229954, #27ae60);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(34, 153, 84, 0.3);
+}
+
+/* Upgrade button style */
+.btn-upgrade {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    border: 2px solid #d68910;
+}
+
+.btn-upgrade:hover {
+    background: linear-gradient(135deg, #d68910, #f39c12);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(214, 137, 16, 0.3);
+}
+
+/* Feature buttons styles */
+.btn-feature {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border: 2px solid #2471a3;
+}
+
+.btn-feature:hover {
+    background: linear-gradient(135deg, #2471a3, #3498db);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(36, 113, 163, 0.3);
+}
+
+/* Specific feature button colors */
+.btn-quests {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    border: 2px solid #7d3c98;
+}
+
+.btn-quests:hover {
+    background: linear-gradient(135deg, #7d3c98, #9b59b6);
+    box-shadow: 0 5px 15px rgba(125, 60, 152, 0.3);
+}
+
+.btn-blacksmith {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border: 2px solid #a93226;
+}
+
+.btn-blacksmith:hover {
+    background: linear-gradient(135deg, #a93226, #e74c3c);
+    box-shadow: 0 5px 15px rgba(169, 50, 38, 0.3);
+}
+
+.btn-market {
+    background: linear-gradient(135deg, #f1c40f, #f39c12);
+    border: 2px solid #d4ac0d;
+}
+
+.btn-market:hover {
+    background: linear-gradient(135deg, #d4ac0d, #f1c40f);
+    box-shadow: 0 5px 15px rgba(212, 172, 13, 0.3);
+}
+
+.btn-storage {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    border: 2px solid #6c7b7d;
+}
+
+.btn-storage:hover {
+    background: linear-gradient(135deg, #6c7b7d, #95a5a6);
+    box-shadow: 0 5px 15px rgba(108, 123, 125, 0.3);
+}
+
+.btn-magetower {
+    background: linear-gradient(135deg, #9c88ff, #8c7ae6);
+    border: 2px solid #7b68ee;
+}
+
+.btn-magetower:hover {
+    background: linear-gradient(135deg, #7b68ee, #9c88ff);
+    box-shadow: 0 5px 15px rgba(123, 104, 238, 0.3);
 }
 
 .btn {

@@ -17,7 +17,7 @@
     <div class="main-container">
         <!-- Header -->
         <div class="header">
-            <h1><img src="/static/img/icon/button/town.png" style="width: 24px; height: 24px; object-fit: contain; margin-right: 10px; vertical-align: middle;" alt="Town"> Thị Trấn</h1>
+            <h1><img src="/static/img/icon/button/town.png" style="width: 48px; height: 48x; object-fit: contain; margin-right: 10px; vertical-align: middle;" alt="Town"> Thị Trấn</h1>
         </div>
 
         <!-- User Info & Navigation Bar -->
@@ -46,15 +46,6 @@
             <div class="nav-actions">
                 <button class="btn btn-primary btn-icon" onclick="showPlayerInfo()">
                     <img src="/static/img/icon/button/info.png" alt="Info"> Thông tin
-                </button>
-                <a href="/quests" class="btn btn-primary btn-icon">
-                    <img src="/static/img/icon/button/quest.png" alt="Quest"> Nhiệm vụ
-                </a>
-                <a href="/dialog" class="btn btn-primary btn-icon">
-                    <img src="/static/img/icon/button/info.png" alt="Dialog"> Dialog
-                </a>
-                <button class="btn btn-primary btn-icon" onclick="showInventory()">
-                    <img src="/static/img/icon/button/inventory.png" alt="Inventory"> Kho đồ
                 </button>
                 <button class="btn btn-secondary btn-icon" onclick="logout()">
                     <img src="/static/img/icon/button/logout.png" alt="Logout"> Đăng xuất
@@ -757,7 +748,257 @@
                 window.location.href = '/';
                 return;
             }
+            
+            // Load buildings and render them
+            loadBuildings();
+            updateUserInfoDisplay(userData);
         });
+
+        // Load and render buildings
+        async function loadBuildings() {
+            try {
+                const response = await apiCall('/api/buildings');
+                const buildings = response.buildings;
+                const userData = getUserData();
+                const userBuildings = userData.buildings || {};
+                
+                renderBuildings(buildings, userBuildings);
+            } catch (error) {
+                console.error('Error loading buildings:', error);
+                showToast('Lỗi khi tải thông tin công trình', 'error');
+            }
+        }
+
+        // Render buildings as cards with appropriate buttons
+        function renderBuildings(buildings, userBuildings) {
+            const container = document.getElementById('buildingsContainer');
+            let html = '';
+            
+            buildings.forEach(building => {
+                const userLevel = userBuildings[building.building_id] || 0;
+                const isBuilt = userLevel > 0;
+                const maxLevel = Object.keys(building.upgrade_material || {}).length;
+                const isMaxLevel = userLevel >= maxLevel;
+                
+                // Building image with level indicator
+                const buildingImage = `/static/img/building/${building.building_id}.png`;
+                const levelText = isBuilt ? `Cấp ${userLevel}` : 'Chưa xây';
+                
+                // Building card styling
+                const cardClass = isBuilt ? 'building-card built' : 'building-card not-built';
+                
+                // Generate buttons based on building state
+                let buttonsHtml = '';
+                
+                if (!isBuilt) {
+                    // Not built - show build button
+                    buttonsHtml = `
+                        <button class="btn btn-success btn-icon building-action" onclick="showBuildingModal('${building.building_id}')">
+                            <img src="/static/img/icon/button/build.png" alt="Build"> Xây dựng
+                        </button>
+                    `;
+                } else {
+                    // Built - show feature button and upgrade button (if not max level)
+                    const featureButton = getBuildingFeatureButton(building.building_id);
+                    
+                    buttonsHtml = `
+                        <div class="building-buttons">
+                            ${featureButton}
+                            ${!isMaxLevel ? `
+                                <button class="btn btn-primary btn-icon building-action" onclick="showBuildingModal('${building.building_id}')">
+                                    <img src="/static/img/icon/button/up.png" alt="Upgrade"> Nâng cấp
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+                
+                html += `
+                    <div class="${cardClass}" data-building-id="${building.building_id}">
+                        <div class="building-level-badge ${isBuilt ? 'built' : 'not-built'}">${levelText}</div>
+                        <div class="building-image">
+                            <div class="building-structure" style="background-image: url('${buildingImage}');"></div>
+                        </div>
+                        <div class="building-info">
+                            <h3 class="building-name">${building.name}</h3>
+                            <p class="building-description">${building.description}</p>
+                            <div class="action-buttons">
+                                ${buttonsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Get feature button for each building type
+        function getBuildingFeatureButton(buildingId) {
+            const featureButtons = {
+                'town_hall': `
+                    <button class="btn btn-success btn-icon building-feature" onclick="window.location.href='/quests'">
+                        <img src="/static/img/icon/button/quest.png" alt="Quests"> Nhiệm vụ
+                    </button>
+                `,
+                'blacksmith': `
+                    <button class="btn btn-success btn-icon building-feature" onclick="showBlacksmithModal()">
+                        <img src="/static/img/icon/button/blacksmith.png" alt="Forge"> Rèn
+                    </button>
+                `,
+                'market': `
+                    <button class="btn btn-success btn-icon building-feature" onclick="showMarketModal()">
+                        <img src="/static/img/icon/button/market.png" alt="Shop"> Chợ
+                    </button>
+                `,
+                'storage': `
+                    <button class="btn btn-success btn-icon building-feature" onclick="showInventory()">
+                        <img src="/static/img/icon/button/inventory.png" alt="Storage"> Kho đồ
+                    </button>
+                `,
+                'mage_tower': `
+                    <button class="btn btn-success btn-icon building-feature" onclick="showMageTowerModal()">
+                        <img src="/static/img/icon/button/mage.png" alt="Magic"> Phép thuật
+                    </button>
+                `
+            };
+            
+            return featureButtons[buildingId] || '';
+        }
+
+        // Building feature functions
+        function showBlacksmithModal() {
+            showToast('Tính năng thợ rèn đang phát triển', 'info');
+            // TODO: Implement blacksmith functionality
+        }
+
+        function showMarketModal() {
+            showToast('Tính năng chợ đang phát triển', 'info');
+            // TODO: Implement market functionality
+        }
+
+        function showMageTowerModal() {
+            showToast('Tính năng tháp phép thuật đang phát triển', 'info');
+            // TODO: Implement mage tower functionality
+        }
+
+        // Show building modal for upgrade/build
+        async function showBuildingModal(buildingId) {
+            try {
+                const response = await apiCall('/api/buildings');
+                const buildings = response.buildings;
+                const building = buildings.find(b => b.building_id === buildingId);
+                
+                if (!building) {
+                    showToast('Không tìm thấy thông tin công trình', 'error');
+                    return;
+                }
+                
+                const userData = getUserData();
+                const userLevel = userData.buildings[buildingId] || 0;
+                const nextLevel = userLevel + 1;
+                const upgradeInfo = building.upgrade_material[nextLevel.toString()];
+                
+                if (!upgradeInfo) {
+                    showToast('Công trình đã đạt cấp độ tối đa', 'info');
+                    return;
+                }
+                
+                // Update modal content
+                document.getElementById('modalBuildingName').textContent = building.name;
+                document.getElementById('modalBuildingDescription').textContent = building.description;
+                
+                // Generate upgrade info HTML
+                let upgradeHtml = `
+                    <div class="upgrade-section">
+                        <h4>
+                            <img src="/static/img/icon/button/${userLevel === 0 ? 'build' : 'up'}.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="${userLevel === 0 ? 'Build' : 'Upgrade'}">
+                            ${userLevel === 0 ? 'Yêu cầu xây dựng' : `Nâng cấp lên cấp ${nextLevel}`}
+                        </h4>
+                        
+                        <div class="upgrade-cost">
+                            <div class="cost-item">
+                                <img src="/static/img/icon/info/gold.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Gold">
+                                <span>Vàng cần thiết: <strong>${upgradeInfo.gold}</strong></span>
+                                <span class="user-gold">(Hiện có: ${userData.gold || 0})</span>
+                            </div>
+                `;
+                
+                if (upgradeInfo.materials && upgradeInfo.materials.length > 0) {
+                    upgradeHtml += '<div class="materials-required"><h5>Nguyên liệu cần thiết:</h5>';
+                    upgradeInfo.materials.forEach(material => {
+                        const userItem = userData.inventory.find(item => item.item_id === material.item_id);
+                        const userQuantity = userItem ? userItem.quantity : 0;
+                        const hasEnough = userQuantity >= material.quantity;
+                        
+                        upgradeHtml += `
+                            <div class="material-item ${hasEnough ? 'sufficient' : 'insufficient'}">
+                                <img src="/static/img/icon/item/${material.item_id}.webp" 
+                                     style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px;" 
+                                     alt="Material"
+                                     onerror="this.src='/static/img/icon/button/cube.png'">
+                                <span>Cần: ${material.quantity}</span>
+                                <span>(Có: ${userQuantity})</span>
+                            </div>
+                        `;
+                    });
+                    upgradeHtml += '</div>';
+                }
+                
+                upgradeHtml += '</div></div>';
+                
+                document.getElementById('upgradeInfo').innerHTML = upgradeHtml;
+                
+                // Update upgrade button
+                const upgradeButton = document.getElementById('upgradeButton');
+                upgradeButton.textContent = userLevel === 0 ? 'Xây dựng' : 'Nâng cấp';
+                upgradeButton.innerHTML = `
+                    <img src="/static/img/icon/button/${userLevel === 0 ? 'build' : 'up'}.png" alt="${userLevel === 0 ? 'Build' : 'Upgrade'}"> 
+                    ${userLevel === 0 ? 'Xây dựng' : 'Nâng cấp'}
+                `;
+                upgradeButton.onclick = () => upgradeBuildingConfirm(buildingId, nextLevel);
+                
+                // Show modal
+                document.getElementById('buildingModal').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading building info:', error);
+                showToast('Lỗi khi tải thông tin công trình', 'error');
+            }
+        }
+
+        // Confirm building upgrade
+        async function upgradeBuildingConfirm(buildingId, level) {
+            try {
+                const response = await apiCall('/api/upgrade-building', 'POST', {
+                    building_id: buildingId,
+                    level: level
+                });
+                
+                if (response.success) {
+                    showToast(response.message, 'success');
+                    
+                    // Update user data
+                    const userData = getUserData();
+                    userData.buildings[buildingId] = level;
+                    userData.gold = response.new_gold;
+                    userData.inventory = response.new_inventory;
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    
+                    // Refresh buildings display
+                    loadBuildings();
+                    updateUserInfoDisplay(userData);
+                    
+                    // Close modal
+                    closeModal();
+                } else {
+                    showToast(response.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error upgrading building:', error);
+                showToast('Lỗi khi nâng cấp công trình', 'error');
+            }
+        }
     </script>
 </body>
 </html>
