@@ -363,9 +363,9 @@ Hệ thống inventory sử dụng layout chia đôi hiện đại:
 
 ### 6.3. Item Display & Icons
 ```javascript
-// Item icons từ static/img/icon/item/{item_id}.webp
+// Item icons từ static/img/icon/item/{item_id}.png
 function getItemIcon(itemData) {
-    return `/static/img/icon/item/${itemData.item_id}.webp`;
+    return `/static/img/icon/item/${itemData.item_id}.png`;
 }
 
 // Fallback system nếu image không load
@@ -1071,9 +1071,9 @@ herofate/
 │   │       │   │   ├── gold.png  # Gold currency
 │   │       │   │   ├── exp.png   # Experience points
 │   │       │   │   └── reputation.png # Reputation
-│   │       │   ├── item/         # Item icons (.webp format)
-│   │       │   │   ├── bronze_sword.webp
-│   │       │   │   ├── wood.webp
+│   │       │   ├── item/         # Item icons (.png format)
+│   │       │   │   ├── bronze_sword.png
+│   │       │   │   ├── wood.png
 │   │       │   │   └── ...       # Extensive item collection
 │   │       │   └── skill/        # Skill icons
 │   │       │       ├── 1001.png  # Basic attack
@@ -1175,7 +1175,7 @@ Hệ thống icon được tổ chức theo chức năng:
 - Visual feedback system
 
 **Game Content Icons:**
-- **Items** (`icon/item/`): .webp format, optimized loading
+- **Items** (`icon/item/`): .png format, optimized loading
 - **Skills** (`icon/skill/`): .png format, clear visualization
 - **Buildings** (`icon/building/`): Consistent với building sprites
 
@@ -1204,14 +1204,14 @@ Complete building ecosystem:
 
 **Performance Optimizations:**
 - **Lazy Loading**: Chỉ load assets khi cần
-- **Format Optimization**: .webp cho items, .png cho UI
+- **Format Optimization**: .png cho items và UI (unified format)
 - **Fallback System**: Graceful degradation
 - **Caching Strategy**: Browser cache optimization
 
 **Error Handling:**
 ```javascript
 // Fallback system example
-<img src="item_icon.webp" 
+<img src="item_icon.png" 
      onerror="this.src='fallback_icon.png'">
 ```
 

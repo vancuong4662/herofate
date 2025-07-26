@@ -428,6 +428,285 @@ body {
     box-shadow: 0 5px 15px rgba(123, 104, 238, 0.3);
 }
 
+/* Market Page Styles */
+.market-tabs {
+    display: flex;
+    margin-bottom: var(--spacing-lg);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.tab-button {
+    background: var(--bg-white-transparent);
+    border: none;
+    padding: var(--spacing-md) var(--spacing-lg);
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--text-secondary);
+    border-bottom: 3px solid transparent;
+    transition: all var(--transition-medium);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-button:hover {
+    background: var(--primary-color-light);
+    color: var(--text-primary);
+}
+
+.tab-button.active {
+    background: var(--primary-color);
+    color: var(--text-white);
+    border-bottom-color: var(--accent-color);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.market-info {
+    background: var(--bg-white-transparent);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-large);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.market-info h3 {
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.market-info p {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+/* Market Grid */
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.market-item {
+    background: var(--bg-white-transparent);
+    border-radius: var(--border-radius-large);
+    padding: var(--spacing-md);
+    cursor: pointer;
+    transition: all var(--transition-medium);
+    position: relative;
+    border: 2px solid transparent;
+}
+
+.market-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    background: rgba(255, 255, 255, 0.95);
+    border-color: var(--primary-color);
+}
+
+.market-item.equipment {
+    border-left: 4px solid var(--accent-color);
+}
+
+.market-item.material {
+    border-left: 4px solid var(--success-color);
+}
+
+.market-item .item-image {
+    text-align: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.market-item .item-image img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.market-item .item-name {
+    margin: 0 0 var(--spacing-xs) 0;
+    color: var(--text-primary);
+    font-size: 1.1em;
+    text-align: center;
+}
+
+.market-item .item-description {
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.market-item .item-quantity {
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.market-item .item-prices {
+    text-align: center;
+    position: relative;
+}
+
+.market-item .current-price {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 1.1em;
+}
+
+.market-item .original-price {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    text-decoration: line-through;
+    margin-top: 2px;
+}
+
+.market-item .discount-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: var(--danger-color);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+/* No items display */
+.no-items, .coming-soon {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-secondary);
+    grid-column: 1 / -1;
+}
+
+.no-items h3, .coming-soon h3 {
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--text-primary);
+}
+
+.no-items p, .coming-soon p {
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+/* Buy Modal Styles */
+.buy-item-display {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    align-items: flex-start;
+}
+
+.buy-item-display .item-image {
+    flex-shrink: 0;
+}
+
+.buy-item-display .item-image img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.buy-item-display .item-details h3 {
+    margin: 0 0 var(--spacing-xs) 0;
+    color: var(--text-primary);
+}
+
+.buy-item-display .item-details p {
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.buy-item-display .item-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.buy-item-display .stat-item {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+
+.quantity-selector {
+    margin-bottom: var(--spacing-lg);
+}
+
+.quantity-selector label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.quantity-controls input {
+    width: 80px;
+    padding: var(--spacing-xs);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-small);
+    text-align: center;
+    font-size: 1em;
+}
+
+.quantity-controls button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.buy-summary {
+    background: var(--bg-light);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-medium);
+}
+
+.cost-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.cost-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cost-item:first-child {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: var(--text-primary);
+}
+
+.cost-item:last-child {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
 .btn {
     background: var(--primary-color);
     color: var(--text-white);

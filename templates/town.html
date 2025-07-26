@@ -533,8 +533,8 @@
         }
 
         function getItemIcon(itemData) {
-            // Return path to webp icon image
-            return `/static/img/icon/item/${itemData.item_id}.webp`;
+            // Return path to png icon image
+            return `/static/img/icon/item/${itemData.item_id}.png`;
         }
 
         function getItemIconFallback(itemData) {
@@ -873,8 +873,7 @@
         }
 
         function showMarketModal() {
-            showToast('Tính năng chợ đang phát triển', 'info');
-            // TODO: Implement market functionality
+            window.location.href = '/market';
         }
 
         function showMageTowerModal() {
@@ -933,7 +932,7 @@
                         
                         upgradeHtml += `
                             <div class="material-item ${hasEnough ? 'sufficient' : 'insufficient'}">
-                                <img src="/static/img/icon/item/${material.item_id}.webp" 
+                                <img src="/static/img/icon/item/${material.item_id}.png" 
                                      style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px;" 
                                      alt="Material"
                                      onerror="this.src='/static/img/icon/button/cube.png'">

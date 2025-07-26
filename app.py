@@ -152,6 +152,110 @@ def assign_random_quests(username):
         import traceback
         traceback.print_exc()
 
+def assign_random_market_items(username):
+    """Assign random market items to user based on market building level"""
+    try:
+        import time
+        random.seed(int(time.time() * 1000) + hash(username))
+        
+        user = db.find_user(username)
+        if not user:
+            print(f"User {username} not found")
+            return
+        
+        # Get market building level (default to 0 if not built)
+        buildings = user.get('buildings', {})
+        market_level = buildings.get('market', 0)
+        
+        # If market is not built, no items to assign
+        if market_level == 0:
+            print(f"User {username} has no market building")
+            return
+        
+        # Calculate number of items based on market level (base 3 + level)
+        base_items = 3
+        items_count = base_items + market_level
+        max_items = 8  # Cap at 8 items
+        items_count = min(items_count, max_items)
+        
+        print(f"User {username} market level: {market_level}, will assign {items_count} items")
+        
+        # Check if user already has market items (refresh daily)
+        current_market = user.get('market', [])
+        current_time = datetime.utcnow()
+        
+        # Remove expired items (older than 24 hours)
+        valid_items = []
+        for item in current_market:
+            item_time = datetime.fromisoformat(item.get('timestamp', ''))
+            if (current_time - item_time).total_seconds() < 86400:  # 24 hours
+                valid_items.append(item)
+        
+        # If we still have enough valid items, don't assign new ones
+        if len(valid_items) >= items_count:
+            print(f"User {username} already has {len(valid_items)} valid market items")
+            return
+        
+        # Load all items
+        with open('data/items.json', 'r', encoding='utf-8') as f:
+            all_items = json.load(f)
+        
+        # Separate items by type
+        equipment_items = [item for item in all_items if item['type'] == 'equipment']
+        material_items = [item for item in all_items if item['type'] == 'material']
+        
+        print(f"Available equipment items: {len(equipment_items)}")
+        print(f"Available material items: {len(material_items)}")
+        
+        # Calculate how many of each type to assign
+        items_needed = items_count - len(valid_items)
+        equipment_count = int(items_needed * 0.2)  # 20% equipment
+        material_count = int(items_needed * 0.8)   # 80% materials
+        
+        # Ensure we have at least some of each if possible
+        if equipment_count == 0 and len(equipment_items) > 0 and items_needed > 0:
+            equipment_count = 1
+            material_count = items_needed - 1
+        
+        print(f"Will assign {equipment_count} equipment and {material_count} materials")
+        
+        new_market_items = valid_items.copy()
+        
+        # Add equipment items
+        if equipment_count > 0 and len(equipment_items) > 0:
+            selected_equipment = random.sample(equipment_items, min(equipment_count, len(equipment_items)))
+            for item in selected_equipment:
+                market_item = {
+                    'item_id': item['item_id'],
+                    'quantity': random.randint(1, 3),
+                    'price': int(item['price'] * random.uniform(0.9, 1.1)),  # Price variation ±10%
+                    'timestamp': current_time.isoformat()
+                }
+                new_market_items.append(market_item)
+                print(f"Added equipment item {item['item_id']} to market")
+        
+        # Add material items
+        if material_count > 0 and len(material_items) > 0:
+            selected_materials = random.sample(material_items, min(material_count, len(material_items)))
+            for item in selected_materials:
+                market_item = {
+                    'item_id': item['item_id'],
+                    'quantity': random.randint(5, 20),  # More quantity for materials
+                    'price': int(item['price'] * random.uniform(0.85, 1.05)),  # Less price variation for materials
+                    'timestamp': current_time.isoformat()
+                }
+                new_market_items.append(market_item)
+                print(f"Added material item {item['item_id']} to market")
+        
+        # Update user market data
+        db.update_user(username, {'market': new_market_items})
+        print(f"Successfully assigned {len(new_market_items)} market items to user {username}")
+        
+    except Exception as e:
+        print(f"Error assigning random market items to {username}: {e}")
+        import traceback
+        traceback.print_exc()
+
 @app.route("/")
 def index():
     # Nếu user đã đăng nhập, redirect sang town
@@ -184,6 +288,11 @@ def dialog():
 @login_required
 def quests():
     return render_template("quests.html")
+
+@app.route('/market')
+@login_required
+def market():
+    return render_template("market.html")
 
 # API Routes
 @app.route("/api/register", methods=["POST"])
@@ -227,7 +336,10 @@ def api_login():
             # Assign random quests if user has less than 3 active quests
             assign_random_quests(username)
             
-            # Reload user data after quest assignment
+            # Assign random market items based on market building level
+            assign_random_market_items(username)
+            
+            # Reload user data after quest and market assignment
             updated_user_data = db.find_user(username)
             user = User(updated_user_data)
             
@@ -410,6 +522,44 @@ def api_shop():
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
+@app.route("/api/market", methods=["GET"])
+@login_required
+def api_market():
+    try:
+        username = current_user.username
+        user = db.find_user(username)
+        
+        if not user:
+            return jsonify({"success": False, "message": "User not found"}), 404
+        
+        # Get user's market items
+        market_items = user.get('market', [])
+        
+        # Load item details
+        with open("data/items.json", "r", encoding="utf-8") as f:
+            all_items = json.load(f)
+        
+        # Combine market data with item details
+        market_data = []
+        for market_item in market_items:
+            item_details = next((item for item in all_items if item['item_id'] == market_item['item_id']), None)
+            if item_details:
+                combined_item = {
+                    'item_id': market_item['item_id'],
+                    'name': item_details['name'],
+                    'description': item_details['description'],
+                    'type': item_details['type'],
+                    'quantity': market_item['quantity'],
+                    'price': market_item['price'],
+                    'original_price': item_details['price'],
+                    'timestamp': market_item['timestamp']
+                }
+                market_data.append(combined_item)
+        
+        return jsonify({"success": True, "market": market_data})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
 @app.route("/api/buy-item", methods=["POST"])
 @login_required
 def api_buy_item():
@@ -463,6 +613,78 @@ def api_buy_item():
                 "success": True, 
                 "message": f"Đã mua {quantity} {item_data['name']}",
                 "cost": total_cost
+            })
+        else:
+            return jsonify({"success": False, "message": "Lỗi cập nhật dữ liệu"}), 500
+            
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@app.route("/api/buy-market-item", methods=["POST"])
+@login_required
+def api_buy_market_item():
+    try:
+        data = request.get_json()
+        item_id = data.get("item_id")
+        quantity = data.get("quantity", 1)
+        
+        username = current_user.username
+        user = db.find_user(username)
+        
+        if not user:
+            return jsonify({"success": False, "message": "Không tìm thấy người dùng"}), 404
+        
+        # Find item in user's market
+        market_items = user.get('market', [])
+        market_item = next((item for item in market_items if item['item_id'] == item_id), None)
+        
+        if not market_item:
+            return jsonify({"success": False, "message": "Item không có trong chợ"}), 404
+        
+        if market_item['quantity'] < quantity:
+            return jsonify({"success": False, "message": "Không đủ số lượng"}), 400
+        
+        # Calculate total cost
+        total_cost = market_item['price'] * quantity
+        
+        if user.get("gold", 0) < total_cost:
+            return jsonify({"success": False, "message": "Không đủ vàng"}), 400
+        
+        # Add item to inventory
+        inventory = user.get("inventory", [])
+        existing_item = next((item for item in inventory if item["item_id"] == item_id), None)
+        
+        if existing_item:
+            existing_item["quantity"] += quantity
+        else:
+            new_item = {"item_id": item_id, "quantity": quantity}
+            inventory.append(new_item)
+        
+        # Update market item quantity or remove if 0
+        market_item['quantity'] -= quantity
+        if market_item['quantity'] <= 0:
+            market_items.remove(market_item)
+        
+        # Update user data
+        new_gold = user.get("gold", 0) - total_cost
+        update_data = {
+            "inventory": inventory,
+            "market": market_items,
+            "gold": new_gold
+        }
+        
+        if db.update_user(username, update_data):
+            # Load item name for response
+            with open("data/items.json", "r", encoding="utf-8") as f:
+                all_items = json.load(f)
+            item_data = next((item for item in all_items if item["item_id"] == item_id), None)
+            item_name = item_data['name'] if item_data else item_id
+            
+            return jsonify({
+                "success": True, 
+                "message": f"Đã mua {quantity} {item_name} từ chợ",
+                "cost": total_cost,
+                "new_gold": new_gold
             })
         else:
             return jsonify({"success": False, "message": "Lỗi cập nhật dữ liệu"}), 500

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chợ - Hero Fate</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <h1><img src="/static/img/icon/button/market.png" style="width: 24px; height: 24px; object-fit: contain; margin-right: 10px; vertical-align: middle;" alt="Market"> Chợ</h1>
+        </div>
+
+        <!-- User Info & Navigation Bar -->
+        <div class="game-info-nav">
+            <!-- User Stats -->
+            <div class="user-stats">
+                <div class="info-item">
+                    <img src="/static/img/icon/info/exp.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Level">
+                    <span>Cấp độ: <strong id="userLevel">1</strong></span>
+                </div>
+                <div class="info-item">
+                    <img src="/static/img/icon/info/gold.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Gold">
+                    <span>Vàng: <strong id="userGold">0</strong></span>
+                </div>
+                <div class="info-item">
+                    <img src="/static/img/icon/info/exp.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="EXP">
+                    <span>EXP: <strong id="userExp">0</strong></span>
+                </div>
+                <div class="info-item">
+                    <img src="/static/img/icon/info/reputation.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Reputation">
+                    <span>Danh tiếng: <strong id="userReputation">0</strong></span>
+                </div>
+            </div>
+            
+            <!-- Navigation Actions -->
+            <div class="nav-actions">
+                <button class="btn btn-secondary btn-icon" onclick="window.location.href='/town'">
+                    <img src="/static/img/icon/button/town.png" alt="Town"> Thị trấn
+                </button>
+                <button class="btn btn-secondary btn-icon" onclick="logout()">
+                    <img src="/static/img/icon/button/logout.png" alt="Logout"> Đăng xuất
+                </button>
+            </div>
+        </div>
+
+        <!-- Market Tabs -->
+        <div class="market-tabs">
+            <button class="tab-button active" onclick="showTab('buy')">
+                <img src="/static/img/icon/button/market.png" alt="Buy"> Mua
+            </button>
+            <button class="tab-button" onclick="showTab('sell')">
+                <img src="/static/img/icon/button/inventory.png" alt="Sell"> Bán
+            </button>
+        </div>
+
+        <!-- Buy Tab Content -->
+        <div id="buyTab" class="tab-content active">
+            <div class="market-info">
+                <h3>
+                    <img src="/static/img/icon/button/market.png" style="width: 20px; height: 20px; object-fit: contain; margin-right: 8px; vertical-align: middle;" alt="Market">
+                    Hàng hóa có sẵn
+                </h3>
+                <p>Các món đồ được bán bởi thương gia khác. Giá cả và số lượng thay đổi hàng ngày.</p>
+            </div>
+            
+            <div class="market-grid" id="marketItemsContainer">
+                <!-- Market items will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Sell Tab Content -->
+        <div id="sellTab" class="tab-content">
+            <div class="market-info">
+                <h3>
+                    <img src="/static/img/icon/button/inventory.png" style="width: 20px; height: 20px; object-fit: contain; margin-right: 8px; vertical-align: middle;" alt="Sell">
+                    Bán hàng
+                </h3>
+                <p>Tính năng đang phát triển. Sẽ sớm có thể bán các món đồ của bạn tại đây.</p>
+            </div>
+            
+            <div class="coming-soon">
+                <i class="fas fa-hammer" style="font-size: 3em; color: #95a5a6; margin-bottom: 20px;"></i>
+                <h3>Đang phát triển</h3>
+                <p>Tính năng bán hàng sẽ sớm được cập nhật trong phiên bản tới.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buy Confirmation Modal -->
+    <div id="buyModal" class="modal">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <img src="/static/img/icon/button/market.png" style="width: 20px; height: 20px; object-fit: contain; margin-right: 8px; vertical-align: middle;" alt="Buy"> Mua hàng
+                </h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <img src="/static/img/icon/button/close.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Close">
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <div id="buyItemInfo">
+                    <!-- Item info will be populated here -->
+                </div>
+                
+                <div class="quantity-selector">
+                    <label for="buyQuantity">Số lượng:</label>
+                    <div class="quantity-controls">
+                        <button class="btn btn-secondary" onclick="adjustQuantity(-1)">-</button>
+                        <input type="number" id="buyQuantity" value="1" min="1" onchange="updateBuyTotal()">
+                        <button class="btn btn-secondary" onclick="adjustQuantity(1)">+</button>
+                    </div>
+                </div>
+                
+                <div class="buy-summary">
+                    <div class="cost-breakdown">
+                        <div class="cost-item">
+                            <span>Tổng tiền:</span>
+                            <span id="totalCost">0 vàng</span>
+                        </div>
+                        <div class="cost-item">
+                            <span>Số dư hiện tại:</span>
+                            <span id="currentGold">0 vàng</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button id="confirmBuyButton" class="btn btn-success btn-icon" onclick="confirmBuy()">
+                    <img src="/static/img/icon/button/market.png" alt="Buy"> Mua
+                </button>
+                <button class="btn btn-secondary btn-icon" onclick="closeModal()">
+                    <img src="/static/img/icon/button/cancel.png" alt="Cancel"> Hủy
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/support.js"></script>
+    <script src="/static/js/gml.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script>
+        let currentMarketItem = null;
+        let currentTab = 'buy';
+
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = getUserData();
+            if (!userData) {
+                window.location.href = '/';
+                return;
+            }
+            
+            updateUserInfoDisplay(userData);
+            loadMarketItems();
+        });
+
+        // Tab switching functions
+        function showTab(tabName) {
+            currentTab = tabName;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            if (tabName === 'buy') {
+                loadMarketItems();
+            }
+        }
+
+        // Load market items
+        async function loadMarketItems() {
+            try {
+                const response = await apiCall('/api/market');
+                if (response.success) {
+                    renderMarketItems(response.market);
+                } else {
+                    showToast('Lỗi tải dữ liệu chợ: ' + response.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error loading market items:', error);
+                showToast('Lỗi kết nối khi tải dữ liệu chợ', 'error');
+            }
+        }
+
+        // Render market items
+        function renderMarketItems(marketItems) {
+            const container = document.getElementById('marketItemsContainer');
+            
+            if (marketItems.length === 0) {
+                container.innerHTML = `
+                    <div class="no-items">
+                        <i class="fas fa-store-slash" style="font-size: 3em; color: #95a5a6; margin-bottom: 20px;"></i>
+                        <h3>Chợ trống</h3>
+                        <p>Hiện tại chợ chưa có hàng hóa nào. Hãy quay lại sau!</p>
+                        <p><small>Gợi ý: Xây dựng hoặc nâng cấp Market để có nhiều hàng hóa hơn.</small></p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            marketItems.forEach(item => {
+                const iconPath = `/static/img/icon/item/${item.item_id}.png`;
+                const typeClass = item.type === 'equipment' ? 'equipment' : 'material';
+                const discountPercent = Math.round((1 - item.price / item.original_price) * 100);
+                const isDiscount = discountPercent > 0;
+                
+                html += `
+                    <div class="market-item ${typeClass}" onclick="showBuyModal('${item.item_id}')">
+                        <div class="item-image">
+                            <img src="${iconPath}" alt="${item.name}" 
+                                 onerror="this.src='/static/img/icon/button/cube.png'">
+                        </div>
+                        <div class="item-info">
+                            <h4 class="item-name">${item.name}</h4>
+                            <p class="item-description">${item.description}</p>
+                            <div class="item-quantity">Còn lại: ${item.quantity}</div>
+                            <div class="item-prices">
+                                <div class="current-price">${item.price} vàng</div>
+                                ${item.original_price !== item.price ? 
+                                    `<div class="original-price">${item.original_price} vàng</div>` : ''
+                                }
+                                ${isDiscount ? 
+                                    `<div class="discount-badge">-${discountPercent}%</div>` : ''
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Show buy modal
+        async function showBuyModal(itemId) {
+            try {
+                const response = await apiCall('/api/market');
+                if (!response.success) {
+                    showToast('Lỗi tải thông tin item', 'error');
+                    return;
+                }
+                
+                const item = response.market.find(i => i.item_id === itemId);
+                if (!item) {
+                    showToast('Không tìm thấy item', 'error');
+                    return;
+                }
+                
+                currentMarketItem = item;
+                
+                // Update modal content
+                document.getElementById('buyItemInfo').innerHTML = `
+                    <div class="buy-item-display">
+                        <div class="item-image">
+                            <img src="/static/img/icon/item/${item.item_id}.png" alt="${item.name}"
+                                 onerror="this.src='/static/img/icon/button/cube.png'">
+                        </div>
+                        <div class="item-details">
+                            <h3>${item.name}</h3>
+                            <p>${item.description}</p>
+                            <div class="item-stats">
+                                <div class="stat-item">Loại: ${getItemTypeVietnamese(item.type)}</div>
+                                <div class="stat-item">Giá: ${item.price} vàng/cái</div>
+                                <div class="stat-item">Còn lại: ${item.quantity}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Reset quantity
+                document.getElementById('buyQuantity').value = 1;
+                document.getElementById('buyQuantity').max = item.quantity;
+                
+                updateBuyTotal();
+                
+                // Show modal
+                document.getElementById('buyModal').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error showing buy modal:', error);
+                showToast('Lỗi hiển thị thông tin mua hàng', 'error');
+            }
+        }
+
+        // Adjust quantity
+        function adjustQuantity(change) {
+            const quantityInput = document.getElementById('buyQuantity');
+            let newValue = parseInt(quantityInput.value) + change;
+            
+            if (newValue < 1) newValue = 1;
+            if (newValue > currentMarketItem.quantity) newValue = currentMarketItem.quantity;
+            
+            quantityInput.value = newValue;
+            updateBuyTotal();
+        }
+
+        // Update buy total
+        function updateBuyTotal() {
+            if (!currentMarketItem) return;
+            
+            const quantity = parseInt(document.getElementById('buyQuantity').value);
+            const total = currentMarketItem.price * quantity;
+            const userData = getUserData();
+            
+            document.getElementById('totalCost').textContent = total + ' vàng';
+            document.getElementById('currentGold').textContent = (userData.gold || 0) + ' vàng';
+            
+            // Update button state
+            const buyButton = document.getElementById('confirmBuyButton');
+            if (total > (userData.gold || 0)) {
+                buyButton.disabled = true;
+                buyButton.classList.add('disabled');
+            } else {
+                buyButton.disabled = false;
+                buyButton.classList.remove('disabled');
+            }
+        }
+
+        // Confirm buy
+        async function confirmBuy() {
+            if (!currentMarketItem) return;
+            
+            const quantity = parseInt(document.getElementById('buyQuantity').value);
+            
+            try {
+                const response = await apiCall('/api/buy-market-item', 'POST', {
+                    item_id: currentMarketItem.item_id,
+                    quantity: quantity
+                });
+                
+                if (response.success) {
+                    showToast(response.message, 'success');
+                    
+                    // Update user data
+                    const userData = getUserData();
+                    userData.gold = response.new_gold;
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    updateUserInfoDisplay(userData);
+                    
+                    // Reload market items
+                    loadMarketItems();
+                    
+                    // Close modal
+                    closeModal();
+                } else {
+                    showToast(response.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error buying item:', error);
+                showToast('Lỗi khi mua hàng', 'error');
+            }
+        }
+
+        // Helper function
+        function getItemTypeVietnamese(type) {
+            const typeMap = {
+                'material': 'Nguyên liệu',
+                'equipment': 'Trang bị',
+                'consumable': 'Vật phẩm tiêu hao',
+                'weapon': 'Vũ khí',
+                'armor': 'Giáp',
+                'accessory': 'Phụ kiện'
+            };
+            return typeMap[type] || type;
+        }
+
+        // Modal functions
+        function closeModal() {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+            currentMarketItem = null;
+        }
+    </script>
+</body>
+</html>
