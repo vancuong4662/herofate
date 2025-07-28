@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" href="/static/css/variables.css">
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/equipment.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
@@ -94,7 +95,7 @@
                             <div class="equipment-grid">
                                 <div class="equipment-slot" id="equipmentSlot-helmet">
                                     <div class="slot-label">Mũ</div>
-                                    <div class="slot-content">
+                                    <div class="slot-content" onclick="unequipItem('helmet')">
                                         <img src="/static/img/icon/item/cube.png" class="equipment-icon" alt="Empty">
                                         <span class="equipment-name">Trống</span>
                                         <span class="equipment-level">Lv.0</span>
@@ -103,7 +104,7 @@
                                 
                                 <div class="equipment-slot" id="equipmentSlot-armor">
                                     <div class="slot-label">Áo giáp</div>
-                                    <div class="slot-content">
+                                    <div class="slot-content" onclick="unequipItem('armor')">
                                         <img src="/static/img/icon/item/cube.png" class="equipment-icon" alt="Empty">
                                         <span class="equipment-name">Trống</span>
                                         <span class="equipment-level">Lv.0</span>
@@ -112,7 +113,7 @@
                                 
                                 <div class="equipment-slot" id="equipmentSlot-weapon">
                                     <div class="slot-label">Vũ khí</div>
-                                    <div class="slot-content">
+                                    <div class="slot-content" onclick="unequipItem('weapon')">
                                         <img src="/static/img/icon/item/cube.png" class="equipment-icon" alt="Empty">
                                         <span class="equipment-name">Trống</span>
                                         <span class="equipment-level">Lv.0</span>
@@ -121,7 +122,7 @@
                                 
                                 <div class="equipment-slot" id="equipmentSlot-ring">
                                     <div class="slot-label">Nhẫn</div>
-                                    <div class="slot-content">
+                                    <div class="slot-content" onclick="unequipItem('ring')">
                                         <img src="/static/img/icon/item/cube.png" class="equipment-icon" alt="Empty">
                                         <span class="equipment-name">Trống</span>
                                         <span class="equipment-level">Lv.0</span>
@@ -445,7 +446,6 @@
             if (playerInstance) {
                 playerInstance.imageSpeed = speed;
             }
-            console.log(`Animation speed set to: ${speed}`);
         }
 
         /**
@@ -556,28 +556,125 @@
                 if (equipment && equippedItem) {
                     // Item is equipped
                     slotElement.classList.add('equipped');
+                    slotElement.style.cursor = 'pointer';
+                    slotElement.title = 'Click để gỡ trang bị';
                     
                     const icon = slotElement.querySelector('.equipment-icon');
                     const name = slotElement.querySelector('.equipment-name');
                     const level = slotElement.querySelector('.equipment-level');
                     
                     icon.src = `/static/img/icon/item/${equippedItem.item_id}.png`;
-                    icon.onerror = () => { icon.src = '/static/img/icon/button/cube.png'; };
+                    icon.onerror = () => { icon.src = '/static/img/icon/item/cube.png'; };
                     name.textContent = equippedItem.name;
-                    level.textContent = `Lv.${equipment.level}`;
+                    
+                    // Show level as stars if level > 0
+                    if (equipment.level > 0) {
+                        let levelHtml = '';
+                        for (let i = 0; i < Math.min(equipment.level, 3); i++) {
+                            levelHtml += '⭐';
+                        }
+                        if (equipment.level > 3) {
+                            levelHtml += `+${equipment.level - 3}`;
+                        }
+                        level.innerHTML = levelHtml;
+                    } else {
+                        level.textContent = 'Lv.0';
+                    }
                 } else {
                     // Slot is empty
                     slotElement.classList.remove('equipped');
+                    slotElement.style.cursor = 'default';
+                    slotElement.title = '';
                     
                     const icon = slotElement.querySelector('.equipment-icon');
                     const name = slotElement.querySelector('.equipment-name');
                     const level = slotElement.querySelector('.equipment-level');
                     
-                    icon.src = '/static/img/icon/button/cube.png';
+                    icon.src = '/static/img/icon/item/cube.png';
                     name.textContent = 'Trống';
                     level.textContent = 'Lv.0';
                 }
             });
+        }
+
+        // Function to unequip item
+        async function unequipItem(slot) {
+            const userData = getUserData();
+            const equipment = userData.equipment || {};
+            
+            // Check if there's an item equipped in this slot
+            if (!equipment[slot]) {
+                showToast('Không có trang bị nào trong slot này', 'info');
+                return;
+            }
+            
+            try {
+                const response = await apiCall('/api/equipment/unequip', 'POST', {
+                    slot: slot
+                });
+                
+                if (response.success) {
+                    showToast(response.message, 'success');
+                    
+                    // Update user data
+                    userData.equipment = response.equipment;
+                    userData.inventory = response.inventory;
+                    updateUserData(userData);
+                    
+                    // Update user info display in header
+                    updateUserInfoDisplay(userData);
+                    
+                    // Close player info modal
+                    document.getElementById('playerInfoModal').style.display = 'none';
+                    
+                    // Stop player animation
+                    if (animationRunning) {
+                        stopPlayerAnimation();
+                    }
+                    
+                    // Open inventory modal with equipment tab to show the unequipped item
+                    setTimeout(async () => {
+                        const modal = document.getElementById('inventoryModal');
+                        modal.style.display = 'block';
+                        
+                        // Reset selection state first
+                        selectedItem = null;
+                        document.querySelectorAll('.inventory-slot.selected').forEach(slot => {
+                            slot.classList.remove('selected');
+                        });
+                        
+                        // Fetch fresh inventory data from server
+                        try {
+                            const userData = getUserData();
+                            const freshResponse = await fetch('/api/user/inventory', {
+                                method: 'GET',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-Username': userData.username
+                                }
+                            });
+                            const freshData = await freshResponse.json();
+                            
+                            if (freshData.success) {
+                                // Update local storage with fresh inventory data
+                                const currentUserData = getUserData();
+                                currentUserData.inventory = freshData.inventory;
+                                updateUserData(currentUserData);
+                            }
+                        } catch (error) {
+                            console.error('Error fetching fresh inventory:', error);
+                        }
+                        
+                        await showInventoryTab('equipment');
+                    }, 200); // Small delay for smooth transition
+                    
+                } else {
+                    showToast(response.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error unequipping item:', error);
+                showToast('Lỗi khi gỡ trang bị', 'error');
+            }
         }
 
         async function updateStatsWithEquipment(userData, equipmentData) {
@@ -640,6 +737,21 @@
             if (animationRunning) {
                 stopPlayerAnimation();
             }
+            
+            // Reset inventory selection when closing inventory modal
+            const inventoryModal = document.getElementById('inventoryModal');
+            if (inventoryModal.style.display === 'none') {
+                selectedItem = null;
+                // Remove selection styling
+                document.querySelectorAll('.inventory-slot.selected').forEach(slot => {
+                    slot.classList.remove('selected');
+                });
+                // Clear inventory grid content when closing
+                const grid = document.getElementById('inventoryGrid');
+                if (grid) {
+                    grid.innerHTML = '';
+                }
+            }
         }
 
         // Initialize player animation system when page loads
@@ -652,10 +764,104 @@
         let selectedItem = null;
         let currentTab = 'material';
         
+        // Equipment level multiplier data (loaded from API)
+        let equipmentMultipliers = {
+            "0": 1.0,
+            "1": 1.0,
+            "2": 1.2,
+            "3": 1.5,
+            "4": 1.8,
+            "5": 2.2,
+            "6": 2.7,
+            "7": 3.3,
+            "8": 4.0,
+            "9": 4.8,
+            "10": 5.7
+        };
+        
+        // Load equipment configuration from API
+        async function loadEquipmentConfig() {
+            try {
+                const response = await apiCall('/api/equipment');
+                if (response.success && response.equipment_config) {
+                    equipmentMultipliers = {
+                        "0": 1.0,
+                        ...response.equipment_config.level_multipliers
+                    };
+                }
+            } catch (error) {
+                console.warn('Could not load equipment config, using defaults');
+            }
+        }
+        
+        // Get level multiplier for equipment upgrades
+        function getLevelMultiplier(level) {
+            return equipmentMultipliers[level.toString()] || 1.0;
+        }
+        
         async function showInventory() {
+            const userData = getUserData();
+            if (!userData || !userData.username) {
+                showToast('Không thể lấy thông tin người chơi', 'error');
+                return;
+            }
+            
+            // Reset selection state
+            selectedItem = null;
+            document.querySelectorAll('.inventory-slot.selected').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            // Clear any existing modal content first
             const modal = document.getElementById('inventoryModal');
-            modal.style.display = 'block';
-            showInventoryTab('material'); // Default to materials tab
+            const grid = document.getElementById('inventoryGrid');
+            
+            // Force hide modal and completely clear all content
+            modal.style.display = 'none';
+            grid.innerHTML = '';
+            
+            // Clear any cached DOM elements
+            const itemDetail = document.getElementById('itemDetail');
+            if (itemDetail) {
+                itemDetail.innerHTML = '';
+            }
+            
+            try {
+                const response = await fetch('/api/user/inventory', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Username': userData.username
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update local storage with fresh inventory data
+                    const currentUserData = getUserData(); // Get fresh copy
+                    currentUserData.inventory = data.inventory;
+                    updateUserData(currentUserData);
+                    
+                    // Force clear the grid one more time
+                    grid.innerHTML = '';
+                    
+                    // Small delay to ensure DOM is ready
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    
+                    // Only now show the modal with fresh data
+                    modal.style.display = 'block';
+                    
+                    // Show default tab with fresh data
+                    await showInventoryTab('material');
+                } else {
+                    console.error('Error fetching inventory:', data.message);
+                    showToast(`Lỗi tải dữ liệu: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error fetching inventory:', error);
+                showToast('Không thể kết nối tới server', 'error');
+            }
         }
 
         function getItemTypeVietnamese(type) {
@@ -697,14 +903,27 @@
 
         async function showInventoryTab(type) {
             currentTab = type;
+            
+            // Always get fresh data from localStorage
             const userData = getUserData();
             const inventory = userData.inventory || [];
             const grid = document.getElementById('inventoryGrid');
+            
+            // Force clear grid content first
+            grid.innerHTML = '';
+            
+            // Show loading while processing
+            grid.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1 / -1;"><i class="fas fa-spinner fa-spin"></i> Đang tải...</p>';
             
             // Reset selected item
             selectedItem = null;
             updateItemDetail(null);
             updateUseButton();
+            
+            // Load equipment config if showing equipment tab
+            if (type === 'equipment') {
+                await loadEquipmentConfig();
+            }
             
             try {
                 // Load items data to get proper names and info
@@ -731,6 +950,31 @@
                             const iconPath = getItemIcon(itemData);
                             const fallbackIcon = getItemIconFallback(itemData);
                             
+                            // Add level indicator for equipment items
+                            let levelIndicator = '';
+                            if (itemData.type === 'equipment') {
+                                // For equipment items, check if this item is equipped and get its level
+                                // First try to get level from the item itself (if it has one)
+                                let currentLevel = item.level || 0;
+                                
+                                // If no level in item, try to get from equipped equipment
+                                if (currentLevel === 0) {
+                                    const equipmentSlot = itemData.equipment_slot;
+                                    const equipmentData = userData.equipment && userData.equipment[equipmentSlot];
+                                    if (equipmentData && equipmentData.item_id === item.item_id) {
+                                        currentLevel = equipmentData.level || 0;
+                                    }
+                                }
+                                
+                                if (currentLevel > 0) {
+                                    levelIndicator = `<div class="item-level-stars">`;
+                                    // Show compact level display with star icon and number
+                                    levelIndicator += `<span style="font-size: 9px; color: #fff; font-weight: bold; text-shadow: 0 0 2px rgba(0,0,0,0.9);">${currentLevel}</span>`;
+                                    levelIndicator += `<img src="/static/img/icon/info/star.png" style="width: 10px; height: 10px; margin-right: 1px;" alt="★">`;
+                                    levelIndicator += '</div>';
+                                }
+                            }
+                            
                             html += `
                                 <div class="inventory-slot" 
                                      data-item-id="${item.item_id}" 
@@ -743,6 +987,7 @@
                                          onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
                                     <i class="item-icon fallback ${fallbackIcon}" style="display: none;"></i>
                                     <div class="item-quantity">${item.quantity}</div>
+                                    ${levelIndicator}
                                 </div>
                             `;
                         }
@@ -759,14 +1004,14 @@
             }
         }
 
-        async function showItemTooltip(itemId) {
+        async function showItemTooltip(itemId, isSelected = false) {
             try {
                 const response = await apiCall('/api/items');
                 const allItems = response.items;
                 const itemData = allItems.find(i => i.item_id === itemId);
                 
                 if (itemData) {
-                    updateItemDetail(itemData);
+                    updateItemDetail(itemData, isSelected ? itemId : null);
                 }
             } catch (error) {
                 console.error('Error loading item tooltip:', error);
@@ -791,13 +1036,13 @@
                 slot.classList.add('selected');
                 selectedItem = itemId;
                 
-                // Show item detail
-                await showItemTooltip(itemId);
+                // Show item detail with selected item context
+                await showItemTooltip(itemId, true);
                 updateUseButton();
             }
         }
 
-        function updateItemDetail(itemData) {
+        function updateItemDetail(itemData, selectedItemId = null) {
             const detailContainer = document.getElementById('itemDetail');
             
             if (!itemData) {
@@ -813,25 +1058,111 @@
             
             detailContainer.className = 'item-detail';
             
-            // Build stats display if available
+            // Build level display for equipment items
+            let levelHtml = '';
             let statsHtml = '';
-            if (itemData.stat && Object.keys(itemData.stat).length > 0) {
-                statsHtml = '<div class="item-stats">';
-                Object.entries(itemData.stat).forEach(([key, value]) => {
-                    let statName = key;
-                    let statValue = value;
-                    
-                    // Format special stats
-                    if (key === 'crit_rate') {
-                        statName = 'Tỷ lệ chí mạng';
-                        statValue = Math.round(value * 100) + '%';
+            
+            if (itemData.type === 'equipment') {
+                // Get equipment level - priority: selected item > equipped item
+                const userData = getUserData();
+                let currentLevel = 0;
+                
+                if (selectedItemId) {
+                    // If item is selected, try to get level from inventory item or equipped equipment
+                    const inventory = userData.inventory || [];
+                    const inventoryItem = inventory.find(item => item.item_id === selectedItemId);
+                    if (inventoryItem && inventoryItem.level !== undefined) {
+                        currentLevel = inventoryItem.level;
                     } else {
-                        statValue = '+' + value;
+                        // Check if it's equipped
+                        const equipmentSlot = itemData.equipment_slot;
+                        const equipmentData = userData.equipment && userData.equipment[equipmentSlot];
+                        if (equipmentData && equipmentData.item_id === selectedItemId) {
+                            currentLevel = equipmentData.level || 0;
+                        }
                     }
+                } else {
+                    // If just hovering, check equipped equipment
+                    const equipmentSlot = itemData.equipment_slot;
+                    const equipmentData = userData.equipment && userData.equipment[equipmentSlot];
+                    if (equipmentData && equipmentData.item_id === itemData.item_id) {
+                        currentLevel = equipmentData.level || 0;
+                    }
+                }
+                
+                // Generate star display for level
+                if (currentLevel > 0) {
+                    levelHtml = '<div class="item-level">';
+                    levelHtml += '<span class="level-label">Cấp độ: </span>';
+                    // Show actual stars for visual appeal
+                    for (let i = 0; i < currentLevel; i++) {
+                        levelHtml += '<img src="/static/img/icon/info/star.png" style="width: 12px; height: 12px; margin-right: 2px;" alt="★">';
+                    }
+                    levelHtml += ` <span class="level-number">(${currentLevel})</span>`;
+                    levelHtml += '</div>';
+                }
+                
+                // Build stats display with level multipliers
+                if (itemData.stat && Object.keys(itemData.stat).length > 0) {
+                    statsHtml = '<div class="item-stats">';
                     
-                    statsHtml += `<div class="stat-item"><span>${statName}:</span><span>${statValue}</span></div>`;
-                });
-                statsHtml += '</div>';
+                    // Get level multiplier
+                    const levelMultiplier = getLevelMultiplier(currentLevel);
+                    
+                    Object.entries(itemData.stat).forEach(([key, value]) => {
+                        let statName = key;
+                        let statValue = value;
+                        let displayValue = value;
+                        
+                        // Apply level multiplier if equipment is upgraded
+                        if (currentLevel > 0) {
+                            displayValue = Math.round(value * levelMultiplier);
+                        }
+                        
+                        // Format special stats
+                        if (key === 'crit_rate') {
+                            statName = 'Tỷ lệ chí mạng';
+                            const basePercent = Math.round(value * 100);
+                            const upgradePercent = Math.round(displayValue * 100);
+                            displayValue = upgradePercent + '%';
+                            
+                            // Show upgrade bonus if level > 0
+                            if (currentLevel > 0 && upgradePercent > basePercent) {
+                                displayValue += ` <span style="color: #27ae60;">(+${upgradePercent - basePercent}%)</span>`;
+                            }
+                        } else {
+                            // Show upgrade bonus if level > 0
+                            if (currentLevel > 0 && displayValue > value) {
+                                displayValue = `${displayValue} <span style="color: #27ae60;">(+${displayValue - value})</span>`;
+                            } else {
+                                displayValue = '+' + displayValue;
+                            }
+                        }
+                        
+                        statsHtml += `<div class="stat-item"><span>${statName}:</span><span>${displayValue}</span></div>`;
+                    });
+                    statsHtml += '</div>';
+                }
+            } else {
+                // Non-equipment items - show base stats
+                if (itemData.stat && Object.keys(itemData.stat).length > 0) {
+                    statsHtml = '<div class="item-stats">';
+                    Object.entries(itemData.stat).forEach(([key, value]) => {
+                        let statName = key;
+                        let statValue = value;
+                        
+                        // Format special stats
+                        if (key === 'crit_rate') {
+                            statName = 'Tỷ lệ chí mạng';
+                            statValue = Math.round(value * 100) + '%';
+                        } else {
+                            statValue = '+' + value;
+                        }
+                        
+                        statsHtml += `<div class="stat-item"><span>${statName}:</span><span>${statValue}</span></div>`;
+                    });
+                    statsHtml += '</div>';
+                }
             }
             
             // Build level requirement if available
@@ -852,6 +1183,7 @@
                 <div class="item-type">${getItemTypeVietnamese(itemData.type)}</div>
                 <div class="item-price"><i class="fas fa-coins"></i> ${itemData.price} vàng</div>
                 ${levelReq}
+                ${levelHtml}
                 <div class="item-description">${itemData.description}</div>
                 ${statsHtml}
             `;
@@ -875,8 +1207,44 @@
                 return;
             }
             
-            // TODO: Implement use item functionality
-            showToast(`Sử dụng item: ${selectedItem}`, 'info');
+            // Check if it's equipment item
+            if (currentTab === 'equipment') {
+                try {
+                    const response = await apiCall('/api/equipment/equip', 'POST', {
+                        item_id: selectedItem
+                    });
+                    
+                    if (response.success) {
+                        showToast(response.message, 'success');
+                        
+                        // Update user data
+                        const userData = getUserData();
+                        userData.equipment = response.equipment;
+                        userData.inventory = response.inventory;
+                        updateUserData(userData);
+                        
+                        // Update user info display in header
+                        updateUserInfoDisplay(userData);
+                        
+                        // Close inventory modal
+                        document.getElementById('inventoryModal').style.display = 'none';
+                        
+                        // Open player info modal with updated equipment
+                        setTimeout(async () => {
+                            await showPlayerInfo();
+                        }, 200); // Small delay for smooth transition
+                        
+                    } else {
+                        showToast(response.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error equipping item:', error);
+                    showToast('Lỗi khi trang bị item', 'error');
+                }
+            } else {
+                // TODO: Implement other item types (consumables, etc.)
+                showToast('Tính năng sử dụng item này chưa được triển khai', 'info');
+            }
         }
 
         // Check if user is logged in
@@ -890,6 +1258,9 @@
             // Load buildings and render them
             loadBuildings();
             updateUserInfoDisplay(userData);
+            
+            // Load equipment configuration for level calculations
+            loadEquipmentConfig();
         });
 
         // Load and render buildings
@@ -1073,7 +1444,7 @@
                                 <img src="/static/img/icon/item/${material.item_id}.png" 
                                      style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px;" 
                                      alt="Material"
-                                     onerror="this.src='/static/img/icon/button/cube.png'">
+                                     onerror="this.src='/static/img/icon/item/cube.png'">
                                 <span>Cần: ${material.quantity}</span>
                                 <span>(Có: ${userQuantity})</span>
                             </div>
@@ -1120,7 +1491,7 @@
                     userData.buildings[buildingId] = level;
                     userData.gold = response.new_gold;
                     userData.inventory = response.new_inventory;
-                    localStorage.setItem('userData', JSON.stringify(userData));
+                    updateUserData(userData);
                     
                     // Refresh buildings display
                     loadBuildings();

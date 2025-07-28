@@ -1,0 +1,286 @@
+/* Equipment Level Display Styles */
+
+/* Level stars in item detail */
+.item-level {
+    margin: 8px 0;
+    padding: 6px 8px;
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(243, 156, 18, 0.3);
+}
+
+.item-level .level-label {
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    margin-right: 4px;
+}
+
+.item-level .level-number {
+    color: #fff3cd;
+    font-size: 11px;
+    margin-left: 4px;
+    font-weight: normal;
+}
+
+/* Level stars in inventory slots */
+.item-level-stars {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.85);
+    padding: 1px 3px;
+    border-radius: 3px;
+    z-index: 2;
+    border: 1px solid rgba(243, 156, 18, 0.6);
+}
+
+.item-level-stars img {
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.8));
+}
+
+.item-level-stars span {
+    color: #fff;
+    font-weight: bold;
+    font-size: 9px;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.9);
+    font-family: Arial, sans-serif;
+    line-height: 1;
+}
+
+/* Enhanced inventory slot styling for equipment */
+.inventory-slot {
+    position: relative;
+    border: 2px solid #34495e;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.inventory-slot:hover {
+    border-color: #3498db;
+    background: linear-gradient(135deg, #34495e, #2c3e50);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.inventory-slot.selected {
+    border-color: #f39c12;
+    background: linear-gradient(135deg, #e67e22, #f39c12);
+    box-shadow: 0 4px 12px rgba(243, 156, 18, 0.5);
+}
+
+.inventory-slot.empty {
+    background: linear-gradient(135deg, #1a1a1a, #2c2c2c);
+    border-color: #3c3c3c;
+    cursor: default;
+}
+
+.inventory-slot .item-icon {
+    max-width: 48px;
+    max-height: 48px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.inventory-slot .item-quantity {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: rgba(231, 76, 60, 0.9);
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 1px 4px;
+    border-radius: 3px;
+    z-index: 2;
+    min-width: 12px;
+    text-align: center;
+}
+
+/* Equipment section in player info modal */
+.equipment-section {
+    margin-top: 20px;
+}
+
+.equipment-section .section-title {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.equipment-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.equipment-slot {
+    background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+    border: 2px solid #95a5a6;
+    border-radius: 6px;
+    padding: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.equipment-slot.equipped {
+    background: linear-gradient(135deg, #e8f5e8, #d4edda);
+    border-color: #27ae60;
+    box-shadow: 0 2px 6px rgba(39, 174, 96, 0.2);
+}
+
+.equipment-slot .slot-label {
+    font-size: 10px;
+    color: #7f8c8d;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+.equipment-slot .equipment-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    margin-bottom: 2px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.equipment-slot .equipment-name {
+    font-size: 10px;
+    color: #2c3e50;
+    display: block;
+    margin-bottom: 1px;
+    font-weight: 500;
+}
+
+.equipment-slot .equipment-level {
+    font-size: 9px;
+    color: #f39c12;
+    font-weight: bold;
+}
+
+/* Enhanced stat display with equipment bonuses */
+.item-stats .stat-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 8px;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-left: 3px solid #3498db;
+    margin-bottom: 3px;
+    border-radius: 0 4px 4px 0;
+    font-size: 12px;
+}
+
+.item-stats .stat-item span:first-child {
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.item-stats .stat-item span:last-child {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+/* Special styling for upgraded equipment stats */
+.item-stats .stat-item.upgraded {
+    border-left-color: #f39c12;
+    background: linear-gradient(135deg, #fff8e1, #ffe082);
+}
+
+.item-stats .stat-item.upgraded span:last-child {
+    color: #e65100;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .equipment-grid {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+    
+    .inventory-slot {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .inventory-slot .item-icon {
+        max-width: 40px;
+        max-height: 40px;
+    }
+    
+    .item-level-stars img {
+        width: 6px !important;
+        height: 6px !important;
+    }
+}
+
+/* Equipment slot styling in player info modal */
+.equipment-slot {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    border: 2px solid #34495e;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+    min-height: 80px;
+}
+
+.equipment-slot.equipped {
+    border-color: #27ae60;
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+}
+
+.equipment-slot.equipped .slot-content {
+    cursor: pointer;
+}
+
+.equipment-slot.equipped .slot-content:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    transform: scale(1.05);
+}
+
+.equipment-slot .slot-label {
+    font-size: 10px;
+    color: #bdc3c7;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+.equipment-slot .equipment-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    margin-bottom: 4px;
+}
+
+.equipment-slot .equipment-name {
+    display: block;
+    font-size: 11px;
+    color: #ecf0f1;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.equipment-slot .equipment-level {
+    display: block;
+    font-size: 9px;
+    color: #f39c12;
+    font-weight: bold;
+}

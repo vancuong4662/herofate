@@ -246,6 +246,24 @@ class Database:
             return self.update_user(username, {"gold": new_gold})
         return False
 
+    def get_all_users(self):
+        """Get all users for admin purposes"""
+        if self.client is not None:
+            try:
+                users = list(self.users.find({}))
+                return users
+            except Exception as e:
+                print(f"Error getting all users: {e}")
+                return []
+        else:
+            # File-based storage
+            try:
+                with open(self.users_file, 'r', encoding='utf-8') as f:
+                    users_data = json.load(f)
+                return users_data
+            except FileNotFoundError:
+                return []
+
     def close_connection(self):
         """Close database connection"""
         if self.client is not None:

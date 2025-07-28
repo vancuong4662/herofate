@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - HeroFate</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .admin-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .admin-section h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn-admin {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        
+        .btn-admin:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        }
+        
+        .users-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #eee;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .user-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .user-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .user-item.selected {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid #eee;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        
+        .item-card {
+            border: 2px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .item-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .item-card.selected {
+            border-color: #667eea;
+            background-color: #f8f9ff;
+        }
+        
+        .item-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 10px;
+            display: block;
+        }
+        
+        .item-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .item-type {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            z-index: 10000;
+            min-width: 300px;
+        }
+        
+        .toast.success {
+            background-color: #27ae60;
+        }
+        
+        .toast.error {
+            background-color: #e74c3c;
+        }
+        
+        .toast.info {
+            background-color: #3498db;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .quantity-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .quantity-input {
+            width: 80px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1><i class="fas fa-cog"></i> Admin Panel - HeroFate</h1>
+            <p>Quản lý tài khoản và vật phẩm trong game</p>
+        </div>
+
+        <!-- User Selection Section -->
+        <div class="admin-section">
+            <h3><i class="fas fa-users"></i> Chọn tài khoản</h3>
+            <div class="users-list" id="usersList">
+                <p style="text-align: center; color: #666;">Đang tải danh sách tài khoản...</p>
+            </div>
+            <div style="margin-top: 15px;">
+                <strong>Tài khoản đã chọn:</strong> 
+                <span id="selectedUserDisplay" style="color: #667eea;">Chưa chọn</span>
+            </div>
+        </div>
+
+        <!-- Add Item Section -->
+        <div class="admin-section">
+            <h3><i class="fas fa-plus-circle"></i> Thêm vật phẩm</h3>
+            
+            <div class="form-group">
+                <label>Tìm kiếm vật phẩm:</label>
+                <input type="text" id="itemSearch" placeholder="Nhập tên vật phẩm..." oninput="filterItems()">
+            </div>
+            
+            <div class="items-grid" id="itemsGrid">
+                <p style="text-align: center; color: #666; grid-column: 1 / -1;">Đang tải danh sách vật phẩm...</p>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <strong>Vật phẩm đã chọn:</strong> 
+                <span id="selectedItemDisplay" style="color: #667eea;">Chưa chọn</span>
+            </div>
+            
+            <div class="form-group" style="margin-top: 20px;">
+                <label>Số lượng:</label>
+                <div class="quantity-controls">
+                    <button type="button" class="quantity-btn" onclick="changeQuantity(-1)">-</button>
+                    <input type="number" id="itemQuantity" class="quantity-input" value="1" min="1" max="99">
+                    <button type="button" class="quantity-btn" onclick="changeQuantity(1)">+</button>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn-admin" onclick="addItemToUser()">
+                    <i class="fas fa-plus"></i> Thêm vật phẩm
+                </button>
+            </div>
+        </div>
+
+        <!-- User Inventory Section -->
+        <div class="admin-section">
+            <h3><i class="fas fa-boxes"></i> Kho đồ của tài khoản</h3>
+            <div id="userInventory">
+                <p style="text-align: center; color: #666;">Chọn tài khoản để xem kho đồ</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn-admin" onclick="window.location.href='/town'">
+                <i class="fas fa-home"></i> Về thị trấn
+            </button>
+            <button class="btn-admin btn-danger" onclick="logout()" style="margin-left: 10px;">
+                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            </button>
+        </div>
+    </div>
+
+    <script src="/static/js/support.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script>
+        let selectedUser = null;
+        let selectedItem = null;
+        let allUsers = [];
+        let allItems = [];
+        
+        // Load admin panel data
+        document.addEventListener('DOMContentLoaded', async function() {
+            const userData = getUserData();
+            if (!userData) {
+                window.location.href = '/';
+                return;
+            }
+            
+            // Check if user is admin (you can implement this check)
+            // For now, any logged-in user can access admin panel
+            
+            await loadUsers();
+            await loadItems();
+        });
+        
+        // Load all users
+        async function loadUsers() {
+            try {
+                const response = await apiCall('/api/admin/users');
+                if (response.success) {
+                    allUsers = response.users;
+                    renderUsers();
+                } else {
+                    showToast('Lỗi khi tải danh sách tài khoản', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showToast('Lỗi khi tải danh sách tài khoản', 'error');
+            }
+        }
+        
+        // Render users list
+        function renderUsers() {
+            const container = document.getElementById('usersList');
+            
+            if (allUsers.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">Không có tài khoản nào</p>';
+                return;
+            }
+            
+            let html = '';
+            allUsers.forEach(user => {
+                const level = Math.floor(user.exp / 100) + 1;
+                html += `
+                    <div class="user-item" onclick="selectUser('${user.username}')">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>${user.username}</strong>
+                                <br>
+                                <small>Cấp ${level} | Vàng: ${user.gold || 0}</small>
+                            </div>
+                            <div style="text-align: right;">
+                                <small>EXP: ${user.exp || 0}</small>
+                                <br>
+                                <small>Items: ${(user.inventory || []).length}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        // Select user
+        function selectUser(username) {
+            // Remove previous selection
+            document.querySelectorAll('.user-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Add selection to clicked user
+            const userItems = document.querySelectorAll('.user-item');
+            userItems.forEach(item => {
+                if (item.textContent.includes(username)) {
+                    item.classList.add('selected');
+                }
+            });
+            
+            selectedUser = username;
+            document.getElementById('selectedUserDisplay').textContent = username;
+            
+            // Load user inventory
+            loadUserInventory(username);
+        }
+        
+        // Load user inventory
+        async function loadUserInventory(username) {
+            try {
+                const response = await apiCall(`/api/admin/user-inventory?username=${username}`);
+                if (response.success) {
+                    renderUserInventory(response.inventory);
+                } else {
+                    showToast('Lỗi khi tải kho đồ', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading user inventory:', error);
+                showToast('Lỗi khi tải kho đồ', 'error');
+            }
+        }
+        
+        // Render user inventory
+        function renderUserInventory(inventory) {
+            const container = document.getElementById('userInventory');
+            
+            if (!inventory || inventory.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">Kho đồ trống</p>';
+                return;
+            }
+            
+            let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;">';
+            
+            inventory.forEach(item => {
+                const itemData = allItems.find(i => i.item_id === item.item_id);
+                if (itemData) {
+                    html += `
+                        <div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center;">
+                            <img src="/static/img/icon/item/${item.item_id}.png" 
+                                 style="width: 32px; height: 32px;" 
+                                 alt="${itemData.name}"
+                                 onerror="this.src='/static/img/icon/button/cube.png'">
+                            <div style="font-size: 12px; margin-top: 5px;">
+                                <strong>${itemData.name}</strong>
+                                <br>
+                                Số lượng: ${item.quantity}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        // Load all items
+        async function loadItems() {
+            try {
+                const response = await apiCall('/api/items');
+                if (response.success) {
+                    allItems = response.items;
+                    renderItems();
+                } else {
+                    showToast('Lỗi khi tải danh sách vật phẩm', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading items:', error);
+                showToast('Lỗi khi tải danh sách vật phẩm', 'error');
+            }
+        }
+        
+        // Render items grid
+        function renderItems(filteredItems = null) {
+            const container = document.getElementById('itemsGrid');
+            const items = filteredItems || allItems;
+            
+            if (items.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1 / -1;">Không tìm thấy vật phẩm nào</p>';
+                return;
+            }
+            
+            let html = '';
+            items.forEach(item => {
+                html += `
+                    <div class="item-card" onclick="selectItem('${item.item_id}')">
+                        <img class="item-icon" 
+                             src="/static/img/icon/item/${item.item_id}.png" 
+                             alt="${item.name}"
+                             onerror="this.src='/static/img/icon/button/cube.png'">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-type">${getItemTypeVietnamese(item.type)}</div>
+                        <div style="font-size: 11px; color: #888; margin-top: 5px;">${item.price} vàng</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        // Filter items by search
+        function filterItems() {
+            const searchTerm = document.getElementById('itemSearch').value.toLowerCase();
+            if (!searchTerm) {
+                renderItems();
+                return;
+            }
+            
+            const filteredItems = allItems.filter(item => 
+                item.name.toLowerCase().includes(searchTerm) ||
+                item.item_id.toLowerCase().includes(searchTerm)
+            );
+            
+            renderItems(filteredItems);
+        }
+        
+        // Select item
+        function selectItem(itemId) {
+            // Remove previous selection
+            document.querySelectorAll('.item-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selection to clicked item
+            const itemCards = document.querySelectorAll('.item-card');
+            itemCards.forEach(card => {
+                if (card.onclick.toString().includes(itemId)) {
+                    card.classList.add('selected');
+                }
+            });
+            
+            selectedItem = itemId;
+            const itemData = allItems.find(i => i.item_id === itemId);
+            document.getElementById('selectedItemDisplay').textContent = itemData ? itemData.name : itemId;
+        }
+        
+        // Change quantity
+        function changeQuantity(delta) {
+            const input = document.getElementById('itemQuantity');
+            let current = parseInt(input.value) || 1;
+            current += delta;
+            
+            if (current < 1) current = 1;
+            if (current > 99) current = 99;
+            
+            input.value = current;
+        }
+        
+        // Add item to user
+        async function addItemToUser() {
+            if (!selectedUser) {
+                showToast('Vui lòng chọn tài khoản', 'error');
+                return;
+            }
+            
+            if (!selectedItem) {
+                showToast('Vui lòng chọn vật phẩm', 'error');
+                return;
+            }
+            
+            const quantity = parseInt(document.getElementById('itemQuantity').value) || 1;
+            
+            try {
+                const response = await apiCall('/api/admin/add-item', 'POST', {
+                    username: selectedUser,
+                    item_id: selectedItem,
+                    quantity: quantity
+                });
+                
+                if (response.success) {
+                    showToast(`Đã thêm ${quantity} ${response.item_name} cho ${selectedUser}`, 'success');
+                    
+                    // Refresh user inventory
+                    await loadUserInventory(selectedUser);
+                    
+                    // Reset quantity
+                    document.getElementById('itemQuantity').value = 1;
+                } else {
+                    showToast(response.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error adding item:', error);
+                showToast('Lỗi khi thêm vật phẩm', 'error');
+            }
+        }
+        
+        // Get item type in Vietnamese
+        function getItemTypeVietnamese(type) {
+            const typeMap = {
+                'material': 'Nguyên liệu',
+                'equipment': 'Trang bị',
+                'consumable': 'Vật phẩm tiêu hao',
+                'weapon': 'Vũ khí',
+                'armor': 'Giáp',
+                'accessory': 'Phụ kiện'
+            };
+            return typeMap[type] || type;
+        }
+    </script>
+</body>
+</html>
