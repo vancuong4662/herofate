@@ -182,6 +182,105 @@ body {
     color: var(--text-primary);
 }
 
+/* Equipment Styles */
+.player-info-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 200px;
+}
+
+.equipment-section {
+    background: rgba(52, 152, 219, 0.05);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 0 0 15px 0;
+    display: flex;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.equipment-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.equipment-slot {
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px solid rgba(52, 152, 219, 0.3);
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.equipment-slot:hover {
+    border-color: #3498db;
+    background: rgba(52, 152, 219, 0.1);
+    transform: translateY(-2px);
+}
+
+.equipment-slot.equipped {
+    border-color: #27ae60;
+    background: rgba(39, 174, 96, 0.1);
+}
+
+.slot-label {
+    font-size: 11px;
+    font-weight: bold;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+}
+
+.slot-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.equipment-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.equipment-name {
+    font-size: 10px;
+    font-weight: 500;
+    color: #2c3e50;
+    line-height: 1.2;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.equipment-level {
+    font-size: 9px;
+    font-weight: bold;
+    color: #3498db;
+    background: rgba(52, 152, 219, 0.1);
+    padding: 1px 6px;
+    border-radius: 10px;
+}
+
+.equipment-slot.equipped .equipment-level {
+    color: #27ae60;
+    background: rgba(39, 174, 96, 0.1);
+}
+
 .info-item i {
     color: var(--accent-color);
 }

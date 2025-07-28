@@ -84,6 +84,13 @@ class Database:
             "quests": [],
             "dialogs_seen": [],
             "inventory": [],
+            "equipment": {
+                "helmet": None,
+                "armor": None,
+                "weapon": None,
+                "ring": None
+            },
+            "market": [],  # Add market field for assigned market items
             "gold": 1000,
             "exp": 0,
             "reputation": 0,

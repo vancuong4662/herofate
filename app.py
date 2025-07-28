@@ -917,6 +917,297 @@ def complete_quest():
         return jsonify({"success": False, "message": str(e)}), 500
 
 
+# ===================== EQUIPMENT SYSTEM APIs =====================
+
+@app.route('/api/equipment', methods=['GET'])
+@login_required
+def api_get_equipment():
+    """Get user's current equipment and available equipment items"""
+    try:
+        username = current_user.username
+        user = db.get_user(username)
+        
+        if not user:
+            return jsonify({"success": False, "message": "User not found"}), 404
+        
+        # Load equipment configuration
+        with open('data/equipment.json', 'r', encoding='utf-8') as f:
+            equipment_config = json.load(f)
+        
+        # Load items data
+        with open('data/items.json', 'r', encoding='utf-8') as f:
+            items_data = json.load(f)
+        
+        # Get user's current equipment
+        user_equipment = user.get('equipment', {})
+        
+        # Get equipment items from inventory
+        inventory = user.get('inventory', [])
+        equipment_items = [item for item in inventory if item.get('level') is not None]
+        
+        # Calculate total stats from equipped items
+        total_stats = {}
+        equipped_items_info = {}
+        
+        for slot, equipped in user_equipment.items():
+            if equipped and equipped.get('item_id'):
+                # Find item data
+                item_data = next((item for item in items_data if item['item_id'] == equipped['item_id']), None)
+                if item_data:
+                    equipped_items_info[slot] = {
+                        **item_data,
+                        'equipped_level': equipped.get('level', 0)
+                    }
+                    
+                    # Calculate stats with upgrade multiplier
+                    item_stats = item_data.get('stat', {})
+                    upgrade_level = equipped.get('level', 0)
+                    multiplier = equipment_config['equipment_upgrade_rates']['level_multipliers'].get(str(upgrade_level), 1.0)
+                    
+                    for stat, value in item_stats.items():
+                        if stat not in total_stats:
+                            total_stats[stat] = 0
+                        total_stats[stat] += int(value * multiplier)
+        
+        return jsonify({
+            "success": True,
+            "equipment": user_equipment,
+            "equipped_items": equipped_items_info,
+            "equipment_in_inventory": equipment_items,
+            "total_stats": total_stats,
+            "equipment_config": equipment_config
+        })
+        
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@app.route('/api/equipment/equip', methods=['POST'])
+@login_required
+def api_equip_item():
+    """Equip an item from inventory"""
+    try:
+        username = current_user.username
+        data = request.get_json()
+        item_id = data.get('item_id')
+        slot = data.get('slot')
+        
+        if not item_id or not slot:
+            return jsonify({"success": False, "message": "Missing item_id or slot"}), 400
+        
+        user = db.get_user(username)
+        if not user:
+            return jsonify({"success": False, "message": "User not found"}), 404
+        
+        # Load items data to verify item
+        with open('data/items.json', 'r', encoding='utf-8') as f:
+            items_data = json.load(f)
+        
+        item_data = next((item for item in items_data if item['item_id'] == item_id), None)
+        if not item_data:
+            return jsonify({"success": False, "message": "Item not found"}), 404
+        
+        # Check if item can be equipped in this slot
+        if item_data.get('equipment_slot') != slot:
+            return jsonify({"success": False, "message": "Item cannot be equipped in this slot"}), 400
+        
+        # Find item in inventory
+        inventory = user.get('inventory', [])
+        inventory_item = next((item for item in inventory if item['item_id'] == item_id), None)
+        
+        if not inventory_item:
+            return jsonify({"success": False, "message": "Item not in inventory"}), 400
+        
+        # Get current equipment
+        equipment = user.get('equipment', {})
+        
+        # If there's already an item equipped in this slot, move it back to inventory
+        if equipment.get(slot):
+            old_equipped = equipment[slot]
+            # Find if old item already exists in inventory
+            old_in_inventory = next((item for item in inventory if item['item_id'] == old_equipped['item_id']), None)
+            if old_in_inventory:
+                # Item already exists, should not happen for equipment but just in case
+                return jsonify({"success": False, "message": "Equipment slot conflict"}), 400
+            else:
+                # Add old equipped item back to inventory
+                inventory.append({
+                    'item_id': old_equipped['item_id'],
+                    'quantity': 1,
+                    'level': old_equipped.get('level', 0)
+                })
+        
+        # Equip the new item
+        equipment[slot] = {
+            'item_id': item_id,
+            'level': inventory_item.get('level', 0)
+        }
+        
+        # Remove item from inventory
+        inventory = [item for item in inventory if item['item_id'] != item_id]
+        
+        # Update user
+        update_data = {
+            'equipment': equipment,
+            'inventory': inventory
+        }
+        
+        db.update_user(username, update_data)
+        
+        return jsonify({
+            "success": True,
+            "message": f"Equipped {item_data['name']} to {slot}",
+            "equipment": equipment
+        })
+        
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@app.route('/api/equipment/unequip', methods=['POST'])
+@login_required
+def api_unequip_item():
+    """Unequip an item and move it back to inventory"""
+    try:
+        username = current_user.username
+        data = request.get_json()
+        slot = data.get('slot')
+        
+        if not slot:
+            return jsonify({"success": False, "message": "Missing slot"}), 400
+        
+        user = db.get_user(username)
+        if not user:
+            return jsonify({"success": False, "message": "User not found"}), 404
+        
+        equipment = user.get('equipment', {})
+        
+        if not equipment.get(slot):
+            return jsonify({"success": False, "message": "No item equipped in this slot"}), 400
+        
+        equipped_item = equipment[slot]
+        inventory = user.get('inventory', [])
+        
+        # Add item back to inventory
+        inventory.append({
+            'item_id': equipped_item['item_id'],
+            'quantity': 1,
+            'level': equipped_item.get('level', 0)
+        })
+        
+        # Remove from equipment
+        equipment[slot] = None
+        
+        # Update user
+        update_data = {
+            'equipment': equipment,
+            'inventory': inventory
+        }
+        
+        db.update_user(username, update_data)
+        
+        return jsonify({
+            "success": True,
+            "message": f"Unequipped item from {slot}",
+            "equipment": equipment
+        })
+        
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@app.route('/api/equipment/upgrade', methods=['POST'])
+@login_required
+def api_upgrade_equipment():
+    """Upgrade an equipped item"""
+    try:
+        username = current_user.username
+        data = request.get_json()
+        slot = data.get('slot')
+        
+        if not slot:
+            return jsonify({"success": False, "message": "Missing slot"}), 400
+        
+        user = db.get_user(username)
+        if not user:
+            return jsonify({"success": False, "message": "User not found"}), 404
+        
+        equipment = user.get('equipment', {})
+        
+        if not equipment.get(slot):
+            return jsonify({"success": False, "message": "No item equipped in this slot"}), 400
+        
+        equipped_item = equipment[slot]
+        current_level = equipped_item.get('level', 0)
+        new_level = current_level + 1
+        
+        if new_level > 10:
+            return jsonify({"success": False, "message": "Item is already at maximum level"}), 400
+        
+        # Load equipment upgrade costs
+        with open('data/equipment.json', 'r', encoding='utf-8') as f:
+            equipment_config = json.load(f)
+        
+        upgrade_costs = equipment_config['equipment_upgrade_rates']['upgrade_costs'].get(str(new_level))
+        if not upgrade_costs:
+            return jsonify({"success": False, "message": "Upgrade cost not found"}), 400
+        
+        # Check if user has enough gold
+        user_gold = user.get('gold', 0)
+        required_gold = upgrade_costs['gold']
+        
+        if user_gold < required_gold:
+            return jsonify({"success": False, "message": f"Not enough gold. Need {required_gold}, have {user_gold}"}), 400
+        
+        # Check materials
+        inventory = user.get('inventory', [])
+        required_materials = upgrade_costs.get('materials', [])
+        
+        for material in required_materials:
+            material_id = material['item_id']
+            required_quantity = material['quantity']
+            
+            user_material = next((item for item in inventory if item['item_id'] == material_id), None)
+            if not user_material or user_material['quantity'] < required_quantity:
+                return jsonify({"success": False, "message": f"Not enough {material_id}"}), 400
+        
+        # Consume materials and gold
+        new_gold = user_gold - required_gold
+        
+        for material in required_materials:
+            material_id = material['item_id']
+            required_quantity = material['quantity']
+            
+            for item in inventory:
+                if item['item_id'] == material_id:
+                    item['quantity'] -= required_quantity
+                    if item['quantity'] <= 0:
+                        inventory = [i for i in inventory if i['item_id'] != material_id]
+                    break
+        
+        # Upgrade the item
+        equipment[slot]['level'] = new_level
+        
+        # Update user
+        update_data = {
+            'equipment': equipment,
+            'inventory': inventory,
+            'gold': new_gold
+        }
+        
+        db.update_user(username, update_data)
+        
+        return jsonify({
+            "success": True,
+            "message": f"Successfully upgraded {equipped_item['item_id']} to level {new_level}",
+            "equipment": equipment,
+            "new_gold": new_gold
+        })
+        
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+
+# ===================== END EQUIPMENT SYSTEM APIs =====================
+
+
 # Chỉ mở trình duyệt nếu đây là tiến trình chính (tránh auto-reload)
 def open_browser():
     if os.environ.get("WERKZEUG_RUN_MAIN") == "true":  # Chỉ chạy khi Flask khởi động lần đầu

@@ -42,7 +42,7 @@
     "description": "Vật liệu ma thuật quý hiếm"
   },
   {
-    "item_id": "mana_stone",
+    "item_id": "mana-stone",
     "name": "Đá mana",
     "type": "material",
     "price": 50,
@@ -56,33 +56,351 @@
     "description": "Vật liệu quý hiếm nhất để chế tạo trang bị huyền thoại"
   },
   {
-    "item_id": "bronze_sword",
+    "item_id": "leather",
+    "name": "Da thú",
+    "type": "material",
+    "price": 8,
+    "description": "Da động vật dùng để chế tạo giáp nhẹ"
+  },
+  {
+    "item_id": "bone",
+    "name": "Xương",
+    "type": "material",
+    "price": 6,
+    "description": "Xương động vật để chế tạo công cụ"
+  },
+  {
+    "item_id": "scale",
+    "name": "Vảy rồng",
+    "type": "material",
+    "price": 80,
+    "description": "Vảy rồng cực kỳ bền chắc và quý hiếm"
+  },
+  {
+    "item_id": "wolf-claw",
+    "name": "Móng sói",
+    "type": "material",
+    "price": 12,
+    "description": "Móng vuốt sói sắc bén"
+  },
+  {
+    "item_id": "solid-beak",
+    "name": "Mỏ chim cứng",
+    "type": "material",
+    "price": 15,
+    "description": "Mỏ chim săn mồi cứng như kim loại"
+  },
+  {
+    "item_id": "beast-fur",
+    "name": "Lông thú",
+    "type": "material",
+    "price": 7,
+    "description": "Lông thú dày để giữ ấm và bảo vệ"
+  },
+  {
+    "item_id": "demon-horn",
+    "name": "Sừng quỷ",
+    "type": "material",
+    "price": 45,
+    "description": "Sừng của quỷ dữ, chứa sức mạnh hắc ám"
+  },
+  {
+    "item_id": "magic-crystal",
+    "name": "Pha lê ma thuật",
+    "type": "material",
+    "price": 60,
+    "description": "Pha lê được tẩm ướp ma thuật mạnh mẽ"
+  },
+  {
+    "item_id": "rope",
+    "name": "Dây thừng",
+    "type": "material",
+    "price": 3,
+    "description": "Sợi dây thừng bền chắc"
+  },
+  {
+    "item_id": "paper",
+    "name": "Giấy",
+    "type": "material",
+    "price": 2,
+    "description": "Tờ giấy để ghi chép"
+  },
+  {
+    "item_id": "cube",
+    "name": "Khối lập phương",
+    "type": "material",
+    "price": 1,
+    "description": "Vật phẩm placeholder"
+  },
+  {
+    "item_id": "banana",
+    "name": "Chuối",
+    "type": "consumable",
+    "price": 5,
+    "description": "Trái cây ngọt ngào, hồi phục 20 HP",
+    "effect": {
+      "HP": 20
+    }
+  },
+  {
+    "item_id": "chicken",
+    "name": "Thịt gà",
+    "type": "consumable",
+    "price": 15,
+    "description": "Thịt gà nướng thơm ngon, hồi phục 50 HP",
+    "effect": {
+      "HP": 50
+    }
+  },
+  {
+    "item_id": "fish",
+    "name": "Cá",
+    "type": "consumable",
+    "price": 12,
+    "description": "Cá tươi ngon, hồi phục 40 HP",
+    "effect": {
+      "HP": 40
+    }
+  },
+  {
+    "item_id": "egg",
+    "name": "Trứng",
+    "type": "consumable",
+    "price": 8,
+    "description": "Trứng tươi bổ dưỡng, hồi phục 25 HP",
+    "effect": {
+      "HP": 25
+    }
+  },
+  {
+    "item_id": "golden-egg",
+    "name": "Trứng vàng",
+    "type": "consumable",
+    "price": 100,
+    "description": "Trứng vàng quý hiếm, hồi phục 200 HP",
+    "effect": {
+      "HP": 200
+    }
+  },
+  {
+    "item_id": "milk",
+    "name": "Sữa",
+    "type": "consumable",
+    "price": 10,
+    "description": "Sữa tươi nguyên chất, hồi phục 30 HP",
+    "effect": {
+      "HP": 30
+    }
+  },
+  {
+    "item_id": "honey",
+    "name": "Mật ong",
+    "type": "consumable",
+    "price": 20,
+    "description": "Mật ong ngọt ngào, hồi phục 60 HP và tăng tốc độ",
+    "effect": {
+      "HP": 60,
+      "AGI": 2
+    }
+  },
+  {
+    "item_id": "watermelon",
+    "name": "Dưa hấu",
+    "type": "consumable",
+    "price": 15,
+    "description": "Dưa hấu mát lạnh, hồi phục 45 HP",
+    "effect": {
+      "HP": 45
+    }
+  },
+  {
+    "item_id": "clover",
+    "name": "Cỏ ba lá",
+    "type": "consumable",
+    "price": 25,
+    "description": "Cỏ ba lá may mắn, tăng tỷ lệ chí mạng tạm thời",
+    "effect": {
+      "crit_rate": 0.05
+    }
+  },
+  {
+    "item_id": "ginseng",
+    "name": "Nhân sâm",
+    "type": "consumable",
+    "price": 80,
+    "description": "Nhân sâm quý hiếm, tăng toàn bộ chỉ số tạm thời",
+    "effect": {
+      "STR": 5,
+      "AGI": 5,
+      "INT": 5,
+      "VIT": 5,
+      "WIS": 5
+    }
+  },
+  {
+    "item_id": "squid",
+    "name": "Mực",
+    "type": "consumable",
+    "price": 18,
+    "description": "Mực tươi ngon, hồi phục 50 HP và tăng trí tuệ",
+    "effect": {
+      "HP": 50,
+      "INT": 3
+    }
+  },
+  {
+    "item_id": "bee-hive",
+    "name": "Tổ ong",
+    "type": "material",
+    "price": 35,
+    "description": "Tổ ong chứa đầy mật ngọt"
+  },
+  {
+    "item_id": "doll",
+    "name": "Búp bê",
+    "type": "material",
+    "price": 25,
+    "description": "Búp bê nhỏ xinh được làm thủ công"
+  },
+  {
+    "item_id": "magic-potion",
+    "name": "Thuốc ma thuật",
+    "type": "consumable",
+    "price": 150,
+    "description": "Thuốc bổ sung năng lượng ma thuật, hồi phục 100 MP",
+    "effect": {
+      "MP": 100
+    }
+  },
+  {
+    "item_id": "medical-kit",
+    "name": "Bộ sơ cứu",
+    "type": "consumable",
+    "price": 200,
+    "description": "Bộ dụng cụ y tế đầy đủ, hồi phục 300 HP",
+    "effect": {
+      "HP": 300
+    }
+  },
+  {
+    "item_id": "magic-powder",
+    "name": "Bột ma thuật",
+    "type": "material",
+    "price": 40,
+    "description": "Bột ma thuật để pha chế thuốc"
+  },
+  {
+    "item_id": "night-orb",
+    "name": "Quả cầu đêm",
+    "type": "material",
+    "price": 75,
+    "description": "Quả cầu chứa sức mạnh của bóng tối"
+  },
+  {
+    "item_id": "blood-orb",
+    "name": "Quả cầu máu",
+    "type": "material",
+    "price": 90,
+    "description": "Quả cầu màu đỏ như máu, chứa năng lượng sinh khí"
+  },
+  {
+    "item_id": "ice-cube",
+    "name": "Khối băng",
+    "type": "material",
+    "price": 20,
+    "description": "Khối băng không bao giờ tan"
+  },
+  {
+    "item_id": "toxic-liquid",
+    "name": "Chất độc",
+    "type": "material",
+    "price": 35,
+    "description": "Chất lỏng độc hại cực kỳ nguy hiểm"
+  },
+  {
+    "item_id": "skull",
+    "name": "Đầu lâu",
+    "type": "material",
+    "price": 30,
+    "description": "Đầu lâu của sinh vật cổ đại"
+  },
+  {
+    "item_id": "iron-keys",
+    "name": "Chùm chìa khóa sắt",
+    "type": "consumable",
+    "price": 50,
+    "description": "Chùm chìa khóa có thể mở các cửa thường",
+    "effect": {
+      "unlock": "normal_door"
+    }
+  },
+  {
+    "item_id": "magic-key",
+    "name": "Chìa khóa ma thuật",
+    "type": "consumable",
+    "price": 200,
+    "description": "Chìa khóa ma thuật có thể mở mọi cửa",
+    "effect": {
+      "unlock": "magic_door"
+    }
+  },
+  {
+    "item_id": "secret-letter",
+    "name": "Thư mật",
+    "type": "consumable",
+    "price": 100,
+    "description": "Bức thư chứa thông tin bí mật quan trọng",
+    "effect": {
+      "quest_item": true
+    }
+  },
+  {
+    "item_id": "mystic-book",
+    "name": "Sách huyền bí",
+    "type": "consumable",
+    "price": 500,
+    "description": "Cuốn sách chứa kiến thức ma thuật cổ đại, tăng vĩnh viễn INT",
+    "effect": {
+      "INT": 10
+    }
+  },
+  {
+    "item_id": "bronze-sword",
     "name": "Gươm đồng",
     "type": "equipment",
+    "equipment_slot": "weapon",
     "price": 120,
     "description": "Một thanh gươm đơn giản làm từ đồng",
     "level_require": 1,
     "stat": {
       "STR": 3
     },
-    "upgrade_material": ["iron", "coal"]
+    "upgrade_material": [
+      "iron",
+      "coal"
+    ]
   },
   {
-    "item_id": "iron_sword",
+    "item_id": "iron-sword",
     "name": "Gươm sắt",
     "type": "equipment",
+    "equipment_slot": "weapon",
     "price": 250,
     "description": "Thanh gươm chắc chắn làm từ sắt",
     "level_require": 3,
     "stat": {
       "STR": 6
     },
-    "upgrade_material": ["iron", "crystal"]
+    "upgrade_material": [
+      "iron",
+      "crystal"
+    ]
   },
   {
-    "item_id": "eagle_sword",
+    "item_id": "eagle-sword",
     "name": "Gươm đại bàng",
     "type": "equipment",
+    "equipment_slot": "weapon",
     "price": 450,
     "description": "Gươm nhẹ và sắc bén như móng vuốt đại bàng",
     "level_require": 5,
@@ -90,12 +408,16 @@
       "STR": 10,
       "AGI": 3
     },
-    "upgrade_material": ["crystal", "mana_stone"]
+    "upgrade_material": [
+      "crystal",
+      "mana-stone"
+    ]
   },
   {
-    "item_id": "hero_saber",
+    "item_id": "hero-saber",
     "name": "Kiếm anh hùng",
     "type": "equipment",
+    "equipment_slot": "weapon",
     "price": 750,
     "description": "Thanh kiếm của những anh hùng huyền thoại",
     "level_require": 8,
@@ -103,12 +425,16 @@
       "STR": 15,
       "VIT": 5
     },
-    "upgrade_material": ["crystal", "diamond"]
+    "upgrade_material": [
+      "crystal",
+      "diamond"
+    ]
   },
   {
-    "item_id": "blue_angle",
+    "item_id": "blue-angle",
     "name": "Thiên thần xanh",
     "type": "equipment",
+    "equipment_slot": "weapon",
     "price": 1200,
     "description": "Vũ khí thiêng liêng được ban phước bởi thiên thần",
     "level_require": 12,
@@ -117,12 +443,16 @@
       "WIS": 8,
       "crit_rate": 0.1
     },
-    "upgrade_material": ["diamond", "mana_stone"]
+    "upgrade_material": [
+      "diamond",
+      "mana-stone"
+    ]
   },
   {
-    "item_id": "phoenix_sword",
+    "item_id": "phoenix-sword",
     "name": "Kiếm phượng hoàng",
     "type": "equipment",
+    "equipment_slot": "weapon",
     "price": 1800,
     "description": "Kiếm huyền thoại mang sức mạnh của phượng hoàng bất tử",
     "level_require": 15,
@@ -131,12 +461,16 @@
       "INT": 10,
       "VIT": 8
     },
-    "upgrade_material": ["diamond", "crystal"]
+    "upgrade_material": [
+      "diamond",
+      "crystal"
+    ]
   },
   {
-    "item_id": "emerald_guardian_sword",
+    "item_id": "emerald-guardian-sword",
     "name": "Kiếm ngọc lục bảo",
     "type": "equipment",
+    "equipment_slot": "weapon",
     "price": 2500,
     "description": "Kiếm hộ vệ được chế tác từ ngọc lục bảo thiêng",
     "level_require": 18,
@@ -145,12 +479,16 @@
       "VIT": 15,
       "WIS": 5
     },
-    "upgrade_material": ["diamond", "mana_stone"]
+    "upgrade_material": [
+      "diamond",
+      "mana-stone"
+    ]
   },
   {
-    "item_id": "demon_slayer_sword",
+    "item_id": "demon-slayer-sword",
     "name": "Kiếm diệt ma",
     "type": "equipment",
+    "equipment_slot": "weapon",
     "price": 3500,
     "description": "Kiếm được tôi luyện để tiêu diệt các thế lực hắc ám",
     "level_require": 22,
@@ -159,12 +497,16 @@
       "AGI": 10,
       "crit_rate": 0.15
     },
-    "upgrade_material": ["diamond", "crystal"]
+    "upgrade_material": [
+      "diamond",
+      "crystal"
+    ]
   },
   {
     "item_id": "executioner",
     "name": "Đao hành quyết",
     "type": "equipment",
+    "equipment_slot": "weapon",
     "price": 4000,
     "description": "Vũ khí khủng khiếp của những kẻ hành quyết",
     "level_require": 25,
@@ -173,12 +515,16 @@
       "VIT": 10,
       "crit_rate": 0.2
     },
-    "upgrade_material": ["diamond", "mana_stone"]
+    "upgrade_material": [
+      "diamond",
+      "mana-stone"
+    ]
   },
   {
-    "item_id": "red_death_blade",
+    "item_id": "red-death-blade",
     "name": "Lưỡi tử thần đỏ",
     "type": "equipment",
+    "equipment_slot": "weapon",
     "price": 5000,
     "description": "Lưỡi kiếm đỏ như máu, mang theo cái chết cho kẻ thù",
     "level_require": 28,
@@ -187,12 +533,15 @@
       "AGI": 15,
       "crit_rate": 0.25
     },
-    "upgrade_material": ["diamond"]
+    "upgrade_material": [
+      "diamond"
+    ]
   },
   {
-    "item_id": "terror_blade",
+    "item_id": "terror-blade",
     "name": "Kiếm khủng bố",
     "type": "equipment",
+    "equipment_slot": "weapon",
     "price": 7500,
     "description": "Kiếm huyền thoại gây ra nỗi kinh hoàng cho mọi kẻ thù",
     "level_require": 32,
@@ -202,18 +551,539 @@
       "INT": 15,
       "crit_rate": 0.3
     },
-    "upgrade_material": ["diamond"]
+    "upgrade_material": [
+      "diamond"
+    ]
   },
   {
-    "item_id": "leather_armor",
+    "item_id": "leather-armor",
     "name": "Áo giáp da",
     "type": "equipment",
+    "equipment_slot": "armor",
     "price": 100,
     "description": "Bộ giáp nhẹ làm từ da",
     "level_require": 1,
     "stat": {
       "VIT": 2
     },
-    "upgrade_material": ["iron", "herb"]
+    "upgrade_material": [
+      "iron",
+      "herb"
+    ]
+  },
+  {
+    "item_id": "leather-coat",
+    "name": "Áo khoác da",
+    "type": "equipment",
+    "equipment_slot": "armor",
+    "price": 80,
+    "description": "Áo khoác da mềm mại và bền chắc",
+    "level_require": 1,
+    "stat": {
+      "VIT": 1,
+      "AGI": 1
+    },
+    "upgrade_material": [
+      "leather",
+      "beast-fur"
+    ]
+  },
+  {
+    "item_id": "copper-armor",
+    "name": "Giáp đồng",
+    "type": "equipment",
+    "equipment_slot": "armor",
+    "price": 200,
+    "description": "Bộ giáp đồng cơ bản nhưng bền chắc",
+    "level_require": 3,
+    "stat": {
+      "VIT": 5,
+      "STR": 2
+    },
+    "upgrade_material": [
+      "iron",
+      "coal"
+    ]
+  },
+  {
+    "item_id": "knight-armor",
+    "name": "Giáp hiệp sĩ",
+    "type": "equipment",
+    "equipment_slot": "armor",
+    "price": 800,
+    "description": "Bộ giáp danh dự của các hiệp sĩ",
+    "level_require": 10,
+    "stat": {
+      "VIT": 15,
+      "STR": 5
+    },
+    "upgrade_material": [
+      "crystal",
+      "iron"
+    ]
+  },
+  {
+    "item_id": "hero-armor",
+    "name": "Giáp anh hùng",
+    "type": "equipment",
+    "equipment_slot": "armor",
+    "price": 1500,
+    "description": "Bộ giáp huyền thoại của các anh hùng",
+    "level_require": 15,
+    "stat": {
+      "VIT": 25,
+      "STR": 10,
+      "AGI": 5
+    },
+    "upgrade_material": [
+      "diamond",
+      "crystal"
+    ]
+  },
+  {
+    "item_id": "steel-plate-armor",
+    "name": "Giáp thép",
+    "type": "equipment",
+    "equipment_slot": "armor",
+    "price": 2000,
+    "description": "Giáp thép cực kỳ bền chắc",
+    "level_require": 18,
+    "stat": {
+      "VIT": 35,
+      "STR": 8
+    },
+    "upgrade_material": [
+      "diamond",
+      "iron"
+    ]
+  },
+  {
+    "item_id": "prime-armor",
+    "name": "Giáp tối thượng",
+    "type": "equipment",
+    "equipment_slot": "armor",
+    "price": 3500,
+    "description": "Bộ giáp đỉnh cao của nghệ thuật rèn",
+    "level_require": 25,
+    "stat": {
+      "VIT": 45,
+      "STR": 15,
+      "AGI": 8
+    },
+    "upgrade_material": [
+      "diamond",
+      "magic-crystal"
+    ]
+  },
+  {
+    "item_id": "nether-armor",
+    "name": "Giáp địa ngục",
+    "type": "equipment",
+    "equipment_slot": "armor",
+    "price": 5000,
+    "description": "Giáp được tôi luyện trong lửa địa ngục",
+    "level_require": 30,
+    "stat": {
+      "VIT": 60,
+      "STR": 20,
+      "INT": 10
+    },
+    "upgrade_material": [
+      "diamond",
+      "demon-horn"
+    ]
+  },
+  {
+    "item_id": "warlord-armor",
+    "name": "Giáp đại tướng",
+    "type": "equipment",
+    "equipment_slot": "armor",
+    "price": 7500,
+    "description": "Bộ giáp uy nghiêm của các đại tướng",
+    "level_require": 35,
+    "stat": {
+      "VIT": 75,
+      "STR": 25,
+      "WIS": 15
+    },
+    "upgrade_material": [
+      "diamond"
+    ]
+  },
+  {
+    "item_id": "simple-hat",
+    "name": "Mũ đơn giản",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 50,
+    "description": "Chiếc mũ đơn giản bảo vệ đầu",
+    "level_require": 1,
+    "stat": {
+      "VIT": 1
+    },
+    "upgrade_material": [
+      "leather"
+    ]
+  },
+  {
+    "item_id": "iron-helm",
+    "name": "Mũ sắt",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 150,
+    "description": "Mũ bảo vệ đầu làm từ sắt",
+    "level_require": 2,
+    "stat": {
+      "VIT": 3,
+      "STR": 1
+    },
+    "upgrade_material": [
+      "iron",
+      "coal"
+    ]
+  },
+  {
+    "item_id": "fighter-helm",
+    "name": "Mũ chiến binh",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 300,
+    "description": "Mũ được thiết kế cho các chiến binh",
+    "level_require": 5,
+    "stat": {
+      "VIT": 6,
+      "STR": 3
+    },
+    "upgrade_material": [
+      "iron",
+      "crystal"
+    ]
+  },
+  {
+    "item_id": "soldier-helm",
+    "name": "Mũ lính",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 250,
+    "description": "Mũ tiêu chuẩn của quân lính",
+    "level_require": 4,
+    "stat": {
+      "VIT": 5,
+      "AGI": 2
+    },
+    "upgrade_material": [
+      "iron",
+      "leather"
+    ]
+  },
+  {
+    "item_id": "knight-helm",
+    "name": "Mũ hiệp sĩ",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 600,
+    "description": "Mũ danh dự của các hiệp sĩ",
+    "level_require": 8,
+    "stat": {
+      "VIT": 10,
+      "STR": 5,
+      "WIS": 2
+    },
+    "upgrade_material": [
+      "crystal",
+      "iron"
+    ]
+  },
+  {
+    "item_id": "samurai-helm",
+    "name": "Mũ samurai",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 1000,
+    "description": "Mũ truyền thống của các samurai",
+    "level_require": 12,
+    "stat": {
+      "VIT": 15,
+      "STR": 8,
+      "AGI": 5
+    },
+    "upgrade_material": [
+      "crystal",
+      "diamond"
+    ]
+  },
+  {
+    "item_id": "magic-warrior-helm",
+    "name": "Mũ pháp chiến",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 1200,
+    "description": "Mũ kết hợp giữa ma thuật và chiến đấu",
+    "level_require": 15,
+    "stat": {
+      "VIT": 18,
+      "STR": 6,
+      "INT": 8,
+      "WIS": 5
+    },
+    "upgrade_material": [
+      "magic-crystal",
+      "diamond"
+    ]
+  },
+  {
+    "item_id": "blue-dragon-helm",
+    "name": "Mũ rồng xanh",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 2000,
+    "description": "Mũ được chế tác từ vảy rồng xanh",
+    "level_require": 18,
+    "stat": {
+      "VIT": 25,
+      "STR": 10,
+      "INT": 10,
+      "WIS": 8
+    },
+    "upgrade_material": [
+      "scale",
+      "diamond"
+    ]
+  },
+  {
+    "item_id": "dark-rose-helm",
+    "name": "Mũ hoa hồng đen",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 2500,
+    "description": "Mũ huyền bí với hoa hồng đen",
+    "level_require": 22,
+    "stat": {
+      "VIT": 30,
+      "INT": 15,
+      "WIS": 12,
+      "crit_rate": 0.08
+    },
+    "upgrade_material": [
+      "magic-crystal",
+      "diamond"
+    ]
+  },
+  {
+    "item_id": "death-wing-helm",
+    "name": "Mũ cánh tử thần",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 3500,
+    "description": "Mũ với đôi cánh của thần chết",
+    "level_require": 25,
+    "stat": {
+      "VIT": 35,
+      "STR": 15,
+      "AGI": 12,
+      "crit_rate": 0.1
+    },
+    "upgrade_material": [
+      "demon-horn",
+      "diamond"
+    ]
+  },
+  {
+    "item_id": "royal-guardian-helm",
+    "name": "Mũ hộ vệ hoàng gia",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 4000,
+    "description": "Mũ của các hộ vệ hoàng gia uy nghiêm",
+    "level_require": 28,
+    "stat": {
+      "VIT": 40,
+      "STR": 18,
+      "WIS": 15
+    },
+    "upgrade_material": [
+      "diamond",
+      "magic-crystal"
+    ]
+  },
+  {
+    "item_id": "meta-dragon-helm",
+    "name": "Mũ rồng kim loại",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 5000,
+    "description": "Mũ được rèn từ kim loại của rồng cổ đại",
+    "level_require": 30,
+    "stat": {
+      "VIT": 45,
+      "STR": 20,
+      "INT": 15,
+      "AGI": 10
+    },
+    "upgrade_material": [
+      "scale",
+      "diamond"
+    ]
+  },
+  {
+    "item_id": "valkyrie-helm",
+    "name": "Mũ Valkyrie",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 6000,
+    "description": "Mũ của các nữ thần chiến tranh Valkyrie",
+    "level_require": 32,
+    "stat": {
+      "VIT": 50,
+      "STR": 22,
+      "AGI": 15,
+      "WIS": 12
+    },
+    "upgrade_material": [
+      "diamond"
+    ]
+  },
+  {
+    "item_id": "warlord-helm",
+    "name": "Mũ đại tướng",
+    "type": "equipment",
+    "equipment_slot": "helmet",
+    "price": 8000,
+    "description": "Mũ uy nghiêm của các đại tướng",
+    "level_require": 35,
+    "stat": {
+      "VIT": 60,
+      "STR": 25,
+      "WIS": 20,
+      "crit_rate": 0.15
+    },
+    "upgrade_material": [
+      "diamond"
+    ]
+  },
+  {
+    "item_id": "bronze-ring",
+    "name": "Nhẫn đồng",
+    "type": "equipment",
+    "equipment_slot": "ring",
+    "price": 80,
+    "description": "Nhẫn đơn giản làm từ đồng",
+    "level_require": 1,
+    "stat": {
+      "STR": 1,
+      "AGI": 1
+    },
+    "upgrade_material": [
+      "iron"
+    ]
+  },
+  {
+    "item_id": "iron-ring",
+    "name": "Nhẫn sắt",
+    "type": "equipment",
+    "equipment_slot": "ring",
+    "price": 150,
+    "description": "Nhẫn chắc chắn làm từ sắt",
+    "level_require": 3,
+    "stat": {
+      "STR": 3,
+      "VIT": 2
+    },
+    "upgrade_material": [
+      "crystal"
+    ]
+  },
+  {
+    "item_id": "silver-ring",
+    "name": "Nhẫn bạc",
+    "type": "equipment",
+    "equipment_slot": "ring",
+    "price": 300,
+    "description": "Nhẫn bạc sáng bóng và thanh lịch",
+    "level_require": 5,
+    "stat": {
+      "AGI": 4,
+      "INT": 3,
+      "crit_rate": 0.02
+    },
+    "upgrade_material": [
+      "crystal",
+      "mana-stone"
+    ]
+  },
+  {
+    "item_id": "golden-ring",
+    "name": "Nhẫn vàng",
+    "type": "equipment",
+    "equipment_slot": "ring",
+    "price": 600,
+    "description": "Nhẫn vàng quý giá và lộng lẫy",
+    "level_require": 8,
+    "stat": {
+      "STR": 5,
+      "AGI": 5,
+      "VIT": 3,
+      "crit_rate": 0.03
+    },
+    "upgrade_material": [
+      "crystal",
+      "diamond"
+    ]
+  },
+  {
+    "item_id": "ruby-ring",
+    "name": "Nhẫn ruby",
+    "type": "equipment",
+    "equipment_slot": "ring",
+    "price": 1200,
+    "description": "Nhẫn được gắn viên ruby đỏ rực",
+    "level_require": 12,
+    "stat": {
+      "STR": 8,
+      "VIT": 6,
+      "INT": 4,
+      "crit_rate": 0.05
+    },
+    "upgrade_material": [
+      "diamond",
+      "magic-crystal"
+    ]
+  },
+  {
+    "item_id": "wisdom-ring",
+    "name": "Nhẫn trí tuệ",
+    "type": "equipment",
+    "equipment_slot": "ring",
+    "price": 600,
+    "description": "Nhẫn tăng cường trí tuệ và khôn ngoan",
+    "level_require": 8,
+    "stat": {
+      "INT": 8,
+      "WIS": 5,
+      "crit_rate": 0.05
+    },
+    "upgrade_material": [
+      "crystal",
+      "mana-stone"
+    ]
+  },
+  {
+    "item_id": "diamond-ring",
+    "name": "Nhẫn kim cương",
+    "type": "equipment",
+    "equipment_slot": "ring",
+    "price": 2000,
+    "description": "Nhẫn quý giá làm từ kim cương",
+    "level_require": 20,
+    "stat": {
+      "STR": 10,
+      "AGI": 8,
+      "VIT": 5,
+      "crit_rate": 0.1
+    },
+    "upgrade_material": [
+      "diamond",
+      "mana-stone"
+    ]
   }
 ]

@@ -75,12 +75,59 @@
             <!-- Modal Body -->
             <div class="modal-body">
                 <div class="player-info-container">
-                    <!-- Left Side - Avatar -->
-                    <div class="player-info-avatar">
-                        <canvas id="playerInfoCanvas" width="128" height="128"></canvas>
-                        <div class="avatar-label">
-                            <img src="/static/img/icon/info/user.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Player">
-                            <span id="playerUsername">Tên tài khoản</span>
+                    <!-- Left Side - Avatar & Equipment -->
+                    <div class="player-info-left">
+                        <div class="player-info-avatar">
+                            <canvas id="playerInfoCanvas" width="128" height="128"></canvas>
+                            <div class="avatar-label">
+                                <img src="/static/img/icon/info/user.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Player">
+                                <span id="playerUsername">Tên tài khoản</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Equipment Section -->
+                        <div class="equipment-section">
+                            <h4 class="section-title">
+                                <img src="/static/img/icon/button/inventory.png" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px; vertical-align: middle;" alt="Equipment">
+                                Trang bị hiện tại
+                            </h4>
+                            <div class="equipment-grid">
+                                <div class="equipment-slot" id="equipmentSlot-helmet">
+                                    <div class="slot-label">Mũ</div>
+                                    <div class="slot-content">
+                                        <img src="/static/img/icon/item/cube.png" class="equipment-icon" alt="Empty">
+                                        <span class="equipment-name">Trống</span>
+                                        <span class="equipment-level">Lv.0</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="equipment-slot" id="equipmentSlot-armor">
+                                    <div class="slot-label">Áo giáp</div>
+                                    <div class="slot-content">
+                                        <img src="/static/img/icon/item/cube.png" class="equipment-icon" alt="Empty">
+                                        <span class="equipment-name">Trống</span>
+                                        <span class="equipment-level">Lv.0</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="equipment-slot" id="equipmentSlot-weapon">
+                                    <div class="slot-label">Vũ khí</div>
+                                    <div class="slot-content">
+                                        <img src="/static/img/icon/item/cube.png" class="equipment-icon" alt="Empty">
+                                        <span class="equipment-name">Trống</span>
+                                        <span class="equipment-level">Lv.0</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="equipment-slot" id="equipmentSlot-ring">
+                                    <div class="slot-label">Nhẫn</div>
+                                    <div class="slot-content">
+                                        <img src="/static/img/icon/item/cube.png" class="equipment-icon" alt="Empty">
+                                        <span class="equipment-name">Trống</span>
+                                        <span class="equipment-level">Lv.0</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -473,14 +520,21 @@
             document.getElementById('playerInfoExp').textContent = userData.exp || 0;
             document.getElementById('playerInfoReputation').textContent = userData.reputation || 0;
             
-            // Update stats
-            const stats = userData.stats || {};
-            document.getElementById('playerInfoSTR').textContent = stats.STR || 10;
-            document.getElementById('playerInfoAGI').textContent = stats.AGI || 10;
-            document.getElementById('playerInfoINT').textContent = stats.INT || 10;
-            document.getElementById('playerInfoVIT').textContent = stats.VIT || 10;
-            document.getElementById('playerInfoWIS').textContent = stats.WIS || 10;
-            document.getElementById('playerInfoCrit').textContent = Math.round((stats.crit_rate || 0.1) * 100) + '%';
+            // Load equipment data
+            try {
+                const equipmentResponse = await apiCall('/api/equipment');
+                if (equipmentResponse.success) {
+                    await updateEquipmentDisplay(equipmentResponse);
+                    await updateStatsWithEquipment(userData, equipmentResponse);
+                } else {
+                    console.error('Error loading equipment:', equipmentResponse.message);
+                    // Still show modal with base stats
+                    updateStatsDisplay(userData.stats || {});
+                }
+            } catch (error) {
+                console.error('Error loading equipment:', error);
+                updateStatsDisplay(userData.stats || {});
+            }
             
             // Show modal
             modal.style.display = 'block';
@@ -489,6 +543,90 @@
             if (!animationRunning) {
                 startPlayerAnimation();
             }
+        }
+
+        async function updateEquipmentDisplay(equipmentData) {
+            const slots = ['helmet', 'armor', 'weapon', 'ring'];
+            
+            slots.forEach(slot => {
+                const slotElement = document.getElementById(`equipmentSlot-${slot}`);
+                const equipment = equipmentData.equipment[slot];
+                const equippedItem = equipmentData.equipped_items[slot];
+                
+                if (equipment && equippedItem) {
+                    // Item is equipped
+                    slotElement.classList.add('equipped');
+                    
+                    const icon = slotElement.querySelector('.equipment-icon');
+                    const name = slotElement.querySelector('.equipment-name');
+                    const level = slotElement.querySelector('.equipment-level');
+                    
+                    icon.src = `/static/img/icon/item/${equippedItem.item_id}.png`;
+                    icon.onerror = () => { icon.src = '/static/img/icon/button/cube.png'; };
+                    name.textContent = equippedItem.name;
+                    level.textContent = `Lv.${equipment.level}`;
+                } else {
+                    // Slot is empty
+                    slotElement.classList.remove('equipped');
+                    
+                    const icon = slotElement.querySelector('.equipment-icon');
+                    const name = slotElement.querySelector('.equipment-name');
+                    const level = slotElement.querySelector('.equipment-level');
+                    
+                    icon.src = '/static/img/icon/button/cube.png';
+                    name.textContent = 'Trống';
+                    level.textContent = 'Lv.0';
+                }
+            });
+        }
+
+        async function updateStatsWithEquipment(userData, equipmentData) {
+            const baseStats = userData.stats || {};
+            const equipmentStats = equipmentData.total_stats || {};
+            
+            // Calculate final stats (base + equipment)
+            const finalStats = {
+                STR: (baseStats.STR || 10) + (equipmentStats.STR || 0),
+                AGI: (baseStats.AGI || 10) + (equipmentStats.AGI || 0),
+                INT: (baseStats.INT || 10) + (equipmentStats.INT || 0),
+                VIT: (baseStats.VIT || 10) + (equipmentStats.VIT || 0),
+                WIS: (baseStats.WIS || 10) + (equipmentStats.WIS || 0),
+                crit_rate: (baseStats.crit_rate || 0.05) + (equipmentStats.crit_rate || 0)
+            };
+            
+            updateStatsDisplay(finalStats, baseStats, equipmentStats);
+        }
+
+        function updateStatsDisplay(finalStats, baseStats = null, equipmentStats = null) {
+            document.getElementById('playerInfoSTR').innerHTML = formatStatValue('STR', finalStats.STR, baseStats, equipmentStats);
+            document.getElementById('playerInfoAGI').innerHTML = formatStatValue('AGI', finalStats.AGI, baseStats, equipmentStats);
+            document.getElementById('playerInfoINT').innerHTML = formatStatValue('INT', finalStats.INT, baseStats, equipmentStats);
+            document.getElementById('playerInfoVIT').innerHTML = formatStatValue('VIT', finalStats.VIT, baseStats, equipmentStats);
+            document.getElementById('playerInfoWIS').innerHTML = formatStatValue('WIS', finalStats.WIS, baseStats, equipmentStats);
+            
+            const critPercent = Math.round((finalStats.crit_rate || 0.05) * 100);
+            document.getElementById('playerInfoCrit').innerHTML = formatStatValue('crit_rate', critPercent + '%', baseStats, equipmentStats);
+        }
+
+        function formatStatValue(statKey, finalValue, baseStats, equipmentStats) {
+            if (!baseStats || !equipmentStats) {
+                return finalValue;
+            }
+            
+            const baseValue = baseStats[statKey] || (statKey === 'crit_rate' ? 0.05 : 10);
+            const equipValue = equipmentStats[statKey] || 0;
+            
+            if (equipValue > 0) {
+                if (statKey === 'crit_rate') {
+                    const baseCrit = Math.round(baseValue * 100);
+                    const equipCrit = Math.round(equipValue * 100);
+                    return `${baseCrit + equipCrit}% <span style="color: #27ae60;">(+${equipCrit}%)</span>`;
+                } else {
+                    return `${finalValue} <span style="color: #27ae60;">(+${equipValue})</span>`;
+                }
+            }
+            
+            return finalValue;
         }
 
         // Close modal function (enhanced)

@@ -1,0 +1,63 @@
+{
+  "equipment_upgrade_rates": {
+    "base_multiplier": 0.1,
+    "level_multipliers": {
+      "1": 1.0,
+      "2": 1.2,
+      "3": 1.5,
+      "4": 1.8,
+      "5": 2.2,
+      "6": 2.7,
+      "7": 3.3,
+      "8": 4.0,
+      "9": 4.8,
+      "10": 5.7
+    },
+    "upgrade_costs": {
+      "1": { "gold": 100 },
+      "2": { "gold": 200 },
+      "3": { "gold": 400 },
+      "4": { "gold": 800 },
+      "5": { "gold": 1600 },
+      "6": { "gold": 3200 },
+      "7": { "gold": 6400 },
+      "8": { "gold": 12800 },
+      "9": { "gold": 25600 },
+      "10": { "gold": 51200 }
+    },
+    "upgrade_success_rates": {
+      "1": 100,
+      "2": 80,
+      "3": 85,
+      "4": 75,
+      "5": 70,
+      "6": 55,
+      "7": 50,
+      "8": 40,
+      "9": 20,
+      "10": 10
+    }
+  },
+  "equipment_slots": {
+    "helmet": {
+      "name": "Mũ",
+      "description": "Bảo vệ đầu khỏi tấn công",
+      "allowed_types": ["helmet", "hat"]
+    },
+    "armor": {
+      "name": "Áo giáp", 
+      "description": "Bảo vệ thân người",
+      "allowed_types": ["armor", "chest"]
+    },
+    "weapon": {
+      "name": "Vũ khí",
+      "description": "Công cụ tấn công chính",
+      "allowed_types": ["weapon", "sword", "staff", "bow"]
+    },
+    "ring": {
+      "name": "Nhẫn",
+      "description": "Phụ kiện tăng cường sức mạnh",
+      "allowed_types": ["ring", "accessory"]
+    }
+  }
+}
